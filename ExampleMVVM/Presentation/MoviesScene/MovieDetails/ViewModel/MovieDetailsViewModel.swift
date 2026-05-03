@@ -8,6 +8,7 @@ protocol MovieDetailsViewModelOutput {
     var title: String { get }
     var posterImage: Observable<Data?> { get }
     var isPosterImageHidden: Bool { get }
+    var rating: String { get }
     var overview: String { get }
 }
 
@@ -24,6 +25,7 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
     let title: String
     let posterImage: Observable<Data?> = Observable(nil)
     let isPosterImageHidden: Bool
+    let rating: String
     let overview: String
     
     init(
@@ -37,7 +39,7 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
         self.isPosterImageHidden = movie.posterPath == nil
         self.posterImagesRepository = posterImagesRepository
         self.mainQueue = mainQueue
-    }
+        self.rating = String(format: "%.1f", movie.rating ?? 0)    }
 }
 
 // MARK: - INPUT. View event methods

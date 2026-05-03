@@ -3,6 +3,7 @@ import UIKit
 final class MovieDetailsViewController: UIViewController, StoryboardInstantiable {
 
     @IBOutlet private var posterImageView: UIImageView!
+    @IBOutlet weak var ratingLabel: UILabel!
     @IBOutlet private var overviewTextView: UITextView!
 
     // MARK: - Lifecycle
@@ -36,6 +37,7 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
         title = viewModel.title
         overviewTextView.text = viewModel.overview
         posterImageView.isHidden = viewModel.isPosterImageHidden
+        ratingLabel.text = "⭐️ \(viewModel.rating)"
         view.accessibilityIdentifier = AccessibilityIdentifier.movieDetailsView
     }
 }

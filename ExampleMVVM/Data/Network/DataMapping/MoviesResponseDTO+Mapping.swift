@@ -22,6 +22,7 @@ extension MoviesResponseDTO {
             case posterPath = "poster_path"
             case overview
             case releaseDate = "release_date"
+            case rating = "vote_average"
         }
         enum GenreDTO: String, Decodable {
             case adventure
@@ -33,6 +34,7 @@ extension MoviesResponseDTO {
         let posterPath: String?
         let overview: String?
         let releaseDate: String?
+        let rating: Double?
     }
 }
 
@@ -53,7 +55,8 @@ extension MoviesResponseDTO.MovieDTO {
                      genre: genre?.toDomain(),
                      posterPath: posterPath,
                      overview: overview,
-                     releaseDate: dateFormatter.date(from: releaseDate ?? ""))
+                     releaseDate: dateFormatter.date(from: releaseDate ?? ""),
+                     rating: rating)
     }
 }
 

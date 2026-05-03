@@ -19,7 +19,8 @@ extension MovieResponseEntity {
             genre: MoviesResponseDTO.MovieDTO.GenreDTO(rawValue: genre ?? ""),
             posterPath: posterPath,
             overview: overview,
-            releaseDate: releaseDate
+            releaseDate: releaseDate,
+            rating: rating
         )
     }
 }
@@ -54,6 +55,7 @@ extension MoviesResponseDTO.MovieDTO {
         entity.posterPath = posterPath
         entity.overview = overview
         entity.releaseDate = releaseDate
+        entity.rating = rating ?? 0
         return entity
     }
 }
