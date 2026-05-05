@@ -13,7 +13,7 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies {
     // MARK: - Persistent Storage
     lazy var moviesQueriesStorage: MoviesQueriesStorage = CoreDataMoviesQueriesStorage(maxStorageLimit: 10)
     lazy var moviesResponseCache: MoviesResponseStorage = CoreDataMoviesResponseStorage()
-
+    lazy var movieDetailsLocalStorage: MovieDetailsLocalStorage = UserDefaultsMovieDetailsLocalStorage()
     init(dependencies: Dependencies) {
         self.dependencies = dependencies        
     }
@@ -80,7 +80,8 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies {
     func makeMoviesDetailsViewModel(movie: Movie) -> MovieDetailsViewModel {
         DefaultMovieDetailsViewModel(
             movie: movie,
-            posterImagesRepository: makePosterImagesRepository()
+            posterImagesRepository: makePosterImagesRepository(),
+            localStorage: movieDetailsLocalStorage
         )
     }
     
