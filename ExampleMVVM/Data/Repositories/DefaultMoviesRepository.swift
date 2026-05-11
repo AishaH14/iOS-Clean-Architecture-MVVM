@@ -54,4 +54,49 @@ extension DefaultMoviesRepository: MoviesRepository {
         }
         return task
     }
+    func fetchMovieGenres(
+        completion: @escaping (Result<[Genre], Error>) -> Void
+    ) -> Cancellable? {
+        
+        let task = RepositoryTask()
+        let endpoint = APIEndpoints.getMovieGenres()
+        
+        task.networkTask = dataTransferService.request(
+            with: endpoint,
+            on: backgroundQueue
+        ) { result in
+            switch result {
+            case .success(let responseDTO):
+                let genres = responseDTO.genres.map { $0.toDomain() }
+                completion(.success(genres))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+        
+        return task
+    }
+    
+    func fetchTVGenres(
+        completion: @escaping (Result<[Genre], Error>) -> Void
+    ) -> Cancellable? {
+        
+        let task = RepositoryTask()
+        let endpoint = APIEndpoints.getTVGenres()
+        
+        task.networkTask = dataTransferService.request(
+            with: endpoint,
+            on: backgroundQueue
+        ) { result in
+            switch result {
+            case .success(let responseDTO):
+                let genres = responseDTO.genres.map { $0.toDomain() }
+                completion(.success(genres))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+        
+        return task
+    }
 }

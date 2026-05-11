@@ -6,11 +6,12 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
     @IBOutlet private var moviesListContainer: UIView!
     @IBOutlet private(set) var suggestionsListContainer: UIView!
     @IBOutlet private var searchBarContainer: UIView!
-    @IBOutlet private var emptyDataLabel: UILabel!
+    @IBOutlet private weak var genresCollectionView: UICollectionView!
+    @IBOutlet private var emptyDataLabel: UILabel!    
     
     private var viewModel: MoviesListViewModel!
     private var posterImagesRepository: PosterImagesRepository?
-
+    private var selectedGenreIndex = 0
     private var moviesTableViewController: MoviesListTableViewController?
     private var searchController = UISearchController(searchResultsController: nil)
 
@@ -30,8 +31,11 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
         super.viewDidLoad()
         setupViews()
         setupBehaviours()
+        genresCollectionView.delegate = self
+        genresCollectionView.dataSource = self
         bind(to: viewModel)
         viewModel.viewDidLoad()
+        emptyDataLabel.isHidden = true
     }
 
     private func bind(to viewModel: MoviesListViewModel) {
@@ -39,6 +43,8 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
         viewModel.loading.observe(on: self) { [weak self] in self?.updateLoading($0) }
         viewModel.query.observe(on: self) { [weak self] in self?.updateSearchQuery($0) }
         viewModel.error.observe(on: self) { [weak self] in self?.showError($0) }
+        viewModel.genres.observe(on: self) { [weak self] _ in self?.genresCollectionView.reloadData()
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -52,6 +58,7 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
             moviesTableViewController = destinationVC
             moviesTableViewController?.viewModel = viewModel
             moviesTableViewController?.posterImagesRepository = posterImagesRepository
+            moviesTableViewController?.emptyDataLabel = emptyDataLabel
         }
     }
 
@@ -155,3 +162,59 @@ extension MoviesListViewController: UISearchControllerDelegate {
         updateQueriesSuggestions()
     }
 }
+extension MoviesListViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return viewModel.genres.value.count + 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: "GenreCell",
+            for: indexPath
+        ) as? GenreCell else {
+            return UICollectionViewCell()
+        }
+        
+        if indexPath.row == 0 {
+            cell.configure(with: "All")
+        } else {
+            let genre = viewModel.genres.value[indexPath.row - 1]
+            cell.configure(with: genre.name)
+        }
+
+        let isSelected = indexPath.row == selectedGenreIndex
+
+      
+        cell.contentView.backgroundColor = isSelected ? .blue : .darkGray
+
+        return cell
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedGenreIndex = indexPath.row
+        collectionView.reloadData()
+        viewModel.didSelectGenre(at: indexPath.row)
+    }
+}
+
+extension MoviesListViewController: UICollectionViewDelegateFlowLayout {
+
+        func collectionView(
+            _ collectionView: UICollectionView,
+            layout collectionViewLayout: UICollectionViewLayout,
+            sizeForItemAt indexPath: IndexPath
+        ) -> CGSize {
+            return CGSize(width: 100, height: 50)
+        }
+
+        func collectionView(
+            _ collectionView: UICollectionView,
+            layout collectionViewLayout: UICollectionViewLayout,
+            minimumLineSpacingForSectionAt section: Int
+        ) -> CGFloat {
+            return 8
+        }
+    }
