@@ -26,7 +26,16 @@ final class MoviesListItemCell: UITableViewCell {
 
         titleLabel.numberOfLines = 2
         dateLabel.textColor = .lightGray
-    }
+        
+    contentView.addSubview(chevronImageView)
+    
+    NSLayoutConstraint.activate([
+        chevronImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+        chevronImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+        chevronImageView.widthAnchor.constraint(equalToConstant: 30),
+        chevronImageView.heightAnchor.constraint(equalToConstant: 30)
+    ])
+}
     func fill(
         with viewModel: MoviesListItemViewModel,
         posterImagesRepository: PosterImagesRepository?
@@ -58,4 +67,12 @@ final class MoviesListItemCell: UITableViewCell {
             }
         }
     }
+    private let chevronImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "chevron")
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
 }

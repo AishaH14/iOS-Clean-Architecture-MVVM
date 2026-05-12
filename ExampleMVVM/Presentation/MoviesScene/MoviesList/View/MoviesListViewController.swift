@@ -77,6 +77,7 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
 
     private func updateItems() {
         moviesTableViewController?.reload()
+        suggestionsListContainer.isHidden = true
     }
 
     private func updateLoading(_ loading: MoviesListViewModelLoading?) {
@@ -98,12 +99,17 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
     }
 
     private func updateQueriesSuggestions() {
-        guard searchController.searchBar.isFirstResponder else {
-            viewModel.closeQueriesSuggestions()
-            return
+        let isSearching = searchController.searchBar.isFirstResponder
+
+            suggestionsListContainer.isHidden = !isSearching
+            moviesListContainer.isHidden = isSearching
+
+            if isSearching {
+                viewModel.showQueriesSuggestions()
+            } else {
+                viewModel.closeQueriesSuggestions()
+            }
         }
-        viewModel.showQueriesSuggestions()
-    }
 
     private func updateSearchQuery(_ query: String) {
         searchController.isActive = false
@@ -142,6 +148,8 @@ extension MoviesListViewController: UISearchBarDelegate {
         guard let searchText = searchBar.text, !searchText.isEmpty else { return }
         searchController.isActive = false
         viewModel.didSearch(query: searchText)
+        moviesListContainer.isHidden = false
+        suggestionsListContainer.isHidden = true
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {

@@ -35,6 +35,14 @@ final class MoviesListTableViewController: UITableViewController {
 
     private func setupViews() {
         tableView.estimatedRowHeight = MoviesListItemCell.height
+        tableView.separatorColor = UIColor.gray.withAlphaComponent(0.2)
+
+           tableView.separatorInset = UIEdgeInsets(
+               top: 0,
+               left: 100,
+               bottom: 0,
+               right: 20
+               )
     }
 }
 
