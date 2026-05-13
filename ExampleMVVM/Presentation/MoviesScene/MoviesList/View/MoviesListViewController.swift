@@ -133,7 +133,6 @@ extension MoviesListViewController {
         searchController.searchBar.translatesAutoresizingMaskIntoConstraints = true
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.frame = searchBarContainer.bounds
-//        searchController.searchBar.autoresizingMask = [.flexibleWidth]
         searchBarContainer.addSubview(searchController.searchBar)
         definesPresentationContext = true
         if #available(iOS 13.0, *) {
