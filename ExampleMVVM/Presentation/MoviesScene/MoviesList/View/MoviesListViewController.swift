@@ -131,10 +131,9 @@ extension MoviesListViewController {
         searchController.searchBar.placeholder = viewModel.searchBarPlaceholder
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.translatesAutoresizingMaskIntoConstraints = true
-        searchController.searchBar.barStyle = .black
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.frame = searchBarContainer.bounds
-        searchController.searchBar.autoresizingMask = [.flexibleWidth]
+//        searchController.searchBar.autoresizingMask = [.flexibleWidth]
         searchBarContainer.addSubview(searchController.searchBar)
         definesPresentationContext = true
         if #available(iOS 13.0, *) {
@@ -146,6 +145,7 @@ extension MoviesListViewController {
 extension MoviesListViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let searchText = searchBar.text, !searchText.isEmpty else { return }
+        searchBar.resignFirstResponder()
         searchController.isActive = false
         viewModel.didSearch(query: searchText)
         moviesListContainer.isHidden = false
@@ -195,8 +195,9 @@ extension MoviesListViewController: UICollectionViewDelegate, UICollectionViewDa
         let isSelected = indexPath.row == selectedGenreIndex
 
       
-        cell.contentView.backgroundColor = isSelected ? .blue : .darkGray
-
+        cell.contentView.backgroundColor = isSelected
+        ? UIColor(red: 0/255, green: 102/255, blue: 230/255, alpha: 1)
+        : UIColor(red: 42/255, green: 42/255, blue: 46/255, alpha: 1)
         return cell
         
     }
