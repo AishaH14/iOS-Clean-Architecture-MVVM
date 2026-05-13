@@ -18,6 +18,7 @@ extension MovieResponseEntity {
             title: title,
             genre: MoviesResponseDTO.MovieDTO.GenreDTO(rawValue: genre ?? ""),
             posterPath: posterPath,
+            voteAverage: nil,
             overview: overview,
             releaseDate: releaseDate
         )

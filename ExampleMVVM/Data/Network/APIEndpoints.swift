@@ -10,6 +10,37 @@ struct APIEndpoints {
             queryParametersEncodable: moviesRequestDTO
         )
     }
+    static func getNowPlayingMovies(with moviesListRequestDTO: MoviesListRequestDTO) -> Endpoint<MoviesResponseDTO> {
+        return Endpoint(
+            path: "3/movie/now_playing",
+            method: .get,
+            queryParametersEncodable: moviesListRequestDTO
+        )
+    }
+
+    static func getPopularMovies(with moviesListRequestDTO: MoviesListRequestDTO) -> Endpoint<MoviesResponseDTO> {
+        return Endpoint(
+            path: "3/movie/popular",
+            method: .get,
+            queryParametersEncodable: moviesListRequestDTO
+        )
+    }
+
+    static func getTopRatedMovies(with moviesListRequestDTO: MoviesListRequestDTO) -> Endpoint<MoviesResponseDTO> {
+        return Endpoint(
+            path: "3/movie/top_rated",
+            method: .get,
+            queryParametersEncodable: moviesListRequestDTO
+        )
+    }
+
+    static func getUpcomingMovies(with moviesListRequestDTO: MoviesListRequestDTO) -> Endpoint<MoviesResponseDTO> {
+        return Endpoint(
+            path: "3/movie/upcoming",
+            method: .get,
+            queryParametersEncodable: moviesListRequestDTO
+        )
+    }
 
     static func getMoviePoster(path: String, width: Int) -> Endpoint<Data> {
 

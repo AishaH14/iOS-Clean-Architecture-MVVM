@@ -20,6 +20,7 @@ extension MoviesResponseDTO {
             case title
             case genre
             case posterPath = "poster_path"
+            case voteAverage = "vote_average"
             case overview
             case releaseDate = "release_date"
         }
@@ -31,6 +32,7 @@ extension MoviesResponseDTO {
         let title: String?
         let genre: GenreDTO?
         let posterPath: String?
+        let voteAverage: Double?
         let overview: String?
         let releaseDate: String?
     }
@@ -52,6 +54,7 @@ extension MoviesResponseDTO.MovieDTO {
                      title: title,
                      genre: genre?.toDomain(),
                      posterPath: posterPath,
+                     voteAverage: voteAverage,
                      overview: overview,
                      releaseDate: dateFormatter.date(from: releaseDate ?? ""))
     }

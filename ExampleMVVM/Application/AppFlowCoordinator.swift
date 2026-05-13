@@ -17,7 +17,20 @@ final class AppFlowCoordinator {
         let tabBarController = UITabBarController()
         setupTabBarAppearance(tabBarController.tabBar)
         
-        let homeNavigationController = UINavigationController(rootViewController: HomeViewController())
+        let moviesSceneDIContainer = appDIContainer.makeMoviesSceneDIContainer()
+        
+        let homeNavigationController = UINavigationController()
+        
+        let homeViewController = moviesSceneDIContainer.makeHomeViewController(
+            actions: HomeViewModelActions(
+                showMovieDetails: { movie in
+                    let detailsViewController = moviesSceneDIContainer.makeMoviesDetailsViewController(movie: movie)
+                    homeNavigationController.pushViewController(detailsViewController, animated: true)
+                }
+            )
+        )
+        
+        homeNavigationController.setViewControllers([homeViewController], animated: false)
         homeNavigationController.tabBarItem = UITabBarItem(
             title: "Home",
             image: UIImage(named: "house"),
@@ -30,8 +43,6 @@ final class AppFlowCoordinator {
             image: UIImage(named: "magnifyingglass"),
             selectedImage: UIImage(named: "magnifyingglass")
         )
-        
-        let moviesSceneDIContainer = appDIContainer.makeMoviesSceneDIContainer()
         let flow = moviesSceneDIContainer.makeMoviesSearchFlowCoordinator(
             navigationController: searchNavigationController
         )

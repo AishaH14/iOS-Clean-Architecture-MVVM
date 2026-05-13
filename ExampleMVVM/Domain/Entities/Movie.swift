@@ -10,6 +10,7 @@ struct Movie: Equatable, Identifiable {
     let title: String?
     let genre: Genre?
     let posterPath: String?
+    let voteAverage: Double?
     let overview: String?
     let releaseDate: Date?
 }
