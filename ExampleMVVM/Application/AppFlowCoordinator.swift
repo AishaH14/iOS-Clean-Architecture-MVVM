@@ -67,7 +67,6 @@ final class AppFlowCoordinator {
     private extension AppFlowCoordinator {
         
         func setupTabBarAppearance(_ tabBar: UITabBar) {
-            tabBar.barTintColor = .white
             tabBar.tintColor = .systemBlue
             tabBar.unselectedItemTintColor = .darkGray
             tabBar.isTranslucent = false

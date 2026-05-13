@@ -37,10 +37,8 @@ final class HomeViewController: UIViewController, StoryboardInstantiable {
 private extension HomeViewController {
     
     func setupView() {
-        view.backgroundColor = .white
         title = viewModel.screenTitle
         
-        collectionView.backgroundColor = .white
         collectionView.dataSource = self
         collectionView.delegate = self
     }

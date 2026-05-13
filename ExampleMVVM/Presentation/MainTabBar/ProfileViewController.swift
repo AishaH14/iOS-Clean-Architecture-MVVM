@@ -20,7 +20,6 @@ final class ProfileViewController: UIViewController {
 private extension ProfileViewController {
     
     func setupView() {
-        view.backgroundColor = .white
         title = "Profile"
     }
 }
