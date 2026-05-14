@@ -54,6 +54,7 @@ extension DefaultMoviesRepository: MoviesRepository {
         }
         return task
     }
+
     
     func fetchNowPlayingMovies(
         page: Int,
@@ -62,6 +63,35 @@ extension DefaultMoviesRepository: MoviesRepository {
         let requestDTO = MoviesListRequestDTO(page: page)
         let endpoint = APIEndpoints.getNowPlayingMovies(with: requestDTO)
         let task = RepositoryTask()
+    func fetchMovieGenres(
+        completion: @escaping (Result<[Genre], Error>) -> Void
+    ) -> Cancellable? {
+        
+        let task = RepositoryTask()
+        let endpoint = APIEndpoints.getMovieGenres()
+        
+        task.networkTask = dataTransferService.request(
+            with: endpoint,
+            on: backgroundQueue
+        ) { result in
+            switch result {
+            case .success(let responseDTO):
+                let genres = responseDTO.genres.map { $0.toDomain() }
+                completion(.success(genres))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+        
+        return task
+    }
+    
+    func fetchTVGenres(
+        completion: @escaping (Result<[Genre], Error>) -> Void
+    ) -> Cancellable? {
+        
+        let task = RepositoryTask()
+        let endpoint = APIEndpoints.getTVGenres()
         
         task.networkTask = dataTransferService.request(
             with: endpoint,
@@ -139,6 +169,8 @@ extension DefaultMoviesRepository: MoviesRepository {
             switch result {
             case .success(let responseDTO):
                 completion(.success(responseDTO.toDomain()))
+                let genres = responseDTO.genres.map { $0.toDomain() }
+                completion(.success(genres))
             case .failure(let error):
                 completion(.failure(error))
             }
