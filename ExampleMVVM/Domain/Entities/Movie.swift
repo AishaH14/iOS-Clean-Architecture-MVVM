@@ -9,10 +9,13 @@ struct Movie: Equatable, Identifiable {
     let id: Identifier
     let title: String?
     let genre: Genre?
+    let genreIds: [Int]?
     let posterPath: String?
+    let rating: Double?
     let overview: String?
     let releaseDate: Date?
     let rating: Double? 
+    let mediaType: String?
 }
 
 struct MoviesPage: Equatable {

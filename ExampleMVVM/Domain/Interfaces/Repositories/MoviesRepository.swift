@@ -8,4 +8,14 @@ protocol MoviesRepository {
         cached: @escaping (MoviesPage) -> Void,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable?
+    
+    @discardableResult
+    func fetchMovieGenres(
+        completion: @escaping (Result<[Genre], Error>) -> Void
+    ) -> Cancellable?
+
+    @discardableResult
+    func fetchTVGenres(
+        completion: @escaping (Result<[Genre], Error>) -> Void
+    ) -> Cancellable?
 }

@@ -16,11 +16,14 @@ extension MovieResponseEntity {
         return .init(
             id: Int(id),
             title: title,
+            name: name,
             genre: MoviesResponseDTO.MovieDTO.GenreDTO(rawValue: genre ?? ""),
+            genreIds: [],
             posterPath: posterPath,
+            rating: rating,
             overview: overview,
             releaseDate: releaseDate,
-            rating: rating
+            mediaType: mediaType
         )
     }
 }
@@ -51,11 +54,13 @@ extension MoviesResponseDTO.MovieDTO {
         let entity: MovieResponseEntity = .init(context: context)
         entity.id = Int64(id)
         entity.title = title
+        entity.name = name
         entity.genre = genre?.rawValue
         entity.posterPath = posterPath
         entity.overview = overview
         entity.releaseDate = releaseDate
         entity.rating = rating ?? 0
+        entity.mediaType = mediaType
         return entity
     }
 }
