@@ -28,7 +28,7 @@ final class HomeMovieCollectionViewCell: UICollectionViewCell {
         posterImagesRepository: PosterImagesRepository?
     ) {
         titleLabel.text = movie.title
-        ratingLabel.text = String(format: "%.1f", movie.voteAverage ?? 0)
+        ratingLabel.text = String(format: "%.1f", movie.rating ?? 0)
         
         guard let posterPath = movie.posterPath else { return }
         

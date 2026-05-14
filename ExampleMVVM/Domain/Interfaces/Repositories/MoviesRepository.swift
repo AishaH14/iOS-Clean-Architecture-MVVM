@@ -28,7 +28,7 @@ protocol MoviesRepository {
     func fetchUpcomingMovies(
         page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
-
+           ) -> Cancellable?
     
     @discardableResult
     func fetchMovieGenres(

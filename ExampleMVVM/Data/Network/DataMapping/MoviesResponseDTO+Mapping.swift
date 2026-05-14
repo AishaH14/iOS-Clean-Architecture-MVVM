@@ -22,7 +22,6 @@ extension MoviesResponseDTO {
             case genre
             case genreIds = "genre_ids"
             case posterPath = "poster_path"
-            case voteAverage = "vote_average"
             case rating = "vote_average"
             case overview
             case releaseDate = "release_date"
@@ -38,7 +37,6 @@ extension MoviesResponseDTO {
         let genre: GenreDTO?
         let genreIds: [Int]?
         let posterPath: String?
-        let voteAverage: Double?
 
         let rating: Double?
         let overview: String?
@@ -66,7 +64,6 @@ extension MoviesResponseDTO.MovieDTO {
                      genreIds: genreIds ?? [],
                      posterPath: posterPath,
 
-                     voteAverage: voteAverage,
                      rating: rating,
                      overview: overview,
                      releaseDate: dateFormatter.date(from: releaseDate ?? ""),
