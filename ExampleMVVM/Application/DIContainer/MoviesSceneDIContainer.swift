@@ -1,5 +1,5 @@
 import UIKit
-import SwiftUI
+
 
 final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies {
     
@@ -13,7 +13,7 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies {
     // MARK: - Persistent Storage
     lazy var moviesQueriesStorage: MoviesQueriesStorage = CoreDataMoviesQueriesStorage(maxStorageLimit: 10)
     lazy var moviesResponseCache: MoviesResponseStorage = CoreDataMoviesResponseStorage()
-
+    lazy var movieDetailsLocalStorage: MovieDetailsLocalStorage = UserDefaultsMovieDetailsLocalStorage()
     init(dependencies: Dependencies) {
         self.dependencies = dependencies        
     }
@@ -23,6 +23,11 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies {
         DefaultSearchMoviesUseCase(
             moviesRepository: makeMoviesRepository(),
             moviesQueriesRepository: makeMoviesQueriesRepository()
+        )
+    }
+    func makeFetchHomeMoviesUseCase() -> FetchHomeMoviesUseCase {
+        DefaultFetchHomeMoviesUseCase(
+            moviesRepository: makeMoviesRepository()
         )
     }
     
@@ -66,10 +71,25 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies {
     func makeMoviesListViewModel(actions: MoviesListViewModelActions) -> MoviesListViewModel {
         DefaultMoviesListViewModel(
             searchMoviesUseCase: makeSearchMoviesUseCase(),
+            moviesRepository: makeMoviesRepository(),
             actions: actions
         )
     }
-    
+    // MARK: - Home
+
+    func makeHomeViewController(actions: HomeViewModelActions) -> HomeViewController {
+        HomeViewController.create(
+            with: makeHomeViewModel(actions: actions),
+            posterImagesRepository: makePosterImagesRepository()
+        )
+    }
+
+    func makeHomeViewModel(actions: HomeViewModelActions) -> HomeViewModel {
+        DefaultHomeViewModel(
+            fetchHomeMoviesUseCase: makeFetchHomeMoviesUseCase(),
+            actions: actions
+        )
+    }
     // MARK: - Movie Details
     func makeMoviesDetailsViewController(movie: Movie) -> UIViewController {
         MovieDetailsViewController.create(
@@ -80,41 +100,29 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies {
     func makeMoviesDetailsViewModel(movie: Movie) -> MovieDetailsViewModel {
         DefaultMovieDetailsViewModel(
             movie: movie,
-            posterImagesRepository: makePosterImagesRepository()
+            posterImagesRepository: makePosterImagesRepository(),
+            localStorage: movieDetailsLocalStorage
         )
     }
-    
     // MARK: - Movies Queries Suggestions List
-    func makeMoviesQueriesSuggestionsListViewController(didSelect: @escaping MoviesQueryListViewModelDidSelectAction) -> UIViewController {
-        if #available(iOS 13.0, *) { // SwiftUI
-            let view = MoviesQueryListView(
-                viewModelWrapper: makeMoviesQueryListViewModelWrapper(didSelect: didSelect)
-            )
-            return UIHostingController(rootView: view)
-        } else { // UIKit
-            return MoviesQueriesTableViewController.create(
-                with: makeMoviesQueryListViewModel(didSelect: didSelect)
-            )
-        }
+
+    func makeMoviesQueriesSuggestionsListViewController(
+        didSelect: @escaping MoviesQueryListViewModelDidSelectAction
+    ) -> UIViewController {
+        return MoviesQueriesTableViewController.create(
+            with: makeMoviesQueryListViewModel(didSelect: didSelect)
+        )
     }
-    
-    func makeMoviesQueryListViewModel(didSelect: @escaping MoviesQueryListViewModelDidSelectAction) -> MoviesQueryListViewModel {
+
+    func makeMoviesQueryListViewModel(
+        didSelect: @escaping MoviesQueryListViewModelDidSelectAction
+    ) -> MoviesQueryListViewModel {
         DefaultMoviesQueryListViewModel(
             numberOfQueriesToShow: 10,
             fetchRecentMovieQueriesUseCaseFactory: makeFetchRecentMovieQueriesUseCase,
             didSelect: didSelect
         )
     }
-
-    @available(iOS 13.0, *)
-    func makeMoviesQueryListViewModelWrapper(
-        didSelect: @escaping MoviesQueryListViewModelDidSelectAction
-    ) -> MoviesQueryListViewModelWrapper {
-        MoviesQueryListViewModelWrapper(
-            viewModel: makeMoviesQueryListViewModel(didSelect: didSelect)
-        )
-    }
-
     // MARK: - Flow Coordinators
     func makeMoviesSearchFlowCoordinator(navigationController: UINavigationController) -> MoviesSearchFlowCoordinator {
         MoviesSearchFlowCoordinator(
