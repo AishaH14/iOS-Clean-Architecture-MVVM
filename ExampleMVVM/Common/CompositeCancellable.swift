@@ -6,7 +6,7 @@
 //
 
 import Foundation
-private final class CompositeCancellable: Cancellable {
+ final class CompositeCancellable: Cancellable {
     
     private let tasks: [Cancellable?]
     
