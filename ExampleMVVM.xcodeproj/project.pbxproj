@@ -124,6 +124,8 @@
 		CA4034692FB0374D00B54677 /* HomeMovieCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4034682FB0374900B54677 /* HomeMovieCollectionViewCell.swift */; };
 		CA40346B2FB0D1E300B54677 /* HomeSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA40346A2FB0D1DE00B54677 /* HomeSectionHeaderView.swift */; };
 		CA4979E52FD01AED00657F9A /* MoviesHomeFlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4979E42FD01AD300657F9A /* MoviesHomeFlowCoordinator.swift */; };
+		CA4979EA2FD05BF800657F9A /* CompositeCancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4979E92FD05BF500657F9A /* CompositeCancellable.swift */; };
+		CA4979EB2FD05BF800657F9A /* CompositeCancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4979E92FD05BF500657F9A /* CompositeCancellable.swift */; };
 		FC2B715C2156FF93002BD59E /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2B715B2156FF93002BD59E /* AppAppearance.swift */; };
 		FC740818216555C500FE52A5 /* UserDefaultsMoviesQueriesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC740817216555C500FE52A5 /* UserDefaultsMoviesQueriesStorage.swift */; };
 		FC74081A2165574400FE52A5 /* MovieQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC7408192165574400FE52A5 /* MovieQuery.swift */; };
@@ -247,6 +249,7 @@
 		CA4034682FB0374900B54677 /* HomeMovieCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMovieCollectionViewCell.swift; sourceTree = "<group>"; };
 		CA40346A2FB0D1DE00B54677 /* HomeSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSectionHeaderView.swift; sourceTree = "<group>"; };
 		CA4979E42FD01AD300657F9A /* MoviesHomeFlowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesHomeFlowCoordinator.swift; sourceTree = "<group>"; };
+		CA4979E92FD05BF500657F9A /* CompositeCancellable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositeCancellable.swift; sourceTree = "<group>"; };
 		FC2B715B2156FF93002BD59E /* AppAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAppearance.swift; sourceTree = "<group>"; };
 		FC740817216555C500FE52A5 /* UserDefaultsMoviesQueriesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsMoviesQueriesStorage.swift; sourceTree = "<group>"; };
 		FC7408192165574400FE52A5 /* MovieQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieQuery.swift; sourceTree = "<group>"; };
@@ -796,6 +799,7 @@
 		1FEED0D520231F72000F4EAA /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				CA4979E92FD05BF500657F9A /* CompositeCancellable.swift */,
 				6C0F72E129CF0F5A0005020A /* DispatchQueueType.swift */,
 				1F474F2122356B1E0092DB4B /* Cancellable.swift */,
 				1F0CEFCE23436B67004141FA /* ConnectionError.swift */,
@@ -1114,6 +1118,7 @@
 				1FFFC833221B0041007D99D2 /* DefaultPosterImagesRepository.swift in Sources */,
 				FC740818216555C500FE52A5 /* UserDefaultsMoviesQueriesStorage.swift in Sources */,
 				1FCE68A1222C873A00CC3074 /* MoviesSceneDIContainer.swift in Sources */,
+				CA4979EB2FD05BF800657F9A /* CompositeCancellable.swift in Sources */,
 				1F2AB95324278CC20010DEEE /* MoviesRequestDTO+Mapping.swift in Sources */,
 				1F903535230759AC00DEA4BD /* MovieQueryEntity+Mapping.swift in Sources */,
 				1FE49D8F230AA7C200D1D42E /* MoviesQueryListViewModel.swift in Sources */,
@@ -1156,6 +1161,7 @@
 				1F474F3022356C7F0092DB4B /* MoviesQueriesRepository.swift in Sources */,
 				1F9034D1230714B900DEA4BD /* NetworkConfigurableMock.swift in Sources */,
 				6C0F72E629CF12930005020A /* DispatchQueueTypeMock.swift in Sources */,
+				CA4979EA2FD05BF800657F9A /* CompositeCancellable.swift in Sources */,
 				1F9034DA2307238C00DEA4BD /* MoviesQueriesListViewModelTests.swift in Sources */,
 				1F474F2F22356C7F0092DB4B /* PosterImagesRepository.swift in Sources */,
 				56B631692FAA27E100046E63 /* Genre.swift in Sources */,
