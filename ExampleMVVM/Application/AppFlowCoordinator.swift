@@ -20,23 +20,15 @@ final class AppFlowCoordinator {
         let moviesSceneDIContainer = appDIContainer.makeMoviesSceneDIContainer()
         
         let homeNavigationController = UINavigationController()
-        
-        let homeViewController = moviesSceneDIContainer.makeHomeViewController(
-            actions: HomeViewModelActions(
-                showMovieDetails: { movie in
-                    let detailsViewController = moviesSceneDIContainer.makeMoviesDetailsViewController(movie: movie)
-                    homeNavigationController.pushViewController(detailsViewController, animated: true)
-                }
-            )
-        )
-        
-        homeNavigationController.setViewControllers([homeViewController], animated: false)
         homeNavigationController.tabBarItem = UITabBarItem(
             title: "Home",
             image: UIImage(named: "house"),
                 selectedImage: UIImage(named: "house")
         )
-        
+        let homeFlow = moviesSceneDIContainer.makeMoviesHomeFlowCoordinator(
+            navigationController: homeNavigationController
+        )
+        homeFlow.start()
         let searchNavigationController = UINavigationController()
         searchNavigationController.tabBarItem = UITabBarItem(
             title: "Search",

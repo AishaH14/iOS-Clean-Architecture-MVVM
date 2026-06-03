@@ -1,7 +1,7 @@
 import UIKit
 
 
-final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies {
+final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,MoviesHomeFlowCoordinatorDependencies {
     
     struct Dependencies {
         let apiDataTransferService: DataTransferService
@@ -23,6 +23,12 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies {
         DefaultSearchMoviesUseCase(
             moviesRepository: makeMoviesRepository(),
             moviesQueriesRepository: makeMoviesQueriesRepository()
+        )
+    }
+    func makeMoviesHomeFlowCoordinator(navigationController: UINavigationController) -> MoviesHomeFlowCoordinator {
+        MoviesHomeFlowCoordinator(
+            navigationController: navigationController,
+            dependencies: self
         )
     }
     func makeFetchHomeMoviesUseCase() -> FetchHomeMoviesUseCase {
