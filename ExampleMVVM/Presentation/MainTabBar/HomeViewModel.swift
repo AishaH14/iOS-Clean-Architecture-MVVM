@@ -15,7 +15,7 @@ struct HomeMovieCellViewModel {
 
 struct HomeSectionViewModel {
     let title: String
-    let movies: [Movie]
+    let movies: [HomeMovieCellViewModel]
 }
 
 struct HomeViewModelActions {
@@ -41,7 +41,7 @@ final class DefaultHomeViewModel: HomeViewModel {
     private let fetchHomeMoviesUseCase: FetchHomeMoviesUseCase
     private let actions: HomeViewModelActions?
     private let mainQueue: DispatchQueueType
-    
+    private var movieSections: [[Movie]] = []
     private var loadTask: Cancellable? { willSet { loadTask?.cancel() } }
     
     let sections: Observable<[HomeSectionViewModel]> = Observable([])
@@ -64,12 +64,12 @@ final class DefaultHomeViewModel: HomeViewModel {
     }
     
     func didSelectMovie(sectionIndex: Int, movieIndex: Int) {
-        guard sections.value.indices.contains(sectionIndex),
-              sections.value[sectionIndex].movies.indices.contains(movieIndex) else {
+        guard movieSections.indices.contains(sectionIndex),
+              movieSections[sectionIndex].indices.contains(movieIndex) else {
             return
         }
         
-        let movie = sections.value[sectionIndex].movies[movieIndex]
+        let movie = movieSections[sectionIndex][movieIndex]
         actions?.showMovieDetails(movie)
     }
 }
@@ -83,15 +83,36 @@ private extension DefaultHomeViewModel {
         
         loadTask = fetchHomeMoviesUseCase.execute { [weak self] result in
             self?.mainQueue.async {
-                self?.loading.value = false
+                guard let self = self else { return }
+                self.loading.value = false
                 
                 switch result {
                 case .success(let homeMovies):
-                    self?.sections.value = [
-                        HomeSectionViewModel(title: "Now Playing", movies: homeMovies.nowPlaying),
-                        HomeSectionViewModel(title: "Popular", movies: homeMovies.popular),
-                        HomeSectionViewModel(title: "Top Rated", movies: homeMovies.topRated),
-                        HomeSectionViewModel(title: "Upcoming", movies: homeMovies.upcoming)
+                    
+                    self.movieSections = [
+                        homeMovies.nowPlaying,
+                        homeMovies.popular,
+                        homeMovies.topRated,
+                        homeMovies.upcoming
+                    ]
+                    
+                    self.sections.value = [
+                        HomeSectionViewModel(
+                            title: NSLocalizedString("Now Playing", comment: ""),
+                            movies: homeMovies.nowPlaying.map { HomeMovieCellViewModel(movie: $0) }
+                        ),
+                        HomeSectionViewModel(
+                            title: NSLocalizedString("Popular", comment: ""),
+                            movies: homeMovies.popular.map { HomeMovieCellViewModel(movie: $0) }
+                        ),
+                        HomeSectionViewModel(
+                            title: NSLocalizedString("Top Rated", comment: ""),
+                            movies: homeMovies.topRated.map { HomeMovieCellViewModel(movie: $0) }
+                        ),
+                        HomeSectionViewModel(
+                            title: NSLocalizedString("Upcoming", comment: ""),
+                            movies: homeMovies.upcoming.map { HomeMovieCellViewModel(movie: $0) }
+                        )
                     ]
                     
                 case .failure(let error):
@@ -105,5 +126,13 @@ private extension DefaultHomeViewModel {
         self.error.value = error.isInternetConnectionError ?
             NSLocalizedString("No internet connection", comment: "") :
             NSLocalizedString("Failed loading movies", comment: "")
+    }
+}
+private extension HomeMovieCellViewModel {
+    
+    init(movie: Movie) {
+        self.title = movie.title
+        self.rating = String(format: "%.1f", movie.rating ?? 0)
+        self.posterPath = movie.posterPath
     }
 }
