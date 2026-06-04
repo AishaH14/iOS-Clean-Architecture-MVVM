@@ -116,7 +116,7 @@ private extension DefaultHomeViewModel {
                     ]
                     
                 case .failure(let error):
-                    self?.handle(error: error)
+                    self.handle(error: error)
                 }
             }
         }
