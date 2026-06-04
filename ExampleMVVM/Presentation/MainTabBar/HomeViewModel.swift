@@ -7,6 +7,12 @@
 
 import Foundation
 
+struct HomeMovieCellViewModel {
+    let title: String?
+    let rating: String
+    let posterPath: String?
+}
+
 struct HomeSectionViewModel {
     let title: String
     let movies: [Movie]

@@ -24,13 +24,13 @@ final class HomeMovieCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(
-        with movie: Movie,
+        with viewModel: HomeMovieCellViewModel,
         posterImagesRepository: PosterImagesRepository?
     ) {
-        titleLabel.text = movie.title
-        ratingLabel.text = String(format: "%.1f", movie.rating ?? 0)
+        titleLabel.text = viewModel.title
+        ratingLabel.text = viewModel.rating
         
-        guard let posterPath = movie.posterPath else { return }
+        guard let posterPath = viewModel.posterPath else { return }
         
         imageLoadTask = posterImagesRepository?.fetchImage(
             with: posterPath,
