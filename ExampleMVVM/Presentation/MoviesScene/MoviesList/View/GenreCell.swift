@@ -8,6 +8,8 @@
 import UIKit
 
 class GenreCell: UICollectionViewCell {
+    static let reuseIdentifier = String(describing: GenreCell.self)
+    
     @IBOutlet weak var titleLabel: UILabel!
     func configure(with title: String) {
         titleLabel.text = title

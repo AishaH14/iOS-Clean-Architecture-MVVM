@@ -178,7 +178,7 @@ extension MoviesListViewController: UICollectionViewDelegate, UICollectionViewDa
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: "GenreCell",
+            withReuseIdentifier: GenreCell.reuseIdentifier,
             for: indexPath
         ) as? GenreCell else {
             return UICollectionViewCell()
