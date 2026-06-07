@@ -7,13 +7,6 @@
 
 import Foundation
 
-protocol MovieDetailsLocalStorage {
-    func isFavorite(movieId: String) -> Bool
-    func isInWatchlist(movieId: String) -> Bool
-    func toggleFavorite(movieId: String)
-    func toggleWatchlist(movieId: String)
-}
-
 final class UserDefaultsMovieDetailsLocalStorage: MovieDetailsLocalStorage {
 
     private let favoritesKey = "favorite_movie_ids"

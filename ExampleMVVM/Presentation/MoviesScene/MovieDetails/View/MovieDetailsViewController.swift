@@ -25,7 +25,16 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
     }
 
     private func bind(to viewModel: MovieDetailsViewModel) {
-        viewModel.posterImage.observe(on: self) { [weak self] in self?.posterImageView.image = $0.flatMap(UIImage.init) }
+        viewModel.posterImage.observe(on: self) { [weak self]in
+            self?.posterImageView.image = $0.flatMap(UIImage.init)
+            }
+        viewModel.isFavorite.observe(on: self) { [weak self] isFavorite in
+            self?.updateFavoriteButton(isFavorite: isFavorite)
+            }
+            
+        viewModel.isInWatchlist.observe(on: self) { [weak self] isInWatchlist in
+            self?.updateWatchlistButton(isInWatchlist: isInWatchlist)
+            }
     }
     
     override func viewDidLayoutSubviews() {
