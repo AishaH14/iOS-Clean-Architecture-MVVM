@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class UserDefaultsMovieDetailsLocalStorage: MovieDetailsLocalStorage {
+final class UserDefaultsMovieDetailsRepository: MovieDetailsRepository {
 
     private let favoritesKey = "favorite_movie_ids"
     private let watchlistKey = "watchlist_movie_ids"

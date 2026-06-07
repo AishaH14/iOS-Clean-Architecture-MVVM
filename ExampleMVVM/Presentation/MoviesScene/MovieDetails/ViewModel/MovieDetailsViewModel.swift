@@ -26,7 +26,7 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
     private let mainQueue: DispatchQueueType
     
     private let movieId: String
-    private let localStorage: MovieDetailsLocalStorage
+    private let movieDetailsRepository : MovieDetailsRepository
     private(set) var isFavorite: Observable<Bool>
     private(set) var isInWatchlist: Observable<Bool>
 
@@ -40,7 +40,7 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
     init(
         movie: Movie,
         posterImagesRepository: PosterImagesRepository,
-        localStorage: MovieDetailsLocalStorage,
+        movieDetailsRepository: MovieDetailsRepository,
         mainQueue: DispatchQueueType = DispatchQueue.main
     ) {
         self.movieId = movie.id
@@ -49,11 +49,11 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
         self.posterImagePath = movie.posterPath
         self.isPosterImageHidden = movie.posterPath == nil
         self.posterImagesRepository = posterImagesRepository
-        self.localStorage = localStorage
+        self.movieDetailsRepository = movieDetailsRepository
         self.mainQueue = mainQueue
         self.rating = String(format: "%.1f", movie.rating ?? 0)
-        self.isFavorite = Observable(localStorage.isFavorite(movieId: movieId))
-        self.isInWatchlist = Observable(localStorage.isInWatchlist(movieId: movieId))
+        self.isFavorite = Observable(movieDetailsRepository.isFavorite(movieId: movieId))
+        self.isInWatchlist = Observable(movieDetailsRepository.isInWatchlist(movieId: movieId))
     }
 }
 
@@ -79,12 +79,12 @@ extension DefaultMovieDetailsViewModel {
         }
     }
     func toggleFavorite() {
-        localStorage.toggleFavorite(movieId: movieId)
-        isFavorite.value = localStorage.isFavorite(movieId: movieId)
+        movieDetailsRepository.toggleFavorite(movieId: movieId)
+        isFavorite.value = movieDetailsRepository.isFavorite(movieId: movieId)
     }
 
     func toggleWatchlist() {
-        localStorage.toggleWatchlist(movieId: movieId)
-        isInWatchlist.value = localStorage.isInWatchlist(movieId: movieId)
+        movieDetailsRepository.toggleWatchlist(movieId: movieId)
+        isInWatchlist.value = movieDetailsRepository.isInWatchlist(movieId: movieId)
     }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol MovieDetailsLocalStorage {
+protocol MovieDetailsRepository {
     func isFavorite(movieId: String) -> Bool
     func isInWatchlist(movieId: String) -> Bool
     func toggleFavorite(movieId: String)
