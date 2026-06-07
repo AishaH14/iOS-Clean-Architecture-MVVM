@@ -43,6 +43,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     
     private let searchMoviesUseCase: SearchMoviesUseCase
     private let moviesRepository: MoviesRepository
+    private let genresRepository: GenresRepository
     private let actions: MoviesListViewModelActions?
     private var allMovies: [Movie] = []
     let genres: Observable<[Genre]> = Observable([])
@@ -72,11 +73,13 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     init(
         searchMoviesUseCase: SearchMoviesUseCase,
         moviesRepository: MoviesRepository,
+        genresRepository: GenresRepository,
         actions: MoviesListViewModelActions? = nil,
         mainQueue: DispatchQueueType = DispatchQueue.main
     ) {
         self.searchMoviesUseCase = searchMoviesUseCase
         self.moviesRepository = moviesRepository
+        self.genresRepository = genresRepository
         self.actions = actions
         self.mainQueue = mainQueue
     }
@@ -139,7 +142,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     
     private func loadGenres() {
         
-        _ = moviesRepository.fetchMovieGenres { [weak self] movieResult in
+        _ = genresRepository.fetchMovieGenres { [weak self] movieResult in
             
             self?.mainQueue.async {
                 
@@ -147,7 +150,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
                     
                 case .success(let movieGenres):
                     
-                    _ = self?.moviesRepository.fetchTVGenres { tvResult in
+                    _ = self?.genresRepository .fetchTVGenres { tvResult in
                         
                         self?.mainQueue.async {
                             

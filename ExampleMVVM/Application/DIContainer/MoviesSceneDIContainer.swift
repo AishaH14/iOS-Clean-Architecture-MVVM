@@ -49,6 +49,11 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies {
             cache: moviesResponseCache
         )
     }
+    func makeGenresRepository() -> GenresRepository {
+        DefaultGenresRepository(
+            dataTransferService: dependencies.apiDataTransferService
+        )
+    }
     func makeMoviesQueriesRepository() -> MoviesQueriesRepository {
         DefaultMoviesQueriesRepository(
             moviesQueriesPersistentStorage: moviesQueriesStorage
@@ -72,6 +77,7 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies {
         DefaultMoviesListViewModel(
             searchMoviesUseCase: makeSearchMoviesUseCase(),
             moviesRepository: makeMoviesRepository(),
+            genresRepository: makeGenresRepository(),
             actions: actions
         )
     }
