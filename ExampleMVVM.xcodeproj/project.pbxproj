@@ -117,6 +117,8 @@
 		56FA11382FD565A4004861EC /* GenresRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56FA11372FD5659A004861EC /* GenresRepository.swift */; };
 		56FA11392FD565A4004861EC /* GenresRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56FA11372FD5659A004861EC /* GenresRepository.swift */; };
 		56FA113B2FD577B2004861EC /* DefaultGenresRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56FA113A2FD577AC004861EC /* DefaultGenresRepository.swift */; };
+		56FA113D2FD6AC54004861EC /* FetchGenresUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56FA113C2FD6AC4D004861EC /* FetchGenresUseCase.swift */; };
+		56FA113E2FD6AC54004861EC /* FetchGenresUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56FA113C2FD6AC4D004861EC /* FetchGenresUseCase.swift */; };
 		6C0F72E229CF0F5B0005020A /* DispatchQueueType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C0F72E129CF0F5A0005020A /* DispatchQueueType.swift */; };
 		6C0F72E329CF115F0005020A /* DispatchQueueType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C0F72E129CF0F5A0005020A /* DispatchQueueType.swift */; };
 		6C0F72E629CF12930005020A /* DispatchQueueTypeMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C0F72E429CF12180005020A /* DispatchQueueTypeMock.swift */; };
@@ -244,6 +246,7 @@
 		56FA11342FD54B88004861EC /* MovieDetailsRepository .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MovieDetailsRepository .swift"; sourceTree = "<group>"; };
 		56FA11372FD5659A004861EC /* GenresRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresRepository.swift; sourceTree = "<group>"; };
 		56FA113A2FD577AC004861EC /* DefaultGenresRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultGenresRepository.swift; sourceTree = "<group>"; };
+		56FA113C2FD6AC4D004861EC /* FetchGenresUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchGenresUseCase.swift; sourceTree = "<group>"; };
 		6C0F72E129CF0F5A0005020A /* DispatchQueueType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueueType.swift; sourceTree = "<group>"; };
 		6C0F72E429CF12180005020A /* DispatchQueueTypeMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueueTypeMock.swift; sourceTree = "<group>"; };
 		CA40345B2FA7076B00B54677 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -577,6 +580,7 @@
 		1FA533D8201EF2F100747E55 /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
+				56FA113C2FD6AC4D004861EC /* FetchGenresUseCase.swift */,
 				CA4034612FAB46F000B54677 /* FetchHomeMoviesUseCase.swift */,
 				1F05A6CB2220A2CB001E2801 /* SearchMoviesUseCase.swift */,
 				1F84DECF23006BDA00139F73 /* FetchRecentMovieQueriesUseCase.swift */,
@@ -1082,6 +1086,7 @@
 				1F53E2B623125896008D6A05 /* UIViewController+AddChild.swift in Sources */,
 				1F84DED023006BDA00139F73 /* FetchRecentMovieQueriesUseCase.swift in Sources */,
 				56B6316B2FAA287100046E63 /* GenresResponseDTO.swift in Sources */,
+				56FA113E2FD6AC54004861EC /* FetchGenresUseCase.swift in Sources */,
 				1FFF12A42439F2E700937EE4 /* MoviesResponseStorage.swift in Sources */,
 				1F2AB951242789B80010DEEE /* MoviesResponseDTO+Mapping.swift in Sources */,
 				1FFF1AD5243B966600937EE4 /* MoviesListItemViewModel.swift in Sources */,
@@ -1144,6 +1149,7 @@
 				1F9034C62306FF2D00DEA4BD /* DataTransferService.swift in Sources */,
 				1F9034C42306FDFE00DEA4BD /* NetworkServiceTests.swift in Sources */,
 				56FA11352FD54B90004861EC /* MovieDetailsRepository .swift in Sources */,
+				56FA113D2FD6AC54004861EC /* FetchGenresUseCase.swift in Sources */,
 				1F53E2B923125FAD008D6A05 /* MoviesQueryListItemViewModel.swift in Sources */,
 				1F57F8D323C656F600981E09 /* AccessibilityIdentifier.swift in Sources */,
 				1F9035412307758D00DEA4BD /* PosterImagesRepositoryMock.swift in Sources */,

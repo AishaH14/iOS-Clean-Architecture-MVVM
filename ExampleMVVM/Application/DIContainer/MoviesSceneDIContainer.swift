@@ -25,6 +25,11 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies {
             moviesQueriesRepository: makeMoviesQueriesRepository()
         )
     }
+    func makeFetchGenresUseCase() -> FetchGenresUseCase {
+        DefaultFetchGenresUseCase(
+            genresRepository: makeGenresRepository()
+        )
+    }
     func makeFetchHomeMoviesUseCase() -> FetchHomeMoviesUseCase {
         DefaultFetchHomeMoviesUseCase(
             moviesRepository: makeMoviesRepository()
@@ -76,8 +81,7 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies {
     func makeMoviesListViewModel(actions: MoviesListViewModelActions) -> MoviesListViewModel {
         DefaultMoviesListViewModel(
             searchMoviesUseCase: makeSearchMoviesUseCase(),
-            moviesRepository: makeMoviesRepository(),
-            genresRepository: makeGenresRepository(),
+            fetchGenresUseCase: makeFetchGenresUseCase(),
             actions: actions
         )
     }
