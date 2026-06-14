@@ -102,18 +102,6 @@ final class DefaultFetchHomeMoviesUseCase: FetchHomeMoviesUseCase {
         ])
     }
 }
-private final class CompositeCancellable: Cancellable {
-    
-    private let tasks: [Cancellable?]
-    
-    init(tasks: [Cancellable?]) {
-        self.tasks = tasks
-    }
-    
-    func cancel() {
-        tasks.forEach { $0?.cancel() }
-    }
-}
 
 private extension Result where Success == MoviesPage, Failure == Error {
     

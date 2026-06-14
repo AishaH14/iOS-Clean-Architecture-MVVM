@@ -12,7 +12,7 @@ final class HomeViewController: UIViewController, StoryboardInstantiable {
     private var viewModel: HomeViewModel!
     private var posterImagesRepository: PosterImagesRepository?
     private var sections: [HomeSectionViewModel] = []
-    
+    private let activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
     @IBOutlet private weak var collectionView: UICollectionView!
     
     static func create(
@@ -30,6 +30,18 @@ final class HomeViewController: UIViewController, StoryboardInstantiable {
         setupView()
         bind(to: viewModel)
         viewModel.viewDidLoad()
+        setupActivityIndicator()
+    }
+    func setupActivityIndicator() {
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.hidesWhenStopped = true
+        
+        view.addSubview(activityIndicator)
+        
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
 }
 
@@ -49,12 +61,32 @@ private extension HomeViewController {
             self?.collectionView.reloadData()
         }
         
-        viewModel.loading.observe(on: self) { isLoading in
+        viewModel.loading.observe(on: self) { [weak self] isLoading in
+            if isLoading {
+                self?.activityIndicator.startAnimating()
+            } else {
+                self?.activityIndicator.stopAnimating()
+            }
         }
         
-        viewModel.error.observe(on: self) { error in
+        viewModel.error.observe(on: self) { [weak self] error in
             guard !error.isEmpty else { return }
+            self?.showError(message: error)
         }
+    }
+    func showError(message: String) {
+        let alert = UIAlertController(
+            title: "Error",
+            message: message,
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(
+            title: "OK",
+            style: .default
+        ))
+        
+        present(alert, animated: true)
     }
 }
 // MARK: - UICollectionViewDataSource
@@ -84,8 +116,13 @@ extension HomeViewController: UICollectionViewDataSource {
         }
         
         let movie = sections[indexPath.section].movies[indexPath.item]
+        let cellViewModel = HomeMovieCellViewModel(
+            title: movie.title,
+            rating: String(format: "%.1f", movie.rating ?? 0),
+               posterPath: movie.posterPath
+           )
         cell.configure(
-            with: movie,
+            with: cellViewModel,
             posterImagesRepository: posterImagesRepository
         )
         
