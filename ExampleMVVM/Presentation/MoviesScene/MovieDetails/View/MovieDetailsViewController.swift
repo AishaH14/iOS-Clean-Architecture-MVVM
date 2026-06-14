@@ -22,12 +22,19 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
         super.viewDidLoad()
         setupViews()
         bind(to: viewModel)
-        updateFavoriteButton()
-        updateWatchlistButton()
     }
 
     private func bind(to viewModel: MovieDetailsViewModel) {
-        viewModel.posterImage.observe(on: self) { [weak self] in self?.posterImageView.image = $0.flatMap(UIImage.init) }
+        viewModel.posterImage.observe(on: self) { [weak self]in
+            self?.posterImageView.image = $0.flatMap(UIImage.init)
+            }
+        viewModel.isFavorite.observe(on: self) { [weak self] isFavorite in
+            self?.updateFavoriteButton(isFavorite: isFavorite)
+            }
+            
+        viewModel.isInWatchlist.observe(on: self) { [weak self] isInWatchlist in
+            self?.updateWatchlistButton(isInWatchlist: isInWatchlist)
+            }
     }
     
     override func viewDidLayoutSubviews() {
@@ -50,9 +57,7 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
         watchlistButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
     }
     
-    private func updateFavoriteButton() {
-        let isFavorite = viewModel.isFavorite
-        
+    private func updateFavoriteButton(isFavorite: Bool) {
         favoriteButton.setImage(
             UIImage(named: isFavorite ? "heart.fill" : "heart"),
             for: .normal
@@ -67,9 +72,7 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
         favoriteButton.tintColor = color
         favoriteButton.setTitleColor(color, for: .normal)
     }
-    private func updateWatchlistButton() {
-        let isInWatchlist = viewModel.isInWatchlist
-        
+    private func updateWatchlistButton(isInWatchlist: Bool) {
         watchlistButton.setImage(
             UIImage(named: isInWatchlist ? "checkmark" : "plus"),
             for: .normal
@@ -88,11 +91,9 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
     
     @IBAction private func watchlistTapped(_ sender: UIButton) {
         viewModel.toggleWatchlist()
-        updateWatchlistButton()
     }
     
     @IBAction private func favoriteTapped(_ sender: UIButton) {
         viewModel.toggleFavorite()
-        updateFavoriteButton()
     }
 }

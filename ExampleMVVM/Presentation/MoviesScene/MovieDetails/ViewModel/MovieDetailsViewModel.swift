@@ -11,8 +11,8 @@ protocol MovieDetailsViewModelOutput {
     var posterImage: Observable<Data?> { get }
     var isPosterImageHidden: Bool { get }
     var rating: String { get }
-    var isFavorite: Bool { get }
-    var isInWatchlist: Bool { get }
+    var isFavorite: Observable<Bool> { get }
+    var isInWatchlist: Observable<Bool> { get }
     var overview: String { get }
 }
 
@@ -26,9 +26,9 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
     private let mainQueue: DispatchQueueType
     
     private let movieId: String
-    private let localStorage: MovieDetailsLocalStorage
-    private(set) var isFavorite: Bool
-    private(set) var isInWatchlist: Bool
+    private let movieDetailsRepository : MovieDetailsRepository
+    private(set) var isFavorite: Observable<Bool>
+    private(set) var isInWatchlist: Observable<Bool>
 
     // MARK: - OUTPUT
     let title: String
@@ -40,7 +40,7 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
     init(
         movie: Movie,
         posterImagesRepository: PosterImagesRepository,
-        localStorage: MovieDetailsLocalStorage,
+        movieDetailsRepository: MovieDetailsRepository,
         mainQueue: DispatchQueueType = DispatchQueue.main
     ) {
         self.movieId = movie.id
@@ -49,11 +49,11 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
         self.posterImagePath = movie.posterPath
         self.isPosterImageHidden = movie.posterPath == nil
         self.posterImagesRepository = posterImagesRepository
-        self.localStorage = localStorage
+        self.movieDetailsRepository = movieDetailsRepository
         self.mainQueue = mainQueue
         self.rating = String(format: "%.1f", movie.rating ?? 0)
-        self.isFavorite = localStorage.isFavorite(movieId: movieId)
-        self.isInWatchlist = localStorage.isInWatchlist(movieId: movieId)
+        self.isFavorite = Observable(movieDetailsRepository.isFavorite(movieId: movieId))
+        self.isInWatchlist = Observable(movieDetailsRepository.isInWatchlist(movieId: movieId))
     }
 }
 
@@ -79,12 +79,12 @@ extension DefaultMovieDetailsViewModel {
         }
     }
     func toggleFavorite() {
-        localStorage.toggleFavorite(movieId: movieId)
-        isFavorite = localStorage.isFavorite(movieId: movieId)
+        movieDetailsRepository.toggleFavorite(movieId: movieId)
+        isFavorite.value = movieDetailsRepository.isFavorite(movieId: movieId)
     }
 
     func toggleWatchlist() {
-        localStorage.toggleWatchlist(movieId: movieId)
-        isInWatchlist = localStorage.isInWatchlist(movieId: movieId)
+        movieDetailsRepository.toggleWatchlist(movieId: movieId)
+        isInWatchlist.value = movieDetailsRepository.isInWatchlist(movieId: movieId)
     }
 }

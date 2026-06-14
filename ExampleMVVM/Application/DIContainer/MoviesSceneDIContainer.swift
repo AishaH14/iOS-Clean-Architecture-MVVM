@@ -13,7 +13,7 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
     // MARK: - Persistent Storage
     lazy var moviesQueriesStorage: MoviesQueriesStorage = CoreDataMoviesQueriesStorage(maxStorageLimit: 10)
     lazy var moviesResponseCache: MoviesResponseStorage = CoreDataMoviesResponseStorage()
-    lazy var movieDetailsLocalStorage: MovieDetailsLocalStorage = UserDefaultsMovieDetailsLocalStorage()
+    lazy var movieDetailsRepository: MovieDetailsRepository = UserDefaultsMovieDetailsRepository()
     init(dependencies: Dependencies) {
         self.dependencies = dependencies        
     }
@@ -25,6 +25,10 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
             moviesQueriesRepository: makeMoviesQueriesRepository()
         )
     }
+    func makeFetchGenresUseCase() -> FetchGenresUseCase {
+        DefaultFetchGenresUseCase(
+            genresRepository: makeGenresRepository()
+        }
     func makeMoviesHomeFlowCoordinator(navigationController: UINavigationController) -> MoviesHomeFlowCoordinator {
         MoviesHomeFlowCoordinator(
             navigationController: navigationController,
@@ -55,6 +59,11 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
             cache: moviesResponseCache
         )
     }
+    func makeGenresRepository() -> GenresRepository {
+        DefaultGenresRepository(
+            dataTransferService: dependencies.apiDataTransferService
+        )
+    }
     func makeMoviesQueriesRepository() -> MoviesQueriesRepository {
         DefaultMoviesQueriesRepository(
             moviesQueriesPersistentStorage: moviesQueriesStorage
@@ -77,7 +86,7 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
     func makeMoviesListViewModel(actions: MoviesListViewModelActions) -> MoviesListViewModel {
         DefaultMoviesListViewModel(
             searchMoviesUseCase: makeSearchMoviesUseCase(),
-            moviesRepository: makeMoviesRepository(),
+            fetchGenresUseCase: makeFetchGenresUseCase(),
             actions: actions
         )
     }
@@ -107,7 +116,7 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
         DefaultMovieDetailsViewModel(
             movie: movie,
             posterImagesRepository: makePosterImagesRepository(),
-            localStorage: movieDetailsLocalStorage
+            movieDetailsRepository: movieDetailsRepository
         )
     }
     // MARK: - Movies Queries Suggestions List

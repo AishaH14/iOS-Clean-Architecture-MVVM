@@ -42,7 +42,7 @@ typealias MoviesListViewModel = MoviesListViewModelInput & MoviesListViewModelOu
 final class DefaultMoviesListViewModel: MoviesListViewModel {
     
     private let searchMoviesUseCase: SearchMoviesUseCase
-    private let moviesRepository: MoviesRepository
+    private let fetchGenresUseCase: FetchGenresUseCase
     private let actions: MoviesListViewModelActions?
     private var allMovies: [Movie] = []
     let genres: Observable<[Genre]> = Observable([])
@@ -71,12 +71,12 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     
     init(
         searchMoviesUseCase: SearchMoviesUseCase,
-        moviesRepository: MoviesRepository,
+        fetchGenresUseCase: FetchGenresUseCase,
         actions: MoviesListViewModelActions? = nil,
         mainQueue: DispatchQueueType = DispatchQueue.main
     ) {
         self.searchMoviesUseCase = searchMoviesUseCase
-        self.moviesRepository = moviesRepository
+        self.fetchGenresUseCase = fetchGenresUseCase
         self.actions = actions
         self.mainQueue = mainQueue
     }
@@ -138,47 +138,23 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     // MARK: - Private
     
     private func loadGenres() {
-        
-        _ = moviesRepository.fetchMovieGenres { [weak self] movieResult in
             
-            self?.mainQueue.async {
+            _ = fetchGenresUseCase.execute { [weak self] result in
                 
-                switch movieResult {
+                self?.mainQueue.async {
                     
-                case .success(let movieGenres):
-                    
-                    _ = self?.moviesRepository.fetchTVGenres { tvResult in
+                    switch result {
                         
-                        self?.mainQueue.async {
-                            
-                            switch tvResult {
-                                
-                            case .success(let tvGenres):
-                                
-                                let allGenres = movieGenres + tvGenres
-                                
-                                let uniqueGenres = Array(
-                                    Dictionary(
-                                        grouping: allGenres,
-                                        by: { $0.id }
-                                    ).compactMap { $0.value.first }
-                                )
-                                
-                                self?.genres.value = uniqueGenres
-                                
-                            case .failure(let error):
-                                print("Error loading TV genres:", error)
-                            }
-                        }
+                    case .success(let genres):
+                        self?.genres.value = genres
+                        
+                    case .failure(let error):
+                        print("Error loading genres:", error)
                     }
-                    
-                case .failure(let error):
-                    print("Error loading movie genres:", error)
                 }
             }
         }
     }
-}
 
 // MARK: - INPUT. View event methods
 
