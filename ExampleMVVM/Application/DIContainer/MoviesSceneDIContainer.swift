@@ -1,7 +1,7 @@
 import UIKit
 
 
-final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,MoviesHomeFlowCoordinatorDependencies {
+final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, MoviesHomeFlowCoordinatorDependencies, ProfileFlowCoordinatorDependencies {
     
     struct Dependencies {
         let apiDataTransferService: DataTransferService
@@ -14,6 +14,7 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
     lazy var moviesQueriesStorage: MoviesQueriesStorage = CoreDataMoviesQueriesStorage(maxStorageLimit: 10)
     lazy var moviesResponseCache: MoviesResponseStorage = CoreDataMoviesResponseStorage()
     lazy var movieDetailsRepository: MovieDetailsRepository = UserDefaultsMovieDetailsRepository()
+    lazy var authSessionStorage: AuthSessionStorage = UserDefaultsAuthSessionStorage()
     init(dependencies: Dependencies) {
         self.dependencies = dependencies        
     }
@@ -51,7 +52,61 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
             moviesQueriesRepository: makeMoviesQueriesRepository()
         )
     }
-    
+    func makeAuthSessionStorage() -> AuthSessionStorage {
+        return authSessionStorage
+    }
+
+    func makeProfileFlowCoordinator(
+        navigationController: UINavigationController
+    ) -> ProfileFlowCoordinator {
+        ProfileFlowCoordinator(
+            navigationController: navigationController,
+            dependencies: self
+        )
+    }
+    func makeLoginViewController(actions: LoginViewModelActions) -> LoginViewController {
+        LoginViewController.create(with: makeLoginViewModel(actions: actions))
+    }
+
+    private func makeLoginViewModel(actions: LoginViewModelActions) -> LoginViewModel {
+        DefaultLoginViewModel(
+            createGuestSessionUseCase: makeCreateGuestSessionUseCase(),
+            authSessionStorage: makeAuthSessionStorage(),
+            actions: actions
+        )
+    }
+    private func makeCreateGuestSessionUseCase() -> CreateGuestSessionUseCase {
+        DefaultCreateGuestSessionUseCase(authRepository: makeAuthRepository())
+    }
+
+    func makeAuthorizeViewController(actions: AuthorizeViewModelActions) -> AuthorizeViewController {
+        AuthorizeViewController.create(with: makeAuthorizeViewModel(actions: actions))
+    }
+
+    private func makeAuthorizeViewModel(actions: AuthorizeViewModelActions) -> AuthorizeViewModel {
+        DefaultAuthorizeViewModel(
+            requestTokenUseCase: makeRequestTokenUseCase(),
+            createSessionUseCase: makeCreateSessionUseCase(),
+            authSessionStorage: makeAuthSessionStorage(),
+            actions: actions
+        )
+    }
+
+    private func makeRequestTokenUseCase() -> RequestTokenUseCase {
+        DefaultRequestTokenUseCase(authRepository: makeAuthRepository())
+    }
+
+    private func makeCreateSessionUseCase() -> CreateSessionUseCase {
+        DefaultCreateSessionUseCase(authRepository: makeAuthRepository())
+    }
+
+    private func makeAuthRepository() -> AuthRepository {
+        DefaultAuthRepository(dataTransferService: dependencies.apiDataTransferService)
+    }
+
+    func makeProfileViewController() -> UIViewController {
+        ProfileViewController.instantiateViewController()
+    }
     // MARK: - Repositories
     func makeMoviesRepository() -> MoviesRepository {
         DefaultMoviesRepository(

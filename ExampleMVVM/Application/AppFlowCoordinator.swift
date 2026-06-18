@@ -39,12 +39,16 @@ final class AppFlowCoordinator {
             navigationController: searchNavigationController
         )
         flow.start()
-        let profileNavigationController = UINavigationController(rootViewController: ProfileViewController())
+        let profileNavigationController = UINavigationController()
         profileNavigationController.tabBarItem = UITabBarItem(
             title: "Profile",
             image: UIImage(named: "person"),
                 selectedImage: UIImage(named: "person")
         )
+        let profileFlow = moviesSceneDIContainer.makeProfileFlowCoordinator(
+            navigationController: profileNavigationController
+        )
+        profileFlow.start()
         
         tabBarController.viewControllers = [
             homeNavigationController,

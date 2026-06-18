@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Authorize View Controller-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController id="Y6W-OH-hqX" customClass="AuthorizeViewController" customModule="ExampleMVVM" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xcY-Op-yoL">
+                                <rect key="frame" x="24" y="256" width="345" height="280"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="Authorize" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uvo-vm-xiB">
+                                        <rect key="frame" x="24" y="32" width="297" height="27.666666666666671"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="We'll open TMDB to authorize." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" showsExpansionTextWhenTruncated="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g9s-px-Mg5">
+                                        <rect key="frame" x="24" y="67.666666666666686" width="297" height="20.333333333333329"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qBn-RE-nNn" customClass="AuthButtonView" customModule="ExampleMVVM" customModuleProvider="target">
+                                        <rect key="frame" x="24" y="112" width="297" height="52"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="52" id="pCe-lK-05Y"/>
+                                        </constraints>
+                                    </view>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Approve access in TMDB, then return here" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rHf-Gp-hap">
+                                        <rect key="frame" x="24" y="176" width="297" height="18"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="Cfw-Pg-f1x">
+                                        <rect key="frame" x="162" y="230" width="20" height="20"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </activityIndicatorView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="g9s-px-Mg5" firstAttribute="leading" secondItem="xcY-Op-yoL" secondAttribute="leading" constant="24" id="7pv-yG-vhZ"/>
+                                    <constraint firstAttribute="trailing" secondItem="qBn-RE-nNn" secondAttribute="trailing" constant="24" id="C61-wy-Yl9"/>
+                                    <constraint firstAttribute="trailing" secondItem="Uvo-vm-xiB" secondAttribute="trailing" constant="24" id="MTc-f2-h3K"/>
+                                    <constraint firstItem="rHf-Gp-hap" firstAttribute="top" secondItem="qBn-RE-nNn" secondAttribute="bottom" constant="12" id="Owp-sw-efb"/>
+                                    <constraint firstItem="g9s-px-Mg5" firstAttribute="top" secondItem="Uvo-vm-xiB" secondAttribute="bottom" constant="8" id="R5D-fG-EGV"/>
+                                    <constraint firstItem="qBn-RE-nNn" firstAttribute="top" secondItem="g9s-px-Mg5" secondAttribute="bottom" constant="24" id="fAh-4Z-Umf"/>
+                                    <constraint firstItem="Uvo-vm-xiB" firstAttribute="leading" secondItem="xcY-Op-yoL" secondAttribute="leading" constant="24" id="kBq-fk-pro"/>
+                                    <constraint firstItem="Uvo-vm-xiB" firstAttribute="top" secondItem="xcY-Op-yoL" secondAttribute="top" constant="32" id="nID-6T-UiM"/>
+                                    <constraint firstAttribute="trailing" secondItem="rHf-Gp-hap" secondAttribute="trailing" constant="24" id="nV9-UP-2Xl"/>
+                                    <constraint firstItem="rHf-Gp-hap" firstAttribute="leading" secondItem="xcY-Op-yoL" secondAttribute="leading" constant="24" id="tMF-Rg-w1o"/>
+                                    <constraint firstItem="qBn-RE-nNn" firstAttribute="leading" secondItem="xcY-Op-yoL" secondAttribute="leading" constant="24" id="vkk-sy-HXZ"/>
+                                    <constraint firstAttribute="trailing" secondItem="g9s-px-Mg5" secondAttribute="trailing" constant="24" id="yxv-le-haJ"/>
+                                    <constraint firstAttribute="height" constant="280" id="zFS-gG-5gK"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
+                        <color key="backgroundColor" systemColor="systemGray5Color"/>
+                        <constraints>
+                            <constraint firstItem="xcY-Op-yoL" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="24" id="3T1-4q-Obs"/>
+                            <constraint firstItem="xcY-Op-yoL" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="138" id="7sJ-mm-wFW"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="xcY-Op-yoL" secondAttribute="trailing" constant="24" id="AxN-Kd-bkV"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="activityIndicator" destination="Cfw-Pg-f1x" id="ZFr-eh-R2w"/>
+                        <outlet property="cardView" destination="xcY-Op-yoL" id="f6N-FA-bqW"/>
+                        <outlet property="openTMDBButton" destination="qBn-RE-nNn" id="WCo-mZ-jyZ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="138.1679389312977" y="130.98591549295776"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGray5Color">
+            <color red="0.8980392157" green="0.8980392157" blue="0.91764705879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

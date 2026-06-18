@@ -115,12 +115,8 @@ extension HomeViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
-        let movie = sections[indexPath.section].movies[indexPath.item]
-        let cellViewModel = HomeMovieCellViewModel(
-            title: movie.title,
-            rating: String(format: "%.1f", movie.rating ?? 0),
-               posterPath: movie.posterPath
-           )
+        let cellViewModel = sections[indexPath.section].movies[indexPath.item]
+
         cell.configure(
             with: cellViewModel,
             posterImagesRepository: posterImagesRepository
