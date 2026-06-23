@@ -21,11 +21,11 @@ struct AuthEndpoints {
             path: "3/authentication/session/new",
             method: .post,
             headerParameters: [
-                "Content-Type": "application/json",
-                "Accept": "application/json"
+                AuthConstants.contentTypeHeader: AuthConstants.applicationJSON,
+                AuthConstants.acceptHeader: AuthConstants.applicationJSON
             ],
             bodyParameters: [
-                "request_token": requestToken
+                AuthConstants.requestToken: requestToken
             ]
         )
     }
