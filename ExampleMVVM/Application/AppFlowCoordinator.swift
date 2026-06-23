@@ -39,7 +39,8 @@ final class AppFlowCoordinator {
             navigationController: searchNavigationController
         )
         flow.start()
-        let profileNavigationController = UINavigationController()
+        let profileNavigationController = UINavigationController(rootViewController: ProfileViewController())
+
         profileNavigationController.tabBarItem = UITabBarItem(
             title: "Profile",
             image: UIImage(named: "person"),

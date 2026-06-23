@@ -14,6 +14,9 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
     lazy var moviesQueriesStorage: MoviesQueriesStorage = CoreDataMoviesQueriesStorage(maxStorageLimit: 10)
     lazy var moviesResponseCache: MoviesResponseStorage = CoreDataMoviesResponseStorage()
     lazy var movieDetailsRepository: MovieDetailsRepository = UserDefaultsMovieDetailsRepository()
+    lazy var authRepository: AuthRepository = DefaultAuthRepository(
+        dataTransferService: dependencies.apiDataTransferService
+    )
     lazy var authSessionStorage: AuthSessionStorage = UserDefaultsAuthSessionStorage()
     init(dependencies: Dependencies) {
         self.dependencies = dependencies        
@@ -101,7 +104,7 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
     }
 
     private func makeAuthRepository() -> AuthRepository {
-        DefaultAuthRepository(dataTransferService: dependencies.apiDataTransferService)
+        return authRepository
     }
 
     func makeProfileViewController() -> UIViewController {
