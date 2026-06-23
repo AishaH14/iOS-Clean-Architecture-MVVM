@@ -33,8 +33,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
-        print("✅ Deep Link received: \(url)")
-        guard url.scheme == "examplemvvm" else { return false }
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
               let token = components.queryItems?.first(where: { $0.name == "request_token" })?.value else {
             return false
