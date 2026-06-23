@@ -78,8 +78,9 @@ final class AuthorizeViewController: UIViewController,StoryboardInstantiable {
       }
       
     @objc private func didReturnFromTMDB(_ notification: Notification) {
-        guard let token = notification.userInfo?["request_token"] as? String else { return }
-        
+        guard let token = notification.userInfo?[AuthDeepLinkConstants.requestToken] as? String else {
+            return
+        }
         dismiss(animated: true) { [weak self] in
             self?.viewModel.didReturnFromTMDB(requestToken: token)
         }

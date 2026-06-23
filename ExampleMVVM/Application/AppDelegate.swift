@@ -34,14 +34,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-              let token = components.queryItems?.first(where: { $0.name == "request_token" })?.value else {
+              let token = components.queryItems?.first(where: { $0.name == AuthDeepLinkConstants.requestToken})?.value else {
             return false
         }
 
         NotificationCenter.default.post(
             name: .didReturnFromTMDB,
             object: nil,
-            userInfo: ["request_token": token]
+            userInfo: [AuthDeepLinkConstants.requestToken: token]
         )
         return true
     }
