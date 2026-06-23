@@ -12,4 +12,5 @@ enum AuthConstants {
     static let contentTypeHeader = "Content-Type"
     static let acceptHeader = "Accept"
     static let applicationJSON = "application/json"
+    
 }

@@ -33,7 +33,6 @@ final class DefaultAuthorizeViewModel: AuthorizeViewModel {
     private let createSessionUseCase: CreateSessionUseCase
     private let authSessionStorage: AuthSessionStorage
     private let actions: AuthorizeViewModelActions
-    private var requestToken: String?
     
     // MARK: - Init
     init(
@@ -51,44 +50,36 @@ final class DefaultAuthorizeViewModel: AuthorizeViewModel {
     // MARK: - Input
     func didTapOpenTMDB() {
         requestTokenUseCase.execute { [weak self] result in
+            DispatchQueue.main.async {
             switch result {
             case .success(let token):
-                self?.requestToken = token
-                UserDefaults.standard.set(token, forKey: "request_token")
-                
                 let redirectURL = "examplemvvm://auth"
                 let encodedRedirectURL = redirectURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? redirectURL
                 let urlString = "https://www.themoviedb.org/authenticate/\(token)?redirect_to=\(encodedRedirectURL)"
                 
                 guard let url = URL(string: urlString) else {
-                    DispatchQueue.main.async {
                         self?.error.value = NSLocalizedString("Invalid authentication URL", comment: "")
+                        
+                        return
                     }
-                    return
-                }
-                DispatchQueue.main.async {
                     self?.openURL.value = url
-                }
+                    
                 case .failure:
-                    DispatchQueue.main.async {
-                        self?.error.value = NSLocalizedString("Failed to create request token", comment: "")
-                    }
-              }
+                    self?.error.value = NSLocalizedString("Failed to create request token", comment: "")
+                }
+            }
         }
     }
     
     func didReturnFromTMDB(requestToken: String) {
         createSessionUseCase.execute(requestToken: requestToken) { [weak self] result in
-            switch result {
-            case .success(let sessionId):
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let sessionId):
                 self?.authSessionStorage.saveSessionId(sessionId)
-                
-                DispatchQueue.main.async {
                     self?.actions.showProfile()
-                }
-                
             case .failure:
-                DispatchQueue.main.async {
+              
                     self?.error.value = NSLocalizedString("Failed to create session", comment: "")
                 }
             }
