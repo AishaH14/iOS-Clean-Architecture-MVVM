@@ -132,7 +132,10 @@ private extension HomeMovieCellViewModel {
     
     init(movie: Movie) {
         self.title = movie.title
-        self.rating = String(format: "%.1f", movie.rating ?? 0)
+        
+        let ratingValue = movie.rating ?? 0
+        self.rating = String(format: "%.1f", ratingValue)
+        
         self.posterPath = movie.posterPath
     }
 }

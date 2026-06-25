@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Login View Controller-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController id="Y6W-OH-hqX" customClass="LoginViewController" customModule="ExampleMVVM" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9sw-W0-A3n">
+                                <rect key="frame" x="24" y="328" width="345" height="280"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="welcome 👋" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="naN-QZ-dhP">
+                                        <rect key="frame" x="20" y="32" width="305" height="34"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="34" id="dya-tQ-EiZ"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wFx-ro-iEv">
+                                        <rect key="frame" x="24" y="78" width="297" height="44"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="44" id="Rfv-7S-ps3"/>
+                                        </constraints>
+                                        <string key="text">Sign in to access your watchlist
+and favorites</string>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IGo-MU-4H8" customClass="AuthButtonView" customModule="ExampleMVVM" customModuleProvider="target">
+                                        <rect key="frame" x="24" y="142" width="297" height="52"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="52" id="IUf-DR-Pdh"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JBY-rs-hBi" customClass="AuthButtonView" customModule="ExampleMVVM" customModuleProvider="target">
+                                        <rect key="frame" x="24" y="209" width="297" height="52"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="52" id="w2s-g0-2ZC"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="280" id="7nA-uy-Uis"/>
+                                    <constraint firstAttribute="trailing" secondItem="IGo-MU-4H8" secondAttribute="trailing" constant="24" id="Fe9-GL-GXo"/>
+                                    <constraint firstItem="naN-QZ-dhP" firstAttribute="leading" secondItem="9sw-W0-A3n" secondAttribute="leading" constant="20" id="J5H-wO-qS6"/>
+                                    <constraint firstItem="IGo-MU-4H8" firstAttribute="leading" secondItem="9sw-W0-A3n" secondAttribute="leading" constant="24" id="NUb-Fk-6dP"/>
+                                    <constraint firstItem="wFx-ro-iEv" firstAttribute="leading" secondItem="9sw-W0-A3n" secondAttribute="leading" constant="24" id="NYV-Cg-GOi"/>
+                                    <constraint firstItem="wFx-ro-iEv" firstAttribute="top" secondItem="naN-QZ-dhP" secondAttribute="bottom" constant="12" id="OU2-VV-gdq"/>
+                                    <constraint firstAttribute="trailing" secondItem="JBY-rs-hBi" secondAttribute="trailing" constant="24" id="P6s-Qy-UhD"/>
+                                    <constraint firstItem="JBY-rs-hBi" firstAttribute="leading" secondItem="9sw-W0-A3n" secondAttribute="leading" constant="24" id="ac2-od-EHt"/>
+                                    <constraint firstItem="IGo-MU-4H8" firstAttribute="top" secondItem="wFx-ro-iEv" secondAttribute="bottom" constant="20" id="c1i-dQ-PSt"/>
+                                    <constraint firstItem="naN-QZ-dhP" firstAttribute="top" secondItem="9sw-W0-A3n" secondAttribute="top" constant="32" id="hhU-cd-OsO"/>
+                                    <constraint firstItem="JBY-rs-hBi" firstAttribute="top" secondItem="IGo-MU-4H8" secondAttribute="bottom" constant="15" id="iK4-pX-Xyh"/>
+                                    <constraint firstItem="naN-QZ-dhP" firstAttribute="centerX" secondItem="9sw-W0-A3n" secondAttribute="centerX" id="j55-i7-Ad0"/>
+                                    <constraint firstAttribute="trailing" secondItem="wFx-ro-iEv" secondAttribute="trailing" constant="24" id="uPK-z6-Rry"/>
+                                    <constraint firstAttribute="trailing" secondItem="naN-QZ-dhP" secondAttribute="trailing" constant="20" id="wUz-Ff-BhP"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
+                        <color key="backgroundColor" systemColor="systemGray5Color"/>
+                        <constraints>
+                            <constraint firstItem="9sw-W0-A3n" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="24" id="0MW-IJ-xqI"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="9sw-W0-A3n" secondAttribute="trailing" constant="24" id="c4I-xa-cPn"/>
+                            <constraint firstItem="9sw-W0-A3n" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="iKc-vx-L6f"/>
+                            <constraint firstItem="9sw-W0-A3n" firstAttribute="centerY" secondItem="5EZ-qb-Rvc" secondAttribute="centerY" constant="42" id="xbl-1c-NuW"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="cardView" destination="9sw-W0-A3n" id="f4y-EE-1gZ"/>
+                        <outlet property="continueAsGuestButtonView" destination="JBY-rs-hBi" id="FbC-iI-mwq"/>
+                        <outlet property="signInButtonView" destination="IGo-MU-4H8" id="ixG-kJ-91h"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="138.1679389312977" y="130.98591549295776"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGray5Color">
+            <color red="0.8980392157" green="0.8980392157" blue="0.91764705879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

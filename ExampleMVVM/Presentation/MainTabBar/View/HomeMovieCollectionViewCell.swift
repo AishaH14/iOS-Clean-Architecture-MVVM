@@ -28,6 +28,7 @@ final class HomeMovieCollectionViewCell: UICollectionViewCell {
         posterImagesRepository: PosterImagesRepository?
     ) {
         titleLabel.text = viewModel.title
+        
         ratingLabel.text = viewModel.rating
         
         guard let posterPath = viewModel.posterPath else { return }
@@ -43,4 +44,6 @@ final class HomeMovieCollectionViewCell: UICollectionViewCell {
             }
         }
     }
-}
+        }
+    
+
