@@ -53,9 +53,7 @@ final class DefaultAuthorizeViewModel: AuthorizeViewModel {
             DispatchQueue.main.async {
             switch result {
             case .success(let token):
-                let redirectURL = "examplemvvm://auth"
-                let encodedRedirectURL = redirectURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? redirectURL
-                let urlString = "https://www.themoviedb.org/authenticate/\(token)?redirect_to=\(encodedRedirectURL)"
+                let urlString = "https://www.themoviedb.org/authenticate/\(token)"
                 
                 guard let url = URL(string: urlString) else {
                         self?.error.value = NSLocalizedString("Invalid authentication URL", comment: "")
