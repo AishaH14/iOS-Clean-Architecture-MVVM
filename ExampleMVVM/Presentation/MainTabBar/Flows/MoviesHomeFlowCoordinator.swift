@@ -7,10 +7,14 @@
 import UIKit
 
 protocol MoviesHomeFlowCoordinatorDependencies {
-    func makeHomeViewController(actions: HomeViewModelActions) -> HomeViewController
-    func makeMoviesDetailsViewController(movie: Movie) -> UIViewController
-}
+    func makeHomeViewController(
+        actions: HomeViewModelActions
+    ) -> HomeViewController
 
+    func makeMovieDetailsFlowCoordinator(
+        navigationController: UINavigationController
+    ) -> MovieDetailsFlowCoordinator
+}
 final class MoviesHomeFlowCoordinator {
     
     private weak var navigationController: UINavigationController?
@@ -34,7 +38,13 @@ final class MoviesHomeFlowCoordinator {
     }
     
     private func showMovieDetails(movie: Movie) {
-        let viewController = dependencies.makeMoviesDetailsViewController(movie: movie)
-        navigationController?.pushViewController(viewController, animated: true)
+        guard let navigationController else { return }
+
+        let coordinator = dependencies.makeMovieDetailsFlowCoordinator(
+            navigationController: navigationController
+        )
+
+        coordinator.start(movie: movie)
     }
-}
+    }
+

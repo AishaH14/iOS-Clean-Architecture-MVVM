@@ -1,9 +1,13 @@
 import Foundation
 
+struct MovieDetailsViewModelActions {
+    let showLists: (_ movieId: Int) -> Void
+}
 protocol MovieDetailsViewModelInput {
     func updatePosterImage(width: Int)
     func toggleFavorite()
     func toggleWatchlist()
+    func addToList()
 }
 
 protocol MovieDetailsViewModelOutput {
@@ -29,6 +33,7 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
     private let movieDetailsRepository : MovieDetailsRepository
     private(set) var isFavorite: Observable<Bool>
     private(set) var isInWatchlist: Observable<Bool>
+    private let actions: MovieDetailsViewModelActions
 
     // MARK: - OUTPUT
     let title: String
@@ -41,7 +46,9 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
         movie: Movie,
         posterImagesRepository: PosterImagesRepository,
         movieDetailsRepository: MovieDetailsRepository,
+        actions: MovieDetailsViewModelActions,
         mainQueue: DispatchQueueType = DispatchQueue.main
+        
     ) {
         self.movieId = movie.id
         self.title = movie.title ?? ""
@@ -54,6 +61,7 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
         self.rating = String(format: "%.1f", movie.rating ?? 0)
         self.isFavorite = Observable(movieDetailsRepository.isFavorite(movieId: movieId))
         self.isInWatchlist = Observable(movieDetailsRepository.isInWatchlist(movieId: movieId))
+        self.actions = actions
     }
 }
 
@@ -86,5 +94,9 @@ extension DefaultMovieDetailsViewModel {
     func toggleWatchlist() {
         movieDetailsRepository.toggleWatchlist(movieId: movieId)
         isInWatchlist.value = movieDetailsRepository.isInWatchlist(movieId: movieId)
+    }
+    func addToList() {
+        guard let movieId = Int(movieId) else { return }
+        actions.showLists(movieId)
     }
 }

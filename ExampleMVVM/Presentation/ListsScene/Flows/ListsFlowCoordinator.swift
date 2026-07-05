@@ -1,0 +1,53 @@
+//
+//  ListsFlowCoordinator.swift
+//  ExampleMVVM
+//
+//  Created by Aisha Hudasi on 13/01/1448 AH.
+//
+
+import UIKit
+
+protocol ListsFlowCoordinatorDependencies {
+    func makeListsViewController(actions: ListsViewModelActions) -> ListsViewController
+    func makeCreateListViewController(actions: CreateListViewModelActions) -> CreateListViewController
+    func makeListDetailsViewController(list: MovieList) -> ListDetailsViewController
+}
+
+final class ListsFlowCoordinator {
+    
+    private weak var navigationController: UINavigationController?
+    private let dependencies: ListsFlowCoordinatorDependencies
+    
+    init(
+        navigationController: UINavigationController,
+        dependencies: ListsFlowCoordinatorDependencies
+    ) {
+        self.navigationController = navigationController
+        self.dependencies = dependencies
+    }
+    
+    func start() {
+        let actions = ListsViewModelActions(
+            showCreateList: showCreateList,
+            showListDetails: showListDetails
+        )
+        let viewController = dependencies.makeListsViewController(actions: actions)
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+    
+    private func showCreateList() {
+        let actions = CreateListViewModelActions(
+            didCreateList: didCreateList
+        )
+        
+        let viewController = dependencies.makeCreateListViewController(actions: actions)
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+    private func didCreateList() {
+        navigationController?.popViewController(animated: true)
+    }
+    private func showListDetails(_ list: MovieList) {
+        let viewController = dependencies.makeListDetailsViewController(list: list)
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+}

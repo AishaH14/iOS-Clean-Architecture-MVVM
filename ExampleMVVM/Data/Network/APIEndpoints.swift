@@ -41,7 +41,70 @@ struct APIEndpoints {
             queryParametersEncodable: moviesListRequestDTO
         )
     }
-
+    static func getAccountDetails(
+        with accountRequestDTO: AccountRequestDTO
+    ) -> Endpoint<AccountResponseDTO> {
+        return Endpoint(
+            path: "3/account",
+            method: .get,
+            queryParametersEncodable: accountRequestDTO
+        )
+    }
+    static func getAccountLists(
+        accountId: Int,
+        with listsRequestDTO: ListsRequestDTO
+    ) -> Endpoint<ListsResponseDTO> {
+        return Endpoint(
+            path: "3/account/\(accountId)/lists",
+            method: .get,
+            queryParametersEncodable: listsRequestDTO
+        )
+    }
+    static func createList(
+        with sessionRequestDTO: CreateListSessionRequestDTO,
+        body createListRequestDTO: CreateListRequestDTO
+    ) -> Endpoint<CreateListResponseDTO> {
+        return Endpoint(
+            path: "3/list",
+            method: .post,
+            headerParameters: [
+                       "Content-Type": "application/json;charset=utf-8",
+                       "Accept": "application/json"
+                   ],
+                   queryParametersEncodable: sessionRequestDTO,
+                   bodyParametersEncodable: createListRequestDTO
+               )
+           }
+    static func deleteList(
+        listId: Int,
+        with sessionRequestDTO: CreateListSessionRequestDTO
+    ) -> Endpoint<CreateListResponseDTO> {
+        return Endpoint(
+            path: "3/list/\(listId)",
+            method: .delete,
+            headerParameters: [
+                "Content-Type": "application/json;charset=utf-8",
+                "Accept": "application/json"
+            ],
+            queryParametersEncodable: sessionRequestDTO
+        )
+    }
+    static func addMovieToList(
+        listId: Int,
+        with sessionRequestDTO: CreateListSessionRequestDTO,
+        body addMovieRequestDTO: AddMovieToListRequestDTO
+    ) -> Endpoint<AddMovieToListResponseDTO> {
+        return Endpoint(
+            path: "3/list/\(listId)/add_item",
+            method: .post,
+            headerParameters: [
+                "Content-Type": "application/json;charset=utf-8",
+                "Accept": "application/json"
+            ],
+            queryParametersEncodable: sessionRequestDTO,
+            bodyParametersEncodable: addMovieRequestDTO
+        )
+    }
     static func getMoviePoster(path: String, width: Int) -> Endpoint<Data> {
 
         let sizes = [92, 154, 185, 342, 500, 780]

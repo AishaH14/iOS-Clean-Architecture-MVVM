@@ -66,10 +66,11 @@ final class AppFlowCoordinator {
         func setupTabBarAppearance(_ tabBar: UITabBar) {
             tabBar.tintColor = .systemBlue
             tabBar.unselectedItemTintColor = .darkGray
-            tabBar.isTranslucent = false
-            
+            tabBar.isTranslucent = true
+            tabBar.backgroundColor = .clear
+            tabBar.backgroundImage = UIImage()
+            tabBar.shadowImage = UIImage()
             tabBar.itemPositioning = .fill
             tabBar.itemSpacing = 0
-            
         }
     }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Security
 
 protocol AuthSessionStorage {
     func saveSessionId(_ sessionId: String)
@@ -20,13 +21,50 @@ final class UserDefaultsAuthSessionStorage: AuthSessionStorage {
         static let sessionId = "session_id"
         static let guestSessionId = "guest_session_id"
     }
-    
-    func saveSessionId(_ sessionId: String) {
-        UserDefaults.standard.set(sessionId, forKey: Keys.sessionId)
+    private enum KeychainConstants {
+        static let service = "com.examplemvvm.auth"
     }
     
+    func saveSessionId(_ sessionId: String) {
+        guard let data = sessionId.data(using: .utf8) else { return }
+        
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: KeychainConstants.service,
+            kSecAttrAccount as String: Keys.sessionId
+        ]
+        
+        let attributes: [String: Any] = [
+            kSecValueData as String: data
+        ]
+        
+        let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
+        
+        if status == errSecItemNotFound {
+            var newItem = query
+            newItem[kSecValueData as String] = data
+            SecItemAdd(newItem as CFDictionary, nil)
+        }
+    }
     func getSessionId() -> String? {
-        UserDefaults.standard.string(forKey: Keys.sessionId)
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: KeychainConstants.service,
+            kSecAttrAccount as String: Keys.sessionId,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        
+        guard status == errSecSuccess,
+              let data = result as? Data,
+              let sessionId = String(data: data, encoding: .utf8) else {
+            return nil
+        }
+        
+        return sessionId
     }
     
     func saveGuestSessionId(_ guestSessionId: String) {
