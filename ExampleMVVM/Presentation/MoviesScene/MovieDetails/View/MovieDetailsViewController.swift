@@ -21,6 +21,7 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        viewModel.viewDidLoad()
         bind(to: viewModel)
     }
     
@@ -34,6 +35,9 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
         
         viewModel.isInWatchlist.observe(on: self) { [weak self] isInWatchlist in
             self?.updateWatchlistButton(isInWatchlist: isInWatchlist)
+        }
+        viewModel.isAddedToList.observe(on: self) { [weak self] isAdded in
+            self?.updateAddToListButton(isAdded: isAdded)
         }
     }
     
@@ -51,7 +55,7 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
         ratingLabel.text = "⭐️ \(viewModel.rating)"
         view.accessibilityIdentifier = AccessibilityIdentifier.movieDetailsView
         
-        updateAddToListButton()
+        updateAddToListButton(isAdded: false)
     }
     
     private func updateFavoriteButton(isFavorite: Bool) {
@@ -107,18 +111,55 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
 
         watchlistButton.configuration = configuration
     }
-    
-    private func updateAddToListButton() {
+    private func showRemoveMovieConfirmation() {
+        let alert = UIAlertController(
+            title: NSLocalizedString(
+                "Remove Movie?",
+                comment: ""
+            ),
+            message: NSLocalizedString(
+                "Are you sure you want to remove this movie from the list?",
+                comment: ""
+            ),
+            preferredStyle: .alert
+        )
+
+        alert.addAction(
+            UIAlertAction(
+                title: NSLocalizedString("Cancel", comment: ""),
+                style: .cancel
+            )
+        )
+
+        alert.addAction(
+            UIAlertAction(
+                title: NSLocalizedString("Done", comment: ""),
+                style: .destructive
+            ) { [weak self] _ in
+                self?.viewModel.addToList()
+            }
+        )
+
+        present(alert, animated: true)
+    }
+    private func updateAddToListButton(isAdded: Bool) {
         var configuration = UIButton.Configuration.plain()
 
         configuration.image = UIImage(
-            systemName: "text.badge.plus"
+            systemName: isAdded
+                ? "checkmark.circle.fill"
+                : "text.badge.plus"
         )
 
-        configuration.title = "Add to List"
+        configuration.title = isAdded
+            ? "Added to List"
+            : "Add to List"
+
         configuration.imagePlacement = .top
         configuration.imagePadding = 6
-        configuration.baseForegroundColor = .systemBlue
+        configuration.baseForegroundColor = isAdded
+            ? .systemGreen
+            : .systemGray
 
         configuration.titleTextAttributesTransformer =
             UIConfigurationTextAttributesTransformer { attributes in
@@ -129,7 +170,6 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
 
         addToListButton.configuration = configuration
     }
-    
     // MARK: - Actions
     
     @IBAction private func watchlistTapped(_ sender: UIButton) {
@@ -141,6 +181,10 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
     }
     
     @IBAction private func addToListTapped(_ sender: UIButton) {
-        viewModel.addToList()
+        if viewModel.isAddedToList.value {
+            showRemoveMovieConfirmation()
+        } else {
+            viewModel.addToList()
+        }
     }
 }

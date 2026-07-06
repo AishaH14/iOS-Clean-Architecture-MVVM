@@ -105,6 +105,30 @@ struct APIEndpoints {
             bodyParametersEncodable: addMovieRequestDTO
         )
     }
+    static func getListDetails(
+        listId: Int
+    ) -> Endpoint<ListDetailsResponseDTO> {
+        Endpoint(
+            path: "3/list/\(listId)",
+            method: .get
+        )
+    }
+    static func removeMovieFromList(
+        listId: Int,
+        with sessionRequestDTO: CreateListSessionRequestDTO,
+        body removeMovieRequestDTO: AddMovieToListRequestDTO
+    ) -> Endpoint<AddMovieToListResponseDTO> {
+        Endpoint(
+            path: "3/list/\(listId)/remove_item",
+            method: .post,
+            headerParameters: [
+                "Content-Type": "application/json;charset=utf-8",
+                "Accept": "application/json"
+            ],
+            queryParametersEncodable: sessionRequestDTO,
+            bodyParametersEncodable: removeMovieRequestDTO
+        )
+    }
     static func getMoviePoster(path: String, width: Int) -> Endpoint<Data> {
 
         let sizes = [92, 154, 185, 342, 500, 780]

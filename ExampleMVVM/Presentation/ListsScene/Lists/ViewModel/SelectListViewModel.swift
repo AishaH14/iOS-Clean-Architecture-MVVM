@@ -8,7 +8,7 @@
 import Foundation
 
 struct SelectListViewModelActions {
-    let didAddMovie: () -> Void
+    let didAddMovie: (_ listId: Int) -> Void
 }
 
 protocol SelectListViewModelInput {
@@ -34,6 +34,7 @@ final class DefaultSelectListViewModel: SelectListViewModel {
     private let movieId: Int
     private let fetchAccountDetailsUseCase: FetchAccountDetailsUseCase
     private let fetchAccountListsUseCase: FetchAccountListsUseCase
+    private let fetchListMoviesUseCase: FetchListMoviesUseCase
     private let addMovieToListUseCase: AddMovieToListUseCase
     private let authSessionStorage: AuthSessionStorage
     private let actions: SelectListViewModelActions
@@ -43,6 +44,7 @@ final class DefaultSelectListViewModel: SelectListViewModel {
         movieId: Int,
         fetchAccountDetailsUseCase: FetchAccountDetailsUseCase,
         fetchAccountListsUseCase: FetchAccountListsUseCase,
+        fetchListMoviesUseCase: FetchListMoviesUseCase,
         addMovieToListUseCase: AddMovieToListUseCase,
         authSessionStorage: AuthSessionStorage,
         actions: SelectListViewModelActions
@@ -50,6 +52,7 @@ final class DefaultSelectListViewModel: SelectListViewModel {
         self.movieId = movieId
         self.fetchAccountDetailsUseCase = fetchAccountDetailsUseCase
         self.fetchAccountListsUseCase = fetchAccountListsUseCase
+        self.fetchListMoviesUseCase = fetchListMoviesUseCase
         self.addMovieToListUseCase = addMovieToListUseCase
         self.authSessionStorage = authSessionStorage
         self.actions = actions
@@ -120,7 +123,7 @@ extension DefaultSelectListViewModel {
             DispatchQueue.main.async {
                 switch result {
                 case .success:
-                    self?.actions.didAddMovie()
+                    self?.actions.didAddMovie(selectedList.id)
 
                 case .failure:
                     self?.error.value = NSLocalizedString(

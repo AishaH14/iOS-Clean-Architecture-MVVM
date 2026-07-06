@@ -7,8 +7,19 @@
 
 import UIKit
 
-final class CreateListViewController: UIViewController, StoryboardInstantiable {
-    
+final class CreateListViewController: UIViewController {
+    // MARK: - Create
+    static func create(
+        with viewModel: CreateListViewModel
+    ) -> CreateListViewController {
+        let viewController = CreateListViewController(
+            nibName: String(describing: CreateListViewController.self),
+            bundle: nil
+        )
+
+        viewController.viewModel = viewModel
+        return viewController
+    }
     // MARK: - IBOutlet
     @IBOutlet private weak var nameTextField: UITextField!
     @IBOutlet private weak var descriptionTextView: UITextView!

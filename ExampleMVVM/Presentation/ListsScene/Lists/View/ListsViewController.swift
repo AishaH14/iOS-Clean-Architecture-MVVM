@@ -14,9 +14,9 @@ final class ListsViewController: UIViewController, StoryboardInstantiable {
     
     // MARK: - Properties
     var viewModel: ListsViewModel!
-    
     private var lists: [MovieList] = []
-    
+    private var posterPaths: [Int: String] = [:]
+    var posterImagesRepository: PosterImagesRepository?
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,6 +69,10 @@ final class ListsViewController: UIViewController, StoryboardInstantiable {
                 guard !error.isEmpty else { return }
                 self?.showError(message: error)
             }
+            viewModel.posterPaths.observe(on: self) { [weak self] posterPaths in
+                self?.posterPaths = posterPaths
+                self?.tableView.reloadData()
+            }
         }
         
         func showError(message: String) {
@@ -107,14 +111,24 @@ final class ListsViewController: UIViewController, StoryboardInstantiable {
             cellForRowAt indexPath: IndexPath
         ) -> UITableViewCell {
             guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: "ListsItemCell",
+                withIdentifier:CellIdentifiers.listsItemCell,
                 for: indexPath
             ) as? ListsItemCell else {
                 return UITableViewCell()
             }
             
             let list = lists[indexPath.row]
-            cell.configure(with: list)
+            let itemViewModel = ListsItemViewModel(
+                title: list.name,
+                description: list.description ?? "",
+                moviesCountText: "\(list.itemCount) movies",
+                posterPath: posterPaths[list.id]
+            )
+
+            cell.configure(
+                with: itemViewModel,
+                posterImagesRepository: posterImagesRepository
+            )
             cell.selectionStyle = .none
             
             return cell
@@ -123,15 +137,15 @@ final class ListsViewController: UIViewController, StoryboardInstantiable {
 
 // MARK: - UITableViewDelegate
 extension ListsViewController: UITableViewDelegate {
-   
-        
-        func tableView(
-            _ tableView: UITableView,
-            didSelectRowAt indexPath: IndexPath
-        ) {
-            tableView.deselectRow(at: indexPath, animated: true)
-            viewModel.didSelectList(at: indexPath.row)
-        }
+    
+    
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        viewModel.didSelectList(at: indexPath.row)
+    }
     func tableView(
         _ tableView: UITableView,
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
@@ -144,14 +158,14 @@ extension ListsViewController: UITableViewDelegate {
             self?.showDeleteConfirmation(at: indexPath)
             completion(false)
         }
-
+        
         deleteAction.backgroundColor = UIColor(
             red: 239 / 255,
             green: 35 / 255,
             blue: 60 / 255,
             alpha: 1
         )
-
+        
         deleteAction.image = UIImage(systemName: "trash")?
             .withTintColor(.white, renderingMode: .alwaysOriginal)
         
@@ -166,13 +180,28 @@ extension ListsViewController: UITableViewDelegate {
         let list = lists[indexPath.row]
         
         let alert = UIAlertController(
-            title: "Delete \"\(list.name)\"?",
+            title: "\n\nDelete \"\(list.name)\"?",
             message: NSLocalizedString(
                 "This list and all its movies will be permanently deleted. This action cannot be undone.",
                 comment: ""
             ),
             preferredStyle: .alert
         )
+        
+        let trashImageView = UIImageView(
+            image: UIImage(systemName: "trash")
+        )
+        
+        trashImageView.tintColor = .systemRed
+        trashImageView.contentMode = .scaleAspectFit
+        trashImageView.frame = CGRect(
+            x: 122,
+            y: 14,
+            width: 28,
+            height: 28
+        )
+        
+        alert.view.addSubview(trashImageView)
         
         alert.addAction(
             UIAlertAction(

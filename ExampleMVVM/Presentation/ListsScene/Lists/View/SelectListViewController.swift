@@ -56,6 +56,14 @@ private extension SelectListViewController {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: NSLocalizedString("Done", comment: ""),
+            style: .plain,
+            target: self,
+            action: #selector(doneTapped)
+        )
+
+        navigationItem.rightBarButtonItem?.isEnabled = false
     }
 
     func bindViewModel() {
@@ -69,7 +77,12 @@ private extension SelectListViewController {
             self?.showError(message: error)
         }
     }
+    @objc func doneTapped() {
+        guard let selectedIndex = selectedIndex else { return }
+        navigationItem.rightBarButtonItem?.isEnabled = false
+        viewModel.didSelectList(at: selectedIndex)
 
+    }
     func showError(message: String) {
         let alert = UIAlertController(
             title: nil,
@@ -102,13 +115,13 @@ extension SelectListViewController: UITableViewDataSource {
         _ tableView: UITableView,
         cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
-        let identifier = "SelectListCell"
+       
 
         let cell = tableView.dequeueReusableCell(
-            withIdentifier: identifier
+            withIdentifier: CellIdentifiers.selectListCell
         ) ?? UITableViewCell(
             style: .subtitle,
-            reuseIdentifier: identifier
+            reuseIdentifier: CellIdentifiers.selectListCell
         )
 
         let list = lists[indexPath.row]
@@ -151,9 +164,15 @@ extension SelectListViewController: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
-        selectedIndex = indexPath.row
-        tableView.reloadData()
+        if selectedIndex == indexPath.row {
+            selectedIndex = nil
+        } else {
+            selectedIndex = indexPath.row
+        }
 
-        viewModel.didSelectList(at: indexPath.row)
+        navigationItem.rightBarButtonItem?.isEnabled =
+            selectedIndex != nil
+
+        tableView.reloadData()
     }
 }

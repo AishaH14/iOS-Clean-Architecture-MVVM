@@ -104,7 +104,6 @@ extension ProfileViewController: UITableViewDelegate {
         case .favorites, .watchlist, .logout:
             return
         }
-        tableView.deselectRow(at: indexPath, animated: true)
-        viewModel.didTapLists()
     }
 }
+

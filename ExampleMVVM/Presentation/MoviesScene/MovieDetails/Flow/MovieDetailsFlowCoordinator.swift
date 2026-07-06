@@ -20,10 +20,10 @@ protocol MovieDetailsFlowCoordinatorDependencies {
 }
 
 final class MovieDetailsFlowCoordinator {
-
+    
     private weak var navigationController: UINavigationController?
     private let dependencies: MovieDetailsFlowCoordinatorDependencies
-
+    
     init(
         navigationController: UINavigationController,
         dependencies: MovieDetailsFlowCoordinatorDependencies
@@ -35,20 +35,25 @@ final class MovieDetailsFlowCoordinator {
         let actions = MovieDetailsViewModelActions(
             showLists: showLists
         )
-
+        
         let viewController = dependencies.makeMoviesDetailsViewController(
             movie: movie,
             actions: actions
         )
-
+        
         navigationController?.pushViewController(
             viewController,
             animated: true
         )
     }
-    private func showLists(movieId: Int) {
+    private func showLists(
+        movieId: Int,
+        didAddMovie: @escaping (_ listId: Int) -> Void
+    ) {
         let actions = SelectListViewModelActions(
-            didAddMovie: { [weak self] in
+            didAddMovie: { [weak self] listId in
+                didAddMovie(listId)
+
                 self?.navigationController?
                     .presentedViewController?
                     .dismiss(animated: true)

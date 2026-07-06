@@ -37,4 +37,14 @@ protocol ListsRepository {
         movieId: Int,
         completion: @escaping (Result<Void, Error>) -> Void
     )
+    func fetchListMovies(
+        listId: Int,
+        completion: @escaping (Result<[Movie], Error>) -> Void
+    )
+    func removeMovieFromList(
+        listId: Int,
+        sessionId: String,
+        movieId: Int,
+        completion: @escaping (Result<Void, Error>) -> Void
+    )
 }

@@ -19,8 +19,16 @@ final class DefaultListsRepository {
         self.dataTransferService = dataTransferService
         self.backgroundQueue = backgroundQueue
     }
-}
-
+    private func makeAPIError(
+           code: Int,
+           message: String
+       ) -> Error {
+           ListsRepositoryError.apiError(
+               code: code,
+               message: message
+           )
+       }
+   }
 extension DefaultListsRepository: ListsRepository {
     
     func fetchAccountDetails(
@@ -95,12 +103,11 @@ extension DefaultListsRepository: ListsRepository {
                 if responseDTO.success, let listId = responseDTO.listId {
                     completion(.success(listId))
                 } else {
-                    completion(.failure(NSError(
-                        domain: "",
-                        code: responseDTO.statusCode,
-                        userInfo: [
-                            NSLocalizedDescriptionKey: responseDTO.statusMessage
-                        ]
+                    completion(
+                        .failure(
+                            self.makeAPIError(
+                                code: responseDTO.statusCode,
+                                message: responseDTO.statusMessage
                     )))
                 }
                 
@@ -130,12 +137,11 @@ extension DefaultListsRepository: ListsRepository {
                 if responseDTO.success {
                     completion(.success(()))
                 } else {
-                    completion(.failure(NSError(
-                        domain: "",
-                        code: responseDTO.statusCode,
-                        userInfo: [
-                            NSLocalizedDescriptionKey: responseDTO.statusMessage
-                        ]
+                    completion(
+                        .failure(
+                            self.makeAPIError(
+                                code: responseDTO.statusCode,
+                                message: responseDTO.statusMessage
                     )))
                 }
                 
@@ -173,15 +179,79 @@ extension DefaultListsRepository: ListsRepository {
                 if responseDTO.success {
                     completion(.success(()))
                 } else {
-                    completion(.failure(NSError(
-                        domain: "",
-                        code: responseDTO.statusCode,
-                        userInfo: [
-                            NSLocalizedDescriptionKey: responseDTO.statusMessage
-                        ]
+                    completion(
+                        .failure(
+                            self.makeAPIError(
+                                code: responseDTO.statusCode,
+                                message: responseDTO.statusMessage
                     )))
                 }
                 
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    func removeMovieFromList(
+        listId: Int,
+        sessionId: String,
+        movieId: Int,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        let sessionRequestDTO = CreateListSessionRequestDTO(
+            sessionId: sessionId
+        )
+
+        let requestDTO = AddMovieToListRequestDTO(
+            mediaId: movieId
+        )
+
+        let endpoint = APIEndpoints.removeMovieFromList(
+            listId: listId,
+            with: sessionRequestDTO,
+            body: requestDTO
+        )
+
+        dataTransferService.request(
+            with: endpoint,
+            on: backgroundQueue
+        ) { result in
+            switch result {
+            case .success(let responseDTO):
+                if responseDTO.success {
+                    completion(.success(()))
+                } else {
+                    completion(
+                        .failure(
+                            ListsRepositoryError.apiError(
+                                code: responseDTO.statusCode,
+                                message: responseDTO.statusMessage
+                    )))
+                }
+
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    func fetchListMovies(
+        listId: Int,
+        completion: @escaping (Result<[Movie], Error>) -> Void
+    ) {
+        let endpoint = APIEndpoints.getListDetails(
+            listId: listId
+        )
+
+        dataTransferService.request(
+            with: endpoint,
+            on: backgroundQueue
+        ) { result in
+            switch result {
+            case .success(let responseDTO):
+                completion(
+                    .success(responseDTO.toDomain())
+                )
+
             case .failure(let error):
                 completion(.failure(error))
             }

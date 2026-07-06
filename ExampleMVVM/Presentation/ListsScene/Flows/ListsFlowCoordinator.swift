@@ -49,5 +49,6 @@ final class ListsFlowCoordinator {
     private func showListDetails(_ list: MovieList) {
         let viewController = dependencies.makeListDetailsViewController(list: list)
         navigationController?.pushViewController(viewController, animated: true)
+        
     }
 }
