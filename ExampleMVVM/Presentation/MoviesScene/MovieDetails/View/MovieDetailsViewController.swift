@@ -21,8 +21,8 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-        viewModel.viewDidLoad()
         bind(to: viewModel)
+        viewModel.viewDidLoad()
     }
     
     private func bind(to viewModel: MovieDetailsViewModel) {

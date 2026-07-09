@@ -231,7 +231,7 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
             fetchAccountListsUseCase: makeFetchAccountListsUseCase(),
             fetchListMoviesUseCase: makeFetchListMoviesUseCase(),
             addMovieToListUseCase: makeAddMovieToListUseCase(),
-            authSessionStorage: authSessionStorage,
+            authSessionStorage: makeAuthSessionStorage(),
             actions: actions
         )
     }
