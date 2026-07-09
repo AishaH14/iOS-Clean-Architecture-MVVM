@@ -1,5 +1,33 @@
 import Foundation
 
+private enum APIPath {
+    static let list = "3/list"
+
+    static func listDetails(_ listId: Int) -> String {
+        "\(list)/\(listId)"
+    }
+
+    static func addListItem(_ listId: Int) -> String {
+        "\(listDetails(listId))/add_item"
+    }
+
+    static func removeListItem(_ listId: Int) -> String {
+        "\(listDetails(listId))/remove_item"
+    }
+}
+
+private enum APIHeaders {
+    static let contentType = "Content-Type"
+    static let accept = "Accept"
+    static let json = "application/json"
+    static let jsonWithCharset = "application/json;charset=utf-8"
+
+    static let jsonHeaders: [String: String] = [
+        contentType: jsonWithCharset,
+        accept: json
+    ]
+}
+
 struct APIEndpoints {
     
     static func getMovies(with moviesRequestDTO: MoviesRequestDTO) -> Endpoint<MoviesResponseDTO> {
@@ -65,29 +93,23 @@ struct APIEndpoints {
         body createListRequestDTO: CreateListRequestDTO
     ) -> Endpoint<CreateListResponseDTO> {
         return Endpoint(
-            path: "3/list",
-            method: .post,
-            headerParameters: [
-                       "Content-Type": "application/json;charset=utf-8",
-                       "Accept": "application/json"
-                   ],
-                   queryParametersEncodable: sessionRequestDTO,
-                   bodyParametersEncodable: createListRequestDTO
-               )
+        path: APIPath.list,
+               method: .post,
+               headerParameters: APIHeaders.jsonHeaders,
+               queryParametersEncodable: sessionRequestDTO,
+               bodyParametersEncodable: createListRequestDTO
+        )
            }
     static func deleteList(
         listId: Int,
         with sessionRequestDTO: CreateListSessionRequestDTO
     ) -> Endpoint<CreateListResponseDTO> {
         return Endpoint(
-            path: "3/list/\(listId)",
-            method: .delete,
-            headerParameters: [
-                "Content-Type": "application/json;charset=utf-8",
-                "Accept": "application/json"
-            ],
-            queryParametersEncodable: sessionRequestDTO
-        )
+            path: APIPath.listDetails(listId),
+                    method: .delete,
+                    headerParameters: APIHeaders.jsonHeaders,
+                    queryParametersEncodable: sessionRequestDTO
+                )
     }
     static func addMovieToList(
         listId: Int,
@@ -95,21 +117,18 @@ struct APIEndpoints {
         body addMovieRequestDTO: AddMovieToListRequestDTO
     ) -> Endpoint<AddMovieToListResponseDTO> {
         return Endpoint(
-            path: "3/list/\(listId)/add_item",
-            method: .post,
-            headerParameters: [
-                "Content-Type": "application/json;charset=utf-8",
-                "Accept": "application/json"
-            ],
-            queryParametersEncodable: sessionRequestDTO,
-            bodyParametersEncodable: addMovieRequestDTO
+                    path: APIPath.addListItem(listId),
+                    method: .post,
+                    headerParameters: APIHeaders.jsonHeaders,
+                    queryParametersEncodable: sessionRequestDTO,
+                    bodyParametersEncodable: addMovieRequestDTO
         )
     }
     static func getListDetails(
         listId: Int
     ) -> Endpoint<ListDetailsResponseDTO> {
         Endpoint(
-            path: "3/list/\(listId)",
+            path: APIPath.listDetails(listId),
             method: .get
         )
     }
@@ -119,15 +138,12 @@ struct APIEndpoints {
         body removeMovieRequestDTO: AddMovieToListRequestDTO
     ) -> Endpoint<AddMovieToListResponseDTO> {
         Endpoint(
-            path: "3/list/\(listId)/remove_item",
-            method: .post,
-            headerParameters: [
-                "Content-Type": "application/json;charset=utf-8",
-                "Accept": "application/json"
-            ],
-            queryParametersEncodable: sessionRequestDTO,
-            bodyParametersEncodable: removeMovieRequestDTO
-        )
+                    path: APIPath.removeListItem(listId),
+                    method: .post,
+                    headerParameters: APIHeaders.jsonHeaders,
+                    queryParametersEncodable: sessionRequestDTO,
+                    bodyParametersEncodable: removeMovieRequestDTO
+                )
     }
     static func getMoviePoster(path: String, width: Int) -> Endpoint<Data> {
 
