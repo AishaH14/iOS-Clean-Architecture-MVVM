@@ -15,7 +15,7 @@ protocol AuthSessionStorage {
     func getGuestSessionId() -> String?
 }
 
-final class UserDefaultsAuthSessionStorage: AuthSessionStorage {
+final class KeychainAuthSessionStorage: AuthSessionStorage {
     
     private enum Keys {
         static let sessionId = "session_id"
@@ -26,19 +26,50 @@ final class UserDefaultsAuthSessionStorage: AuthSessionStorage {
     }
     
     func saveSessionId(_ sessionId: String) {
-        guard let data = sessionId.data(using: .utf8) else { return }
+        save(
+            sessionId,
+            forKey: Keys.sessionId
+        )
+    }
+
+    func getSessionId() -> String? {
+        getValue(
+            forKey: Keys.sessionId
+        )
+    }
+    
+    func saveGuestSessionId(_ guestSessionId: String) {
+        save(
+            guestSessionId,
+            forKey: Keys.guestSessionId
+        )
+    }
+    
+    func getGuestSessionId() -> String? {
+        getValue(
+            forKey: Keys.guestSessionId
+        )
+    }
+}
+// MARK: - Private
+private extension KeychainAuthSessionStorage {
+    
+    func save(
+        _ value: String,
+        forKey key: String
+    ) {
+        guard let data = value.data(using: .utf8) else { return }
         
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: KeychainConstants.service,
-            kSecAttrAccount as String: Keys.sessionId
-        ]
+        let query = makeQuery(forKey: key)
         
         let attributes: [String: Any] = [
             kSecValueData as String: data
         ]
         
-        let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
+        let status = SecItemUpdate(
+            query as CFDictionary,
+            attributes as CFDictionary
+        )
         
         if status == errSecItemNotFound {
             var newItem = query
@@ -46,32 +77,32 @@ final class UserDefaultsAuthSessionStorage: AuthSessionStorage {
             SecItemAdd(newItem as CFDictionary, nil)
         }
     }
-    func getSessionId() -> String? {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: KeychainConstants.service,
-            kSecAttrAccount as String: Keys.sessionId,
-            kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne
-        ]
+    
+    func getValue(forKey key: String) -> String? {
+        var query = makeQuery(forKey: key)
+        query[kSecReturnData as String] = true
+        query[kSecMatchLimit as String] = kSecMatchLimitOne
         
         var result: AnyObject?
-        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        let status = SecItemCopyMatching(
+            query as CFDictionary,
+            &result
+        )
         
         guard status == errSecSuccess,
               let data = result as? Data,
-              let sessionId = String(data: data, encoding: .utf8) else {
+              let value = String(data: data, encoding: .utf8) else {
             return nil
         }
         
-        return sessionId
+        return value
     }
     
-    func saveGuestSessionId(_ guestSessionId: String) {
-        UserDefaults.standard.set(guestSessionId, forKey: Keys.guestSessionId)
-    }
-    
-    func getGuestSessionId() -> String? {
-        UserDefaults.standard.string(forKey: Keys.guestSessionId)
+    func makeQuery(forKey key: String) -> [String: Any] {
+        [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: KeychainConstants.service,
+            kSecAttrAccount as String: key
+        ]
     }
 }

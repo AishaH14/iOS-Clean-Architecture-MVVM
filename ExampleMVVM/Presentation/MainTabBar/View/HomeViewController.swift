@@ -12,7 +12,7 @@ final class HomeViewController: UIViewController, StoryboardInstantiable {
     private var viewModel: HomeViewModel!
     private var posterImagesRepository: PosterImagesRepository?
     private var sections: [HomeSectionViewModel] = []
-    private let activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
+    private let activityIndicator = UIActivityIndicatorView(style: .large)
     @IBOutlet private weak var collectionView: UICollectionView!
     
     static func create(

@@ -17,7 +17,7 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
     lazy var authRepository: AuthRepository = DefaultAuthRepository(
         dataTransferService: dependencies.apiDataTransferService
     )
-    lazy var authSessionStorage: AuthSessionStorage = UserDefaultsAuthSessionStorage()
+    lazy var authSessionStorage: AuthSessionStorage = KeychainAuthSessionStorage()
     lazy var listsRepository: ListsRepository = DefaultListsRepository(
         dataTransferService: dependencies.apiDataTransferService
     )
