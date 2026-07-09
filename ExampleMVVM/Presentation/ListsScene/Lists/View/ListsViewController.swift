@@ -118,6 +118,9 @@ final class ListsViewController: UIViewController, StoryboardInstantiable {
             }
             
             let list = lists[indexPath.row]
+            if indexPath.row == lists.count - 1 {
+                viewModel.didReachEndOfList()
+            }
             let itemViewModel = ListsItemViewModel(
                 title: list.name,
                 description: list.description ?? "",

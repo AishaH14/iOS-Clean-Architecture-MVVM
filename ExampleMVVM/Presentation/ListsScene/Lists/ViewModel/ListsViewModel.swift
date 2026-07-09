@@ -18,6 +18,7 @@ protocol ListsViewModelInput {
     func didTapCreateList()
     func didRequestDeleteList(at index: Int)
     func didSelectList(at index: Int)
+    func didReachEndOfList()
 }
 
 protocol ListsViewModelOutput {
@@ -41,6 +42,12 @@ final class DefaultListsViewModel: ListsViewModel {
     private let actions: ListsViewModelActions
     private let deleteListUseCase: DeleteListUseCase
     private let fetchListMoviesUseCase: FetchListMoviesUseCase
+    private let initialPage = 1
+    private var currentPage = 1
+    private var isLoading = false
+    private var canLoadMore = true
+    private var accountId: Int?
+    private var sessionId: String?
     // MARK: - Init
     init(
         fetchAccountDetailsUseCase: FetchAccountDetailsUseCase,
@@ -66,15 +73,29 @@ final class DefaultListsViewModel: ListsViewModel {
         }
         
         fetchAccountDetailsUseCase.execute(sessionId: sessionId) { [weak self] result in
-            switch result {
-            case .success(let account):
-                self?.fetchLists(
-                    accountId: account.id,
-                    sessionId: sessionId
-                )
-            case .failure:
-                DispatchQueue.main.async {
-                    self?.error.value = NSLocalizedString("Failed to fetch account details", comment: "")
+
+                    DispatchQueue.main.async {
+                        guard let self = self else { return }
+
+                        switch result {
+                        case .success(let account):
+                            self.accountId = account.id
+                            self.sessionId = sessionId
+                            self.resetPagination()
+                            self.lists.value = []
+                            self.posterPaths.value = [:]
+
+                            self.fetchLists(
+                                accountId: account.id,
+                                sessionId: sessionId,
+                                page: self.currentPage
+                            )
+
+                        case .failure:
+                            self.error.value = NSLocalizedString(
+                                "Failed to fetch account details",
+                                comment: ""
+                            )
                 }
             }
         }
@@ -82,20 +103,51 @@ final class DefaultListsViewModel: ListsViewModel {
     func didTapCreateList() {
         actions.showCreateList()
     }
+    private func resetPagination() {
+        currentPage = initialPage
+        canLoadMore = true
+    }
     
-    private func fetchLists(accountId: Int, sessionId: String) {
+    private func fetchLists(
+        accountId: Int,
+        sessionId: String,
+        page: Int
+    ) {
+        guard !isLoading, canLoadMore else { return }
+
+        isLoading = true
+
         fetchAccountListsUseCase.execute(
             accountId: accountId,
             sessionId: sessionId,
-            page: 1
+            page: page
         ) { [weak self] result in
             DispatchQueue.main.async {
+                guard let self = self else { return }
+
+                self.isLoading = false
+
                 switch result {
-                case .success(let lists):
-                    self?.lists.value = lists
-                    self?.fetchPosterPaths(for: lists)
+                case .success(let newLists):
+                    if newLists.isEmpty {
+                        self.canLoadMore = false
+                        return
+                    }
+
+                    if page == self.initialPage {
+                        self.lists.value = newLists
+                    } else {
+                        self.lists.value += newLists
+                    }
+
+                    self.currentPage = page
+                    self.fetchPosterPaths(for: newLists)
+
                 case .failure:
-                    self?.error.value = NSLocalizedString("Failed to fetch lists", comment: "")
+                    self.error.value = NSLocalizedString(
+                        "Failed to fetch lists",
+                        comment: ""
+                    )
                 }
             }
         }
@@ -150,5 +202,17 @@ final class DefaultListsViewModel: ListsViewModel {
         
         let list = lists.value[index]
         actions.showListDetails(list)
+    }
+    func didReachEndOfList() {
+        guard let accountId = accountId,
+              let sessionId = sessionId else {
+            return
+        }
+
+        fetchLists(
+            accountId: accountId,
+            sessionId: sessionId,
+            page: currentPage + 1
+        )
     }
 }

@@ -100,7 +100,7 @@ private extension CreateListViewController {
         descriptionCountLabel.font = UIFont.systemFont(ofSize: 14)
         descriptionCountLabel.textAlignment = .right
         descriptionCountLabel.frame = CGRect(
-            x: descriptionTextView.frame.width - 30,
+            x: descriptionTextView.frame.width - 55,
             y: descriptionTextView.frame.height - 30,
             width: 60,
             height: 22
