@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Security
 
 protocol AuthSessionStorage {
     func saveSessionId(_ sessionId: String)
@@ -24,85 +23,39 @@ final class KeychainAuthSessionStorage: AuthSessionStorage {
     private enum KeychainConstants {
         static let service = "com.examplemvvm.auth"
     }
-    
+
+    private let keychainStorage: KeychainStorage
+
+    init(
+        keychainStorage: KeychainStorage = KeychainStorage(
+            service: KeychainConstants.service
+        )
+    ) {
+        self.keychainStorage = keychainStorage
+    }
+
     func saveSessionId(_ sessionId: String) {
-        save(
+        keychainStorage.save(
             sessionId,
             forKey: Keys.sessionId
         )
     }
 
     func getSessionId() -> String? {
-        getValue(
+        keychainStorage.getValue(
             forKey: Keys.sessionId
         )
     }
-    
     func saveGuestSessionId(_ guestSessionId: String) {
-        save(
+        keychainStorage.save(
             guestSessionId,
             forKey: Keys.guestSessionId
         )
     }
-    
+
     func getGuestSessionId() -> String? {
-        getValue(
+        keychainStorage.getValue(
             forKey: Keys.guestSessionId
         )
-    }
-}
-// MARK: - Private
-private extension KeychainAuthSessionStorage {
-    
-    func save(
-        _ value: String,
-        forKey key: String
-    ) {
-        guard let data = value.data(using: .utf8) else { return }
-        
-        let query = makeQuery(forKey: key)
-        
-        let attributes: [String: Any] = [
-            kSecValueData as String: data
-        ]
-        
-        let status = SecItemUpdate(
-            query as CFDictionary,
-            attributes as CFDictionary
-        )
-        
-        if status == errSecItemNotFound {
-            var newItem = query
-            newItem[kSecValueData as String] = data
-            SecItemAdd(newItem as CFDictionary, nil)
-        }
-    }
-    
-    func getValue(forKey key: String) -> String? {
-        var query = makeQuery(forKey: key)
-        query[kSecReturnData as String] = true
-        query[kSecMatchLimit as String] = kSecMatchLimitOne
-        
-        var result: AnyObject?
-        let status = SecItemCopyMatching(
-            query as CFDictionary,
-            &result
-        )
-        
-        guard status == errSecSuccess,
-              let data = result as? Data,
-              let value = String(data: data, encoding: .utf8) else {
-            return nil
-        }
-        
-        return value
-    }
-    
-    func makeQuery(forKey key: String) -> [String: Any] {
-        [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: KeychainConstants.service,
-            kSecAttrAccount as String: key
-        ]
     }
 }
