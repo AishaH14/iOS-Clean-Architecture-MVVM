@@ -1,5 +1,5 @@
 //
-//  CreateListResponseDTO.swift
+//  ListActionResponseDTO.swift
 //  ExampleMVVM
 //
 //  Created by Aisha Hudasi on 16/01/1448 AH.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CreateListResponseDTO: Decodable {
+struct ListActionResponseDTO: Decodable {
     let success: Bool
     let statusCode: Int
     let statusMessage: String

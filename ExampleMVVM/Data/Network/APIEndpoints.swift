@@ -91,7 +91,7 @@ struct APIEndpoints {
     static func createList(
         with sessionRequestDTO: CreateListSessionRequestDTO,
         body createListRequestDTO: CreateListRequestDTO
-    ) -> Endpoint<CreateListResponseDTO> {
+    ) -> Endpoint<ListActionResponseDTO> {
         return Endpoint(
         path: APIPath.list,
                method: .post,
@@ -103,7 +103,7 @@ struct APIEndpoints {
     static func deleteList(
         listId: Int,
         with sessionRequestDTO: CreateListSessionRequestDTO
-    ) -> Endpoint<CreateListResponseDTO> {
+    ) -> Endpoint<ListActionResponseDTO> {
         return Endpoint(
             path: APIPath.listDetails(listId),
                     method: .delete,
@@ -115,7 +115,7 @@ struct APIEndpoints {
         listId: Int,
         with sessionRequestDTO: CreateListSessionRequestDTO,
         body addMovieRequestDTO: AddMovieToListRequestDTO
-    ) -> Endpoint<AddMovieToListResponseDTO> {
+    ) -> Endpoint<ListActionResponseDTO> {
         return Endpoint(
                     path: APIPath.addListItem(listId),
                     method: .post,
@@ -136,7 +136,7 @@ struct APIEndpoints {
         listId: Int,
         with sessionRequestDTO: CreateListSessionRequestDTO,
         body removeMovieRequestDTO: AddMovieToListRequestDTO
-    ) -> Endpoint<AddMovieToListResponseDTO> {
+    ) -> Endpoint<ListActionResponseDTO> {
         Endpoint(
                     path: APIPath.removeListItem(listId),
                     method: .post,

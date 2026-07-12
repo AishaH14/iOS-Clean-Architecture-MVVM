@@ -124,9 +124,8 @@
 		6C0F72E629CF12930005020A /* DispatchQueueTypeMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C0F72E429CF12180005020A /* DispatchQueueTypeMock.swift */; };
 		CA1729522FF4FB0900A19266 /* CreateListRequestDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1729512FF4FB0600A19266 /* CreateListRequestDTO.swift */; };
 		CA1729542FF4FB3B00A19266 /* CreateListSessionRequestDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1729532FF4FB3700A19266 /* CreateListSessionRequestDTO.swift */; };
-		CA1729562FF4FB5C00A19266 /* CreateListResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1729552FF4FB5A00A19266 /* CreateListResponseDTO.swift */; };
+		CA1729562FF4FB5C00A19266 /* ListActionResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1729552FF4FB5A00A19266 /* ListActionResponseDTO.swift */; };
 		CA17296F2FFA32FA00A19266 /* AddMovieToListRequestDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA17296E2FFA328800A19266 /* AddMovieToListRequestDTO.swift */; };
-		CA1729712FFA333500A19266 /* AddMovieToListResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1729702FFA333200A19266 /* AddMovieToListResponseDTO.swift */; };
 		CA1A006E2FE16BCF004A1347 /* AuthEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1A006D2FE16BC8004A1347 /* AuthEndpoints.swift */; };
 		CA1A006F2FE16BCF004A1347 /* AuthEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1A006D2FE16BC8004A1347 /* AuthEndpoints.swift */; };
 		CA1A00712FE16CC6004A1347 /* AuthResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1A00702FE16CC2004A1347 /* AuthResponseDTO.swift */; };
@@ -273,9 +272,8 @@
 		6C0F72E429CF12180005020A /* DispatchQueueTypeMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueueTypeMock.swift; sourceTree = "<group>"; };
 		CA1729512FF4FB0600A19266 /* CreateListRequestDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateListRequestDTO.swift; sourceTree = "<group>"; };
 		CA1729532FF4FB3700A19266 /* CreateListSessionRequestDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateListSessionRequestDTO.swift; sourceTree = "<group>"; };
-		CA1729552FF4FB5A00A19266 /* CreateListResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateListResponseDTO.swift; sourceTree = "<group>"; };
+		CA1729552FF4FB5A00A19266 /* ListActionResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListActionResponseDTO.swift; sourceTree = "<group>"; };
 		CA17296E2FFA328800A19266 /* AddMovieToListRequestDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMovieToListRequestDTO.swift; sourceTree = "<group>"; };
-		CA1729702FFA333200A19266 /* AddMovieToListResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMovieToListResponseDTO.swift; sourceTree = "<group>"; };
 		CA1A006D2FE16BC8004A1347 /* AuthEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthEndpoints.swift; sourceTree = "<group>"; };
 		CA1A00702FE16CC2004A1347 /* AuthResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthResponseDTO.swift; sourceTree = "<group>"; };
 		CA1A00722FE16D81004A1347 /* DefaultAuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAuthRepository.swift; sourceTree = "<group>"; };
@@ -443,9 +441,8 @@
 			isa = PBXGroup;
 			children = (
 				CA40CB642FFA9EA1001A06DE /* ListDetailsResponseDTO.swift */,
-				CA1729702FFA333200A19266 /* AddMovieToListResponseDTO.swift */,
 				CA17296E2FFA328800A19266 /* AddMovieToListRequestDTO.swift */,
-				CA1729552FF4FB5A00A19266 /* CreateListResponseDTO.swift */,
+				CA1729552FF4FB5A00A19266 /* ListActionResponseDTO.swift */,
 				CA1729532FF4FB3700A19266 /* CreateListSessionRequestDTO.swift */,
 				CA1729512FF4FB0600A19266 /* CreateListRequestDTO.swift */,
 				CABE95552FF11971002720A1 /* AccountRequestDTO.swift */,
@@ -1186,7 +1183,6 @@
 				1FFF12A42439F2E700937EE4 /* MoviesResponseStorage.swift in Sources */,
 				1F2AB951242789B80010DEEE /* MoviesResponseDTO+Mapping.swift in Sources */,
 				1FFF1AD5243B966600937EE4 /* MoviesListItemViewModel.swift in Sources */,
-				CA1729712FFA333500A19266 /* AddMovieToListResponseDTO.swift in Sources */,
 				1FC2C9632301FEC0001AE47E /* MovieQueryUDS+Mapping.swift in Sources */,
 				1FE49D90230AA7C200D1D42E /* MovieDetailsViewModel.swift in Sources */,
 				1F794921247D869700552CC3 /* BlackStyleNavigationBarBehavior.swift in Sources */,
@@ -1213,7 +1209,7 @@
 				CA1A00832FE29A2A004A1347 /* NotificationName+Extension.swift in Sources */,
 				1FE49D87230AA7C200D1D42E /* MovieDetailsViewController.swift in Sources */,
 				56FA11362FD54B90004861EC /* MovieDetailsRepository .swift in Sources */,
-				CA1729562FF4FB5C00A19266 /* CreateListResponseDTO.swift in Sources */,
+				CA1729562FF4FB5C00A19266 /* ListActionResponseDTO.swift in Sources */,
 				1FC5B7D0242634EB0086FA8C /* UIImageView+ImageSizeAfterAspectFit.swift in Sources */,
 				1FE49D8C230AA7C200D1D42E /* MoviesListViewController.swift in Sources */,
 				1FC5B7D2242635CC0086FA8C /* CGSize+ScaledSize.swift in Sources */,
