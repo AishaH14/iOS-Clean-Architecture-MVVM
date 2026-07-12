@@ -19,6 +19,7 @@ final class ListsFlowCoordinator {
     
     private weak var navigationController: UINavigationController?
     private let dependencies: ListsFlowCoordinatorDependencies
+    private weak var listsViewController: ListsViewController?
     
     init(
         navigationController: UINavigationController,
@@ -35,6 +36,7 @@ final class ListsFlowCoordinator {
             showAuthorization: showAuthorization
         )
         let viewController = dependencies.makeListsViewController(actions: actions)
+        listsViewController = viewController
         navigationController?.pushViewController(viewController, animated: true)
     }
     
@@ -48,6 +50,7 @@ final class ListsFlowCoordinator {
     }
     private func didCreateList() {
         navigationController?.popViewController(animated: true)
+        listsViewController?.refreshLists()
     }
     private func showListDetails(_ list: MovieList) {
         let viewController = dependencies.makeListDetailsViewController(list: list)
