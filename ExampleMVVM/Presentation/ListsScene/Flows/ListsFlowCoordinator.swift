@@ -11,6 +11,8 @@ protocol ListsFlowCoordinatorDependencies {
     func makeListsViewController(actions: ListsViewModelActions) -> ListsViewController
     func makeCreateListViewController(actions: CreateListViewModelActions) -> CreateListViewController
     func makeListDetailsViewController(list: MovieList) -> ListDetailsViewController
+    func makeLoginViewController(actions: LoginViewModelActions) -> LoginViewController
+    func makeAuthorizeViewController(actions: AuthorizeViewModelActions) -> AuthorizeViewController
 }
 
 final class ListsFlowCoordinator {
@@ -29,7 +31,8 @@ final class ListsFlowCoordinator {
     func start() {
         let actions = ListsViewModelActions(
             showCreateList: showCreateList,
-            showListDetails: showListDetails
+            showListDetails: showListDetails,
+            showAuthorization: showAuthorization
         )
         let viewController = dependencies.makeListsViewController(actions: actions)
         navigationController?.pushViewController(viewController, animated: true)
@@ -50,5 +53,29 @@ final class ListsFlowCoordinator {
         let viewController = dependencies.makeListDetailsViewController(list: list)
         navigationController?.pushViewController(viewController, animated: true)
         
+    }
+    private func showAuthorization() {
+        let viewController = dependencies.makeLoginViewController(
+            actions: LoginViewModelActions(
+                showAuthorize: { [weak self] in
+                    self?.showAuthorize()
+                },
+                showProfile: { [weak self] in
+                    self?.navigationController?.popToRootViewController(animated: true)
+                }
+            )
+        )
+        navigationController?.setViewControllers([viewController], animated: true)
+    }
+    private func showAuthorize() {
+        let viewController = dependencies.makeAuthorizeViewController(
+            actions: AuthorizeViewModelActions(
+                showProfile: { [weak self] in
+                    self?.navigationController?.popToRootViewController(animated: true)
+                }
+            )
+        )
+
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }

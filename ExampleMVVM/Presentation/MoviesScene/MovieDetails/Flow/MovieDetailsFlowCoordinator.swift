@@ -17,6 +17,8 @@ protocol MovieDetailsFlowCoordinatorDependencies {
         movieId: Int,
         actions: SelectListViewModelActions
     ) -> UIViewController
+    func makeLoginViewController(actions: LoginViewModelActions) -> LoginViewController
+        func makeAuthorizeViewController(actions: AuthorizeViewModelActions) -> AuthorizeViewController
 }
 
 final class MovieDetailsFlowCoordinator {
@@ -33,7 +35,8 @@ final class MovieDetailsFlowCoordinator {
     }
     func start(movie: Movie) {
         let actions = MovieDetailsViewModelActions(
-            showLists: showLists
+            showLists: showLists,
+            showAuthorization: showAuthorization
         )
         
         let viewController = dependencies.makeMoviesDetailsViewController(
@@ -78,5 +81,30 @@ final class MovieDetailsFlowCoordinator {
             sheetNavigationController,
             animated: true
         )
+    }
+    private func showAuthorization() {
+        let viewController = dependencies.makeLoginViewController(
+            actions: LoginViewModelActions(
+                showAuthorize: { [weak self] in
+                    self?.showAuthorize()
+                },
+                showProfile: { [weak self] in
+                    self?.navigationController?.popToRootViewController(animated: true)
+                }
+            )
+        )
+
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+    private func showAuthorize() {
+        let viewController = dependencies.makeAuthorizeViewController(
+            actions: AuthorizeViewModelActions(
+                showProfile: { [weak self] in
+                    self?.navigationController?.popToRootViewController(animated: true)
+                }
+            )
+        )
+
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }

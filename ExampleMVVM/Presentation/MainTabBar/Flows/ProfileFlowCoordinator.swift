@@ -31,9 +31,11 @@ final class ProfileFlowCoordinator {
 
     // MARK: - Start
     func start() {
-        let sessionId = dependencies.makeAuthSessionStorage().getSessionId()
+        let authSessionStorage = dependencies.makeAuthSessionStorage()
+        let sessionId = authSessionStorage.getSessionId()
+        let guestSessionId = authSessionStorage.getGuestSessionId()
 
-        if sessionId != nil {
+        if sessionId != nil || guestSessionId != nil {
             let profileViewController = dependencies.makeProfileViewController(
                 actions: ProfileViewModelActions(
                     showLists: showLists
@@ -50,7 +52,6 @@ final class ProfileFlowCoordinator {
             navigationController?.setViewControllers([loginViewController], animated: false)
         }
     }
-
     // MARK: - Private
     private func showAuthorize() {
         let authorizeViewController = dependencies.makeAuthorizeViewController(

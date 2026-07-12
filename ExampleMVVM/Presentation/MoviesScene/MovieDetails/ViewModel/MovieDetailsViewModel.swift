@@ -5,6 +5,7 @@ struct MovieDetailsViewModelActions {
         _ movieId: Int,
         _ didAddMovie: @escaping (_ listId: Int) -> Void
     ) -> Void
+    let showAuthorization: () -> Void
 }
 protocol MovieDetailsViewModelInput {
     func updatePosterImage(width: Int)
@@ -120,11 +121,26 @@ extension DefaultMovieDetailsViewModel {
         isInWatchlist.value = movieDetailsRepository.isInWatchlist(movieId: movieId)
     }
     func addToList() {
+        switch authSessionStorage.listsAuthorizationState() {
+        case .authenticated:
+            break
+            
+        case .guest:
+            actions.showAuthorization()
+            return
+            
+        case .missing:
+            actions.showAuthorization()
+            return
+        }
+        
         guard let movieId = Int(movieId) else { return }
+        
         if isAddedToList.value {
             removeFromList(movieId: movieId)
             return
         }
+        
         actions.showLists(movieId) { [weak self] listId in
             self?.addedListId = listId
             self?.isAddedToList.value = true

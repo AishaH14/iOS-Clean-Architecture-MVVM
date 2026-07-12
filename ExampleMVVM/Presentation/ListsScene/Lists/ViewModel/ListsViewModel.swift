@@ -4,13 +4,12 @@
 //
 //  Created by Aisha Hudasi on 13/01/1448 AH.
 //
-
 import Foundation
 
 struct ListsViewModelActions {
     let showCreateList: () -> Void
     let showListDetails: (MovieList) -> Void
-
+    let showAuthorization: () -> Void
 }
 
 protocol ListsViewModelInput {
@@ -35,6 +34,7 @@ final class DefaultListsViewModel: ListsViewModel {
     let lists: Observable<[MovieList]> = Observable([])
     let error: Observable<String> = Observable("")
     let posterPaths: Observable<[Int: String]> = Observable([:])
+    
     // MARK: - Properties
     private let fetchAccountDetailsUseCase: FetchAccountDetailsUseCase
     private let fetchAccountListsUseCase: FetchAccountListsUseCase
@@ -42,12 +42,14 @@ final class DefaultListsViewModel: ListsViewModel {
     private let actions: ListsViewModelActions
     private let deleteListUseCase: DeleteListUseCase
     private let fetchListMoviesUseCase: FetchListMoviesUseCase
+    
     private let initialPage = 1
     private var currentPage = 1
     private var isLoading = false
     private var canLoadMore = true
     private var accountId: Int?
     private var sessionId: String?
+    
     // MARK: - Init
     init(
         fetchAccountDetailsUseCase: FetchAccountDetailsUseCase,
@@ -67,113 +69,45 @@ final class DefaultListsViewModel: ListsViewModel {
     
     // MARK: - Input
     func viewDidLoad() {
-        guard let sessionId = authSessionStorage.getSessionId() else {
+        switch authSessionStorage.listsAuthorizationState() {
+        case .authenticated(let sessionId):
+            fetchAccountDetails(sessionId: sessionId)
+            
+        case .guest:
+            actions.showAuthorization()
+            
+        case .missing:
             error.value = NSLocalizedString("Missing session id", comment: "")
-            return
         }
-        
-        fetchAccountDetailsUseCase.execute(sessionId: sessionId) { [weak self] result in
-
-                    DispatchQueue.main.async {
-                        guard let self = self else { return }
-
-                        switch result {
-                        case .success(let account):
-                            self.accountId = account.id
-                            self.sessionId = sessionId
-                            self.resetPagination()
-                            self.lists.value = []
-                            self.posterPaths.value = [:]
-
-                            self.fetchLists(
-                                accountId: account.id,
-                                sessionId: sessionId,
-                                page: self.currentPage
-                            )
-
-                        case .failure:
-                            self.error.value = NSLocalizedString(
-                                "Failed to fetch account details",
-                                comment: ""
-                            )
-                }
-            }
-        }
-    }
-    func didTapCreateList() {
-        actions.showCreateList()
-    }
-    private func resetPagination() {
-        currentPage = initialPage
-        canLoadMore = true
     }
     
-    private func fetchLists(
-        accountId: Int,
-        sessionId: String,
-        page: Int
-    ) {
-        guard !isLoading, canLoadMore else { return }
-
-        isLoading = true
-
-        fetchAccountListsUseCase.execute(
-            accountId: accountId,
-            sessionId: sessionId,
-            page: page
-        ) { [weak self] result in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-
-                self.isLoading = false
-
-                switch result {
-                case .success(let newLists):
-                    if newLists.isEmpty {
-                        self.canLoadMore = false
-                        return
-                    }
-
-                    if page == self.initialPage {
-                        self.lists.value = newLists
-                    } else {
-                        self.lists.value += newLists
-                    }
-
-                    self.currentPage = page
-                    self.fetchPosterPaths(for: newLists)
-
-                case .failure:
-                    self.error.value = NSLocalizedString(
-                        "Failed to fetch lists",
-                        comment: ""
-                    )
-                }
-            }
+    func didTapCreateList() {
+        switch authSessionStorage.listsAuthorizationState() {
+        case .authenticated:
+            actions.showCreateList()
+            
+        case .guest:
+            actions.showAuthorization()
+            
+        case .missing:
+            error.value = NSLocalizedString("Missing session id", comment: "")
         }
     }
-    private func fetchPosterPaths(for lists: [MovieList]) {
-        for list in lists {
-            fetchListMoviesUseCase.execute(
-                listId: list.id
-            ) { [weak self] result in
-                guard case let .success(movies) = result,
-                      let posterPath = movies.first?.posterPath else {
-                    return
-                }
-
-                DispatchQueue.main.async {
-                    var paths = self?.posterPaths.value ?? [:]
-                    paths[list.id] = posterPath
-                    self?.posterPaths.value = paths
-                }
-            }
-        }
-    }
+    
     func didRequestDeleteList(at index: Int) {
         guard index < lists.value.count else { return }
         
-        guard let sessionId = authSessionStorage.getSessionId() else {
+        let sessionId: String
+        
+        switch authSessionStorage.listsAuthorizationState() {
+        case .authenticated(let authenticatedSessionId):
+            sessionId = authenticatedSessionId
+            
+        case .guest:
+            actions.showAuthorization()
+            return
+            
+        case .missing:
             error.value = NSLocalizedString("Missing session id", comment: "")
             return
         }
@@ -192,27 +126,139 @@ final class DefaultListsViewModel: ListsViewModel {
                     self?.lists.value = updatedLists
                     
                 case .failure:
-                    self?.error.value = NSLocalizedString("Failed to delete list", comment: "")
+                    self?.error.value = NSLocalizedString(
+                        "Failed to delete list",
+                        comment: ""
+                    )
                 }
             }
         }
     }
+    
     func didSelectList(at index: Int) {
-        guard index < lists.value.count else { return }
-        
-        let list = lists.value[index]
-        actions.showListDetails(list)
+        switch authSessionStorage.listsAuthorizationState() {
+        case .authenticated:
+            guard index < lists.value.count else { return }
+            let list = lists.value[index]
+            actions.showListDetails(list)
+            
+        case .guest:
+            actions.showAuthorization()
+            
+        case .missing:
+            error.value = NSLocalizedString("Missing session id", comment: "")
+        }
     }
+    
     func didReachEndOfList() {
         guard let accountId = accountId,
               let sessionId = sessionId else {
             return
         }
-
+        
         fetchLists(
             accountId: accountId,
             sessionId: sessionId,
             page: currentPage + 1
         )
+    }
+    
+    // MARK: - Private
+    private func fetchAccountDetails(sessionId: String) {
+        fetchAccountDetailsUseCase.execute(sessionId: sessionId) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                
+                switch result {
+                case .success(let account):
+                    self.accountId = account.id
+                    self.sessionId = sessionId
+                    self.resetPagination()
+                    self.lists.value = []
+                    self.posterPaths.value = [:]
+                    
+                    self.fetchLists(
+                        accountId: account.id,
+                        sessionId: sessionId,
+                        page: self.currentPage
+                    )
+                    
+                case .failure:
+                    self.error.value = NSLocalizedString(
+                        "Failed to fetch account details",
+                        comment: ""
+                    )
+                }
+            }
+        }
+    }
+    
+    private func resetPagination() {
+        currentPage = initialPage
+        canLoadMore = true
+    }
+    
+    private func fetchLists(
+        accountId: Int,
+        sessionId: String,
+        page: Int
+    ) {
+        guard !isLoading, canLoadMore else { return }
+        
+        isLoading = true
+        
+        fetchAccountListsUseCase.execute(
+            accountId: accountId,
+            sessionId: sessionId,
+            page: page
+        ) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                
+                self.isLoading = false
+                
+                switch result {
+                case .success(let newLists):
+                    if newLists.isEmpty {
+                        self.canLoadMore = false
+                        return
+                    }
+                    
+                    if page == self.initialPage {
+                        self.lists.value = newLists
+                    } else {
+                        self.lists.value += newLists
+                    }
+                    
+                    self.currentPage = page
+                    self.fetchPosterPaths(for: newLists)
+                    
+                case .failure:
+                    self.error.value = NSLocalizedString(
+                        "Failed to fetch lists",
+                        comment: ""
+                    )
+                }
+            }
+        }
+    }
+    
+    private func fetchPosterPaths(for lists: [MovieList]) {
+        for list in lists {
+            fetchListMoviesUseCase.execute(
+                listId: list.id
+            ) { [weak self] result in
+                guard case let .success(movies) = result,
+                      let posterPath = movies.first?.posterPath else {
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    var paths = self?.posterPaths.value ?? [:]
+                    paths[list.id] = posterPath
+                    self?.posterPaths.value = paths
+                }
+            }
+        }
     }
 }
