@@ -22,25 +22,15 @@ final class ListsViewController: UIViewController, StoryboardInstantiable {
         super.viewDidLoad()
         
         setupViews()
-        bind(to: viewModel)
+        bindViewModel()
         viewModel.viewDidLoad()
     }
     
     func refreshLists() {
         viewModel.viewDidLoad()
     }
-    func bind(to viewModel: ListsViewModel) {
-        viewModel.lists.observe(on: self) { [weak self] lists in
-            self?.lists = lists
-            self?.tableView.reloadData()
-        }
-
-        viewModel.posterPaths.observe(on: self) { [weak self] posterPaths in
-            self?.posterPaths = posterPaths
-            self?.tableView.reloadData()
-        }
+    
     }
-}
 
     // MARK: - Private
     private extension ListsViewController {
