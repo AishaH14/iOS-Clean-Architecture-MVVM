@@ -3,8 +3,10 @@ import Foundation
 struct MovieDetailsViewModelActions {
     let showLists: (
         _ movieId: Int,
+        _ currentListId: Int?,
         _ didAddMovie: @escaping (_ listId: Int) -> Void
     ) -> Void
+    
     let showAuthorization: () -> Void
 }
 protocol MovieDetailsViewModelInput {
@@ -141,13 +143,19 @@ extension DefaultMovieDetailsViewModel {
     }
     func addToList() {
         guard let movieId = Int(movieId) else { return }
-        if isAddedToList.value {
-            removeFromList(movieId: movieId)
-            return
-        }
-        actions.showLists(movieId) { [weak self] listId in
-            self?.addedListId = listId
-            self?.isAddedToList.value = true
+
+        actions.showLists(
+            movieId,
+            addedListId
+        ) { [weak self] listId in
+            guard let self = self else { return }
+
+            if self.addedListId == listId {
+                return
+            }
+
+            self.addedListId = listId
+            self.isAddedToList.value = true
         }
     }
     private func removeFromList(movieId: Int) {

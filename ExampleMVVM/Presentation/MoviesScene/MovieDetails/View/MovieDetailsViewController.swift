@@ -111,37 +111,6 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
 
         watchlistButton.configuration = configuration
     }
-    private func showRemoveMovieConfirmation() {
-        let alert = UIAlertController(
-            title: NSLocalizedString(
-                "Remove Movie?",
-                comment: ""
-            ),
-            message: NSLocalizedString(
-                "Are you sure you want to remove this movie from the list?",
-                comment: ""
-            ),
-            preferredStyle: .alert
-        )
-
-        alert.addAction(
-            UIAlertAction(
-                title: NSLocalizedString("Cancel", comment: ""),
-                style: .cancel
-            )
-        )
-
-        alert.addAction(
-            UIAlertAction(
-                title: NSLocalizedString("Done", comment: ""),
-                style: .destructive
-            ) { [weak self] _ in
-                self?.viewModel.addToList()
-            }
-        )
-
-        present(alert, animated: true)
-    }
     private func updateAddToListButton(isAdded: Bool) {
         var configuration = UIButton.Configuration.plain()
 
@@ -181,10 +150,6 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
     }
     
     @IBAction private func addToListTapped(_ sender: UIButton) {
-        if viewModel.isAddedToList.value {
-            showRemoveMovieConfirmation()
-        } else {
             viewModel.addToList()
         }
     }
-}

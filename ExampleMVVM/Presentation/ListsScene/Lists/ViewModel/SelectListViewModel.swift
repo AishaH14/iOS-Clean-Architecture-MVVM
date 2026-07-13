@@ -19,6 +19,7 @@ protocol SelectListViewModelInput {
 protocol SelectListViewModelOutput {
     var lists: Observable<[MovieList]> { get }
     var error: Observable<String> { get }
+    var selectedListId: Observable<Int?> { get }
 }
 
 typealias SelectListViewModel =
@@ -29,15 +30,19 @@ final class DefaultSelectListViewModel: SelectListViewModel {
     // MARK: - Output
     let lists: Observable<[MovieList]> = Observable([])
     let error: Observable<String> = Observable("")
+    let selectedListId: Observable<Int?>
 
     // MARK: - Properties
     private let movieId: Int
+    private let currentListId: Int?
     private let fetchAccountDetailsUseCase: FetchAccountDetailsUseCase
     private let fetchAccountListsUseCase: FetchAccountListsUseCase
     private let fetchListMoviesUseCase: FetchListMoviesUseCase
     private let addMovieToListUseCase: AddMovieToListUseCase
+    private let removeMovieFromListUseCase: RemoveMovieFromListUseCase
     private let authSessionStorage: AuthSessionStorage
     private let actions: SelectListViewModelActions
+
     private var fetchAccountDetailsTask: Cancellable? {
         willSet {
             fetchAccountDetailsTask?.cancel()
@@ -56,31 +61,46 @@ final class DefaultSelectListViewModel: SelectListViewModel {
         }
     }
 
+    private var removeMovieFromListTask: Cancellable? {
+        willSet {
+            removeMovieFromListTask?.cancel()
+        }
+    }
+
     // MARK: - Init
     init(
         movieId: Int,
+        currentListId: Int?,
         fetchAccountDetailsUseCase: FetchAccountDetailsUseCase,
         fetchAccountListsUseCase: FetchAccountListsUseCase,
         fetchListMoviesUseCase: FetchListMoviesUseCase,
         addMovieToListUseCase: AddMovieToListUseCase,
+        removeMovieFromListUseCase: RemoveMovieFromListUseCase,
         authSessionStorage: AuthSessionStorage,
         actions: SelectListViewModelActions
     ) {
         self.movieId = movieId
+        self.currentListId = currentListId
         self.fetchAccountDetailsUseCase = fetchAccountDetailsUseCase
         self.fetchAccountListsUseCase = fetchAccountListsUseCase
         self.fetchListMoviesUseCase = fetchListMoviesUseCase
         self.addMovieToListUseCase = addMovieToListUseCase
+        self.removeMovieFromListUseCase = removeMovieFromListUseCase
         self.authSessionStorage = authSessionStorage
         self.actions = actions
+        self.selectedListId = Observable(currentListId)
     }
 }
+
 // MARK: - Input
 extension DefaultSelectListViewModel {
 
     func viewDidLoad() {
         guard let sessionId = authSessionStorage.getSessionId() else {
-            error.value = NSLocalizedString("Missing session id", comment: "")
+            error.value = NSLocalizedString(
+                "Missing session id",
+                comment: ""
+            )
             return
         }
 
@@ -104,7 +124,60 @@ extension DefaultSelectListViewModel {
             }
         }
     }
-    private func fetchLists(accountId: Int, sessionId: String) {
+
+    func didSelectList(at index: Int) {
+        guard index < lists.value.count else { return }
+
+        guard let sessionId = authSessionStorage.getSessionId() else {
+            error.value = NSLocalizedString(
+                "Missing session id",
+                comment: ""
+            )
+            return
+        }
+
+        let selectedList = lists.value[index]
+
+        if selectedList.id == currentListId {
+            actions.didAddMovie(selectedList.id)
+            return
+        }
+
+        guard let currentListId = currentListId else {
+            addMovie(
+                to: selectedList.id,
+                sessionId: sessionId
+            )
+            return
+        }
+
+        removeMovieFromListTask = removeMovieFromListUseCase.execute(
+            listId: currentListId,
+            sessionId: sessionId,
+            movieId: movieId
+        ) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self?.addMovie(
+                        to: selectedList.id,
+                        sessionId: sessionId
+                    )
+
+                case .failure:
+                    self?.error.value = NSLocalizedString(
+                        "Failed to move movie to another list",
+                        comment: ""
+                    )
+                }
+            }
+        }
+    }
+
+    private func fetchLists(
+        accountId: Int,
+        sessionId: String
+    ) {
         fetchAccountListsTask = fetchAccountListsUseCase.execute(
             accountId: accountId,
             sessionId: sessionId,
@@ -124,25 +197,21 @@ extension DefaultSelectListViewModel {
             }
         }
     }
-    func didSelectList(at index: Int) {
-        guard index < lists.value.count else { return }
 
-        guard let sessionId = authSessionStorage.getSessionId() else {
-            error.value = NSLocalizedString("Missing session id", comment: "")
-            return
-        }
-
-        let selectedList = lists.value[index]
-
+    private func addMovie(
+        to listId: Int,
+        sessionId: String
+    ) {
         addMovieToListTask = addMovieToListUseCase.execute(
-            listId: selectedList.id,
+            listId: listId,
             sessionId: sessionId,
             movieId: movieId
         ) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
                 case .success:
-                    self?.actions.didAddMovie(selectedList.id)
+                    self?.selectedListId.value = listId
+                    self?.actions.didAddMovie(listId)
 
                 case .failure:
                     self?.error.value = NSLocalizedString(
@@ -152,6 +221,5 @@ extension DefaultSelectListViewModel {
                 }
             }
         }
-        
     }
 }

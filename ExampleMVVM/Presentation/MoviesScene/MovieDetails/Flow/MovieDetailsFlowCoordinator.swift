@@ -8,14 +8,14 @@
 import UIKit
 
 protocol MovieDetailsFlowCoordinatorDependencies {
+    func makeSelectListViewController(
+        movieId: Int,
+        currentListId: Int?,
+        actions: SelectListViewModelActions
+    ) -> UIViewController
     func makeMoviesDetailsViewController(
         movie: Movie,
         actions: MovieDetailsViewModelActions
-    ) -> UIViewController
-
-    func makeSelectListViewController(
-        movieId: Int,
-        actions: SelectListViewModelActions
     ) -> UIViewController
     func makeLoginViewController(actions: LoginViewModelActions) -> LoginViewController
         func makeAuthorizeViewController(actions: AuthorizeViewModelActions) -> AuthorizeViewController
@@ -49,34 +49,37 @@ final class MovieDetailsFlowCoordinator {
             animated: true
         )
     }
+
     private func showLists(
         movieId: Int,
+        currentListId: Int?,
         didAddMovie: @escaping (_ listId: Int) -> Void
     ) {
         let actions = SelectListViewModelActions(
             didAddMovie: { [weak self] listId in
                 didAddMovie(listId)
-
+                
                 self?.navigationController?
                     .presentedViewController?
                     .dismiss(animated: true)
             }
         )
-
+        
         let viewController = dependencies.makeSelectListViewController(
             movieId: movieId,
+            currentListId: currentListId,
             actions: actions
         )
-
+        
         let sheetNavigationController = UINavigationController(
             rootViewController: viewController
         )
-
+        
         if let sheet = sheetNavigationController.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
             sheet.prefersGrabberVisible = true
         }
-
+        
         navigationController?.present(
             sheetNavigationController,
             animated: true

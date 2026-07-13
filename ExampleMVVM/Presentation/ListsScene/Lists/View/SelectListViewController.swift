@@ -37,19 +37,19 @@ final class SelectListViewController: UIViewController {
 
 // MARK: - Private
 private extension SelectListViewController {
-
+    
     func setupViews() {
         title = NSLocalizedString("Add to List", comment: "")
         view.backgroundColor = .systemBackground
-
+        
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.delegate = self
         tableView.rowHeight = 60
         tableView.tableFooterView = UIView()
-
+        
         view.addSubview(tableView)
-
+        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -62,45 +62,45 @@ private extension SelectListViewController {
             target: self,
             action: #selector(doneTapped)
         )
-
+        
         navigationItem.rightBarButtonItem?.isEnabled = false
     }
-
+    
     func bindViewModel() {
         viewModel.lists.observe(on: self) { [weak self] lists in
-            self?.lists = lists
-            self?.tableView.reloadData()
+            guard let self = self else { return }
+            
+            self.lists = lists
+            self.selectedIndex = lists.firstIndex {
+                $0.id == self.viewModel.selectedListId.value
+            }
+            
+            self.navigationItem.rightBarButtonItem?.isEnabled =
+            self.selectedIndex != nil
+            
+            self.tableView.reloadData()
         }
-
-        viewModel.error.observe(on: self) { [weak self] error in
-            guard !error.isEmpty else { return }
-            self?.showError(message: error)
+        
+        viewModel.selectedListId.observe(on: self) { [weak self] selectedListId in
+            guard let self = self else { return }
+            
+            self.selectedIndex = self.lists.firstIndex {
+                $0.id == selectedListId
+            }
+            
+            self.navigationItem.rightBarButtonItem?.isEnabled =
+            self.selectedIndex != nil
+            
+            self.tableView.reloadData()
         }
     }
-    @objc func doneTapped() {
-        guard let selectedIndex = selectedIndex else { return }
-        navigationItem.rightBarButtonItem?.isEnabled = false
-        viewModel.didSelectList(at: selectedIndex)
+        @objc func doneTapped() {
+            guard let selectedIndex = selectedIndex else { return }
 
-    }
-    func showError(message: String) {
-        let alert = UIAlertController(
-            title: nil,
-            message: message,
-            preferredStyle: .alert
-        )
-
-        alert.addAction(
-            UIAlertAction(
-                title: NSLocalizedString("OK", comment: ""),
-                style: .default
-            )
-        )
-
-        present(alert, animated: true)
-    }
-}
-
+            navigationItem.rightBarButtonItem?.isEnabled = false
+            viewModel.didSelectList(at: selectedIndex)
+        
+    }}
 // MARK: - UITableViewDataSource
 extension SelectListViewController: UITableViewDataSource {
 
@@ -164,14 +164,9 @@ extension SelectListViewController: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
-        if selectedIndex == indexPath.row {
-            selectedIndex = nil
-        } else {
-            selectedIndex = indexPath.row
-        }
+        selectedIndex = indexPath.row
 
-        navigationItem.rightBarButtonItem?.isEnabled =
-            selectedIndex != nil
+        navigationItem.rightBarButtonItem?.isEnabled = true
 
         tableView.reloadData()
     }

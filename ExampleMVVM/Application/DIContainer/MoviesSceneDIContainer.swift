@@ -211,11 +211,13 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
     }
     func makeSelectListViewController(
         movieId: Int,
+        currentListId: Int?,
         actions: SelectListViewModelActions
     ) -> UIViewController {
         SelectListViewController(
             viewModel: makeSelectListViewModel(
                 movieId: movieId,
+                currentListId: currentListId,
                 actions: actions
             )
         )
@@ -223,14 +225,17 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
 
     func makeSelectListViewModel(
         movieId: Int,
+        currentListId: Int?,
         actions: SelectListViewModelActions
     ) -> SelectListViewModel {
         DefaultSelectListViewModel(
             movieId: movieId,
+            currentListId: currentListId,
             fetchAccountDetailsUseCase: makeFetchAccountDetailsUseCase(),
             fetchAccountListsUseCase: makeFetchAccountListsUseCase(),
             fetchListMoviesUseCase: makeFetchListMoviesUseCase(),
             addMovieToListUseCase: makeAddMovieToListUseCase(),
+            removeMovieFromListUseCase: makeRemoveMovieFromListUseCase(),
             authSessionStorage: makeAuthSessionStorage(),
             actions: actions
         )
