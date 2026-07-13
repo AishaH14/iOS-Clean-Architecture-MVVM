@@ -1,5 +1,6 @@
 import Foundation
 
+
 struct APIEndpoints {
     
     static func getMovies(with moviesRequestDTO: MoviesRequestDTO) -> Endpoint<MoviesResponseDTO> {
@@ -41,7 +42,15 @@ struct APIEndpoints {
             queryParametersEncodable: moviesListRequestDTO
         )
     }
-
+    static func getAccountDetails(
+        with accountRequestDTO: AccountRequestDTO
+    ) -> Endpoint<AccountResponseDTO> {
+        return Endpoint(
+            path: "3/account",
+            method: .get,
+            queryParametersEncodable: accountRequestDTO
+        )
+    }
     static func getMoviePoster(path: String, width: Int) -> Endpoint<Data> {
 
         let sizes = [92, 154, 185, 342, 500, 780]

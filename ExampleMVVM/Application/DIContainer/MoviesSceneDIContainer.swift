@@ -1,7 +1,7 @@
 import UIKit
 
 
-final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, MoviesHomeFlowCoordinatorDependencies, ProfileFlowCoordinatorDependencies {
+final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, MoviesHomeFlowCoordinatorDependencies, ProfileFlowCoordinatorDependencies,MovieDetailsFlowCoordinatorDependencies {
     
     struct Dependencies {
         let apiDataTransferService: DataTransferService
@@ -17,7 +17,10 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
     lazy var authRepository: AuthRepository = DefaultAuthRepository(
         dataTransferService: dependencies.apiDataTransferService
     )
-    lazy var authSessionStorage: AuthSessionStorage = UserDefaultsAuthSessionStorage()
+    lazy var authSessionStorage: AuthSessionStorage = KeychainAuthSessionStorage()
+    lazy var listsRepository: ListsRepository = DefaultListsRepository(
+        dataTransferService: dependencies.apiDataTransferService
+    )
     init(dependencies: Dependencies) {
         self.dependencies = dependencies        
     }
@@ -53,6 +56,11 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
             requestValue: requestValue,
             completion: completion,
             moviesQueriesRepository: makeMoviesQueriesRepository()
+        )
+    }
+    func makeFetchListMoviesUseCase() -> FetchListMoviesUseCase {
+        DefaultFetchListMoviesUseCase(
+            listsRepository: makeListsRepository()
         )
     }
     func makeAuthSessionStorage() -> AuthSessionStorage {
@@ -106,9 +114,131 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
     private func makeAuthRepository() -> AuthRepository {
         return authRepository
     }
+    private func makeListsRepository() -> ListsRepository {
+        return listsRepository
+    }
 
-    func makeProfileViewController() -> UIViewController {
-        ProfileViewController.instantiateViewController()
+    func makeFetchAccountListsUseCase() -> FetchAccountListsUseCase {
+        DefaultFetchAccountListsUseCase(
+            listsRepository: makeListsRepository()
+        )
+    }
+    func makeFetchAccountDetailsUseCase() -> FetchAccountDetailsUseCase {
+        DefaultFetchAccountDetailsUseCase(
+            listsRepository: makeListsRepository()
+        )
+    }
+    func makeCreateListUseCase() -> CreateListUseCase {
+        DefaultCreateListUseCase(
+            listsRepository: makeListsRepository()
+        )
+    }
+    func makeDeleteListUseCase() -> DeleteListUseCase {
+        DefaultDeleteListUseCase(
+            listsRepository: makeListsRepository()
+        )
+    }
+    // MARK: - Profile
+    func makeProfileViewController(actions: ProfileViewModelActions) -> UIViewController {
+        let viewController = ProfileViewController.instantiateViewController()
+        viewController.viewModel = makeProfileViewModel(actions: actions)
+        return viewController
+    }
+
+    func makeProfileViewModel(actions: ProfileViewModelActions) -> ProfileViewModel {
+        DefaultProfileViewModel(actions: actions)
+    }
+    // MARK: - Lists
+
+    func makeListsViewController(actions: ListsViewModelActions) -> ListsViewController {
+            let viewController = ListsViewController.instantiateViewController()
+            viewController.viewModel = makeListsViewModel(actions: actions)
+            viewController.posterImagesRepository = makePosterImagesRepository()
+            return viewController
+        }
+
+    func makeListsViewModel(actions: ListsViewModelActions) -> ListsViewModel {
+        DefaultListsViewModel(
+            fetchAccountDetailsUseCase: makeFetchAccountDetailsUseCase(),
+            fetchAccountListsUseCase: makeFetchAccountListsUseCase(),
+            fetchListMoviesUseCase: makeFetchListMoviesUseCase(),
+            deleteListUseCase: makeDeleteListUseCase(),
+            authSessionStorage: makeAuthSessionStorage(),
+            actions: actions
+        )
+    }
+
+    func makeCreateListViewController(actions: CreateListViewModelActions
+    ) -> CreateListViewController {
+        CreateListViewController.create(
+            with: makeCreateListViewModel(actions: actions)
+        )
+    }
+
+    func makeCreateListViewModel(actions: CreateListViewModelActions) -> CreateListViewModel {
+        DefaultCreateListViewModel(
+            createListUseCase: makeCreateListUseCase(),
+            authSessionStorage: makeAuthSessionStorage(),
+            actions: actions
+        )
+    }
+  
+    func makeListDetailsViewController(
+        list: MovieList
+    ) -> ListDetailsViewController {
+        ListDetailsViewController.create(
+            with: makeListDetailsViewModel(list: list),
+            posterImagesRepository: makePosterImagesRepository()
+        )
+    }
+    func makeListDetailsViewModel(
+        list: MovieList
+    ) -> ListDetailsViewModel {
+        DefaultListDetailsViewModel(
+            list: list,
+            fetchListMoviesUseCase: makeFetchListMoviesUseCase()
+        )
+    }
+    func makeAddMovieToListUseCase() -> AddMovieToListUseCase {
+        DefaultAddMovieToListUseCase(
+            listsRepository: makeListsRepository()
+        )
+    }
+    func makeRemoveMovieFromListUseCase() -> RemoveMovieFromListUseCase {
+        DefaultRemoveMovieFromListUseCase(
+            listsRepository: makeListsRepository()
+        )
+    }
+    func makeSelectListViewController(
+        movieId: Int,
+        currentListId: Int?,
+        actions: SelectListViewModelActions
+    ) -> UIViewController {
+        SelectListViewController(
+            viewModel: makeSelectListViewModel(
+                movieId: movieId,
+                currentListId: currentListId,
+                actions: actions
+            )
+        )
+    }
+
+    func makeSelectListViewModel(
+        movieId: Int,
+        currentListId: Int?,
+        actions: SelectListViewModelActions
+    ) -> SelectListViewModel {
+        DefaultSelectListViewModel(
+            movieId: movieId,
+            currentListId: currentListId,
+            fetchAccountDetailsUseCase: makeFetchAccountDetailsUseCase(),
+            fetchAccountListsUseCase: makeFetchAccountListsUseCase(),
+            fetchListMoviesUseCase: makeFetchListMoviesUseCase(),
+            addMovieToListUseCase: makeAddMovieToListUseCase(),
+            removeMovieFromListUseCase: makeRemoveMovieFromListUseCase(),
+            authSessionStorage: makeAuthSessionStorage(),
+            actions: actions
+        )
     }
     // MARK: - Repositories
     func makeMoviesRepository() -> MoviesRepository {
@@ -164,17 +294,32 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
         )
     }
     // MARK: - Movie Details
-    func makeMoviesDetailsViewController(movie: Movie) -> UIViewController {
+    func makeMoviesDetailsViewController(
+        movie: Movie,
+        actions: MovieDetailsViewModelActions
+    ) -> UIViewController {
         MovieDetailsViewController.create(
-            with: makeMoviesDetailsViewModel(movie: movie)
+            with: makeMoviesDetailsViewModel(
+                movie: movie,
+                actions: actions
+            )
         )
     }
-    
-    func makeMoviesDetailsViewModel(movie: Movie) -> MovieDetailsViewModel {
+
+    func makeMoviesDetailsViewModel(
+        movie: Movie,
+        actions: MovieDetailsViewModelActions
+    ) -> MovieDetailsViewModel {
         DefaultMovieDetailsViewModel(
             movie: movie,
             posterImagesRepository: makePosterImagesRepository(),
-            movieDetailsRepository: movieDetailsRepository
+            movieDetailsRepository: movieDetailsRepository,
+            removeMovieFromListUseCase: makeRemoveMovieFromListUseCase(),
+            authSessionStorage: makeAuthSessionStorage(),
+            fetchAccountDetailsUseCase: makeFetchAccountDetailsUseCase(),
+            fetchAccountListsUseCase: makeFetchAccountListsUseCase(),
+            fetchListMoviesUseCase: makeFetchListMoviesUseCase(),
+            actions: actions
         )
     }
     // MARK: - Movies Queries Suggestions List
@@ -199,6 +344,14 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
     // MARK: - Flow Coordinators
     func makeMoviesSearchFlowCoordinator(navigationController: UINavigationController) -> MoviesSearchFlowCoordinator {
         MoviesSearchFlowCoordinator(
+            navigationController: navigationController,
+            dependencies: self
+        )
+    }
+    func makeMovieDetailsFlowCoordinator(
+        navigationController: UINavigationController
+    ) -> MovieDetailsFlowCoordinator {
+        MovieDetailsFlowCoordinator(
             navigationController: navigationController,
             dependencies: self
         )

@@ -7,10 +7,10 @@
 
 import UIKit
 
-protocol ProfileFlowCoordinatorDependencies {
+protocol ProfileFlowCoordinatorDependencies: ListsFlowCoordinatorDependencies {
     func makeLoginViewController(actions: LoginViewModelActions) -> LoginViewController
     func makeAuthorizeViewController(actions: AuthorizeViewModelActions) -> AuthorizeViewController
-    func makeProfileViewController() -> UIViewController
+    func makeProfileViewController(actions: ProfileViewModelActions) -> UIViewController
     func makeAuthSessionStorage() -> AuthSessionStorage
 }
 
@@ -31,10 +31,16 @@ final class ProfileFlowCoordinator {
 
     // MARK: - Start
     func start() {
-        let sessionId = dependencies.makeAuthSessionStorage().getSessionId()
+        let authSessionStorage = dependencies.makeAuthSessionStorage()
+        let sessionId = authSessionStorage.getSessionId()
+        let guestSessionId = authSessionStorage.getGuestSessionId()
 
-        if sessionId != nil {
-            let profileViewController = dependencies.makeProfileViewController()
+        if sessionId != nil || guestSessionId != nil {
+            let profileViewController = dependencies.makeProfileViewController(
+                actions: ProfileViewModelActions(
+                    showLists: showLists
+                )
+            )
             navigationController?.setViewControllers([profileViewController], animated: false)
         } else {
             let loginViewController = dependencies.makeLoginViewController(
@@ -46,7 +52,6 @@ final class ProfileFlowCoordinator {
             navigationController?.setViewControllers([loginViewController], animated: false)
         }
     }
-
     // MARK: - Private
     private func showAuthorize() {
         let authorizeViewController = dependencies.makeAuthorizeViewController(
@@ -58,7 +63,20 @@ final class ProfileFlowCoordinator {
     }
 
     private func showProfile() {
-        let profileViewController = dependencies.makeProfileViewController()
+        let profileViewController = dependencies.makeProfileViewController(
+            actions: ProfileViewModelActions(
+                showLists: showLists
+            )
+        )
         navigationController?.setViewControllers([profileViewController], animated: true)
+    }
+    private func showLists() {
+        guard let navigationController = navigationController else { return }
+        
+        let flow = ListsFlowCoordinator(
+            navigationController: navigationController,
+            dependencies: dependencies
+        )
+        flow.start()
     }
 }

@@ -14,26 +14,48 @@ protocol AuthSessionStorage {
     func getGuestSessionId() -> String?
 }
 
-final class UserDefaultsAuthSessionStorage: AuthSessionStorage {
+final class KeychainAuthSessionStorage: AuthSessionStorage {
     
     private enum Keys {
         static let sessionId = "session_id"
         static let guestSessionId = "guest_session_id"
     }
-    
+    private enum KeychainConstants {
+        static let service = "com.examplemvvm.auth"
+    }
+
+    private let keychainStorage: KeychainStorage
+
+    init(
+        keychainStorage: KeychainStorage = KeychainStorage(
+            service: KeychainConstants.service
+        )
+    ) {
+        self.keychainStorage = keychainStorage
+    }
+
     func saveSessionId(_ sessionId: String) {
-        UserDefaults.standard.set(sessionId, forKey: Keys.sessionId)
+        keychainStorage.save(
+            sessionId,
+            forKey: Keys.sessionId
+        )
     }
-    
+
     func getSessionId() -> String? {
-        UserDefaults.standard.string(forKey: Keys.sessionId)
+        keychainStorage.getValue(
+            forKey: Keys.sessionId
+        )
     }
-    
     func saveGuestSessionId(_ guestSessionId: String) {
-        UserDefaults.standard.set(guestSessionId, forKey: Keys.guestSessionId)
+        keychainStorage.save(
+            guestSessionId,
+            forKey: Keys.guestSessionId
+        )
     }
-    
+
     func getGuestSessionId() -> String? {
-        UserDefaults.standard.string(forKey: Keys.guestSessionId)
+        keychainStorage.getValue(
+            forKey: Keys.guestSessionId
+        )
     }
 }
