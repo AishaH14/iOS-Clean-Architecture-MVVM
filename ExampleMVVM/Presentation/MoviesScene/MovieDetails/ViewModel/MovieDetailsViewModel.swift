@@ -47,6 +47,25 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
     private let fetchAccountDetailsUseCase: FetchAccountDetailsUseCase
     private let fetchAccountListsUseCase: FetchAccountListsUseCase
     private let fetchListMoviesUseCase: FetchListMoviesUseCase
+    private var removeMovieFromListTask: Cancellable? {
+        willSet {
+            removeMovieFromListTask?.cancel()
+        }
+    }
+
+    private var fetchAccountDetailsTask: Cancellable? {
+        willSet {
+            fetchAccountDetailsTask?.cancel()
+        }
+    }
+
+    private var fetchAccountListsTask: Cancellable? {
+        willSet {
+            fetchAccountListsTask?.cancel()
+        }
+    }
+
+    private var fetchListMoviesTasks: [Cancellable] = []
     // MARK: - OUTPUT
     let title: String
     let posterImage: Observable<Data?> = Observable(nil)
@@ -95,7 +114,7 @@ extension DefaultMovieDetailsViewModel {
     }
     func updatePosterImage(width: Int) {
         guard let posterImagePath = posterImagePath else { return }
-
+        
         imageLoadTask = posterImagesRepository.fetchImage(
             with: posterImagePath,
             width: width
@@ -115,32 +134,17 @@ extension DefaultMovieDetailsViewModel {
         movieDetailsRepository.toggleFavorite(movieId: movieId)
         isFavorite.value = movieDetailsRepository.isFavorite(movieId: movieId)
     }
-
+    
     func toggleWatchlist() {
         movieDetailsRepository.toggleWatchlist(movieId: movieId)
         isInWatchlist.value = movieDetailsRepository.isInWatchlist(movieId: movieId)
     }
     func addToList() {
-        switch authSessionStorage.listsAuthorizationState() {
-        case .authenticated:
-            break
-            
-        case .guest:
-            actions.showAuthorization()
-            return
-            
-        case .missing:
-            actions.showAuthorization()
-            return
-        }
-        
         guard let movieId = Int(movieId) else { return }
-        
         if isAddedToList.value {
             removeFromList(movieId: movieId)
             return
         }
-        
         actions.showLists(movieId) { [weak self] listId in
             self?.addedListId = listId
             self?.isAddedToList.value = true
@@ -148,12 +152,12 @@ extension DefaultMovieDetailsViewModel {
     }
     private func removeFromList(movieId: Int) {
         guard let listId = addedListId else { return }
-
+        
         guard let sessionId = authSessionStorage.getSessionId() else {
             return
         }
-
-        removeMovieFromListUseCase.execute(
+        
+        removeMovieFromListTask = removeMovieFromListUseCase.execute(
             listId: listId,
             sessionId: sessionId,
             movieId: movieId
@@ -163,7 +167,7 @@ extension DefaultMovieDetailsViewModel {
                 case .success:
                     self?.addedListId = nil
                     self?.isAddedToList.value = false
-
+                    
                 case .failure:
                     break
                 }
@@ -174,49 +178,51 @@ extension DefaultMovieDetailsViewModel {
     private func checkIfMovieIsAlreadyAdded() {
         guard let sessionId = authSessionStorage.getSessionId() else { return }
         guard let currentMovieId = Int(movieId) else { return }
-
-        fetchAccountDetailsUseCase.execute(
+        
+        fetchAccountDetailsTask = fetchAccountDetailsUseCase.execute(
             sessionId: sessionId
         ) { [weak self] result in
             guard let self = self else { return }
-
+            
             switch result {
             case .success(let account):
-                self.fetchAccountListsUseCase.execute(
+                self.fetchAccountListsTask = self.fetchAccountListsUseCase.execute(
                     accountId: account.id,
                     sessionId: sessionId,
                     page: 1
                 ) { [weak self] result in
                     guard let self = self else { return }
-
                     guard case let .success(lists) = result else { return }
-
+                    self.fetchListMoviesTasks.forEach { $0.cancel() }
+                    self.fetchListMoviesTasks.removeAll()
                     for list in lists {
-                        self.fetchListMoviesUseCase.execute(
-                            listId: list.id
-                        ) { [weak self] result in
-                            guard let self = self else { return }
-
-                            guard case let .success(movies) = result else { return }
-
-                            let containsMovie = movies.contains {
-                                Int($0.id) == currentMovieId
+                        if let task = self.fetchListMoviesUseCase.execute(
+                            listId: list.id,
+                            completion: { [weak self] result in
+                                guard let self = self else { return }
+                                guard case let .success(movies) = result else {
+                                    return
+                                }
+                                
+                                let containsMovie = movies.contains {
+                                    Int($0.id) == currentMovieId
+                                }
+                                
+                                guard containsMovie else { return }
+                                
+                                self.mainQueue.async {
+                                    self.addedListId = list.id
+                                    self.isAddedToList.value = true
+                                }
                             }
-
-                            guard containsMovie else { return }
-
-                            self.mainQueue.async {
-                                self.addedListId = list.id
-                                self.isAddedToList.value = true
-                            }
+                        ) {
+                            self.fetchListMoviesTasks.append(task)
                         }
                     }
                 }
-
             case .failure:
                 break
             }
         }
     }
-    }
-
+}

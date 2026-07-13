@@ -7,29 +7,28 @@
 import Foundation
 
 protocol DeleteListUseCase {
+    @discardableResult
     func execute(
         listId: Int,
         sessionId: String,
         completion: @escaping (Result<Void, Error>) -> Void
-    )
+    ) -> Cancellable?
 }
 
 final class DefaultDeleteListUseCase: DeleteListUseCase {
     
-    // MARK: - Properties
     private let listsRepository: ListsRepository
     
-    // MARK: - Init
     init(listsRepository: ListsRepository) {
         self.listsRepository = listsRepository
     }
     
-    // MARK: - Execute
+    @discardableResult
     func execute(
         listId: Int,
         sessionId: String,
         completion: @escaping (Result<Void, Error>) -> Void
-    ) {
+    ) -> Cancellable? {
         listsRepository.deleteList(
             listId: listId,
             sessionId: sessionId,

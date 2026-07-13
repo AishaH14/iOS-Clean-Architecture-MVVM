@@ -29,6 +29,11 @@ final class DefaultCreateListViewModel: CreateListViewModel {
     private let createListUseCase: CreateListUseCase
     private let authSessionStorage: AuthSessionStorage
     private let actions: CreateListViewModelActions
+    private var createListTask: Cancellable? {
+        willSet {
+            createListTask?.cancel()
+        }
+    }
     
     // MARK: - Init
     init(
@@ -56,7 +61,7 @@ final class DefaultCreateListViewModel: CreateListViewModel {
             return
         }
         
-        createListUseCase.execute(
+        createListTask = createListUseCase.execute(
             sessionId: sessionId,
             name: trimmedName,
             description: trimmedDescription
@@ -67,9 +72,12 @@ final class DefaultCreateListViewModel: CreateListViewModel {
                     self?.actions.didCreateList()
                     
                 case .failure:
-                    self?.error.value = NSLocalizedString("Failed to create list", comment: "")
+                    self?.error.value = NSLocalizedString("Failed to create list",
+                        comment: ""
+                    )
                 }
             }
         }
-    }
-}
+            }
+        }
+

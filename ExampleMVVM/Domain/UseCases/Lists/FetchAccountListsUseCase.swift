@@ -8,12 +8,13 @@
 import Foundation
 
 protocol FetchAccountListsUseCase {
+    @discardableResult
     func execute(
         accountId: Int,
         sessionId: String,
         page: Int,
         completion: @escaping (Result<[MovieList], Error>) -> Void
-    )
+    ) -> Cancellable?
 }
 
 final class DefaultFetchAccountListsUseCase: FetchAccountListsUseCase {
@@ -24,12 +25,13 @@ final class DefaultFetchAccountListsUseCase: FetchAccountListsUseCase {
         self.listsRepository = listsRepository
     }
     
+    @discardableResult
     func execute(
         accountId: Int,
         sessionId: String,
         page: Int,
         completion: @escaping (Result<[MovieList], Error>) -> Void
-    ) {
+    ) -> Cancellable? {
         listsRepository.fetchAccountLists(
             accountId: accountId,
             sessionId: sessionId,

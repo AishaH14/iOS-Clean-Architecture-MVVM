@@ -43,6 +43,26 @@ final class DefaultListsViewModel: ListsViewModel {
     private let deleteListUseCase: DeleteListUseCase
     private let fetchListMoviesUseCase: FetchListMoviesUseCase
     
+    private var fetchAccountDetailsTask: Cancellable? {
+        willSet {
+            fetchAccountDetailsTask?.cancel()
+        }
+    }
+    
+    private var fetchAccountListsTask: Cancellable? {
+        willSet {
+            fetchAccountListsTask?.cancel()
+        }
+    }
+    
+    private var deleteListTask: Cancellable? {
+        willSet {
+            deleteListTask?.cancel()
+        }
+    }
+    
+    private var posterLoadTasks: [Cancellable] = []
+    
     private let initialPage = 1
     private var currentPage = 1
     private var isLoading = false
@@ -77,7 +97,8 @@ final class DefaultListsViewModel: ListsViewModel {
             actions.showAuthorization()
             
         case .missing:
-            error.value = NSLocalizedString("Missing session id", comment: "")
+            error.value = NSLocalizedString("Missing session id",comment: ""
+            )
         }
     }
     
@@ -90,7 +111,8 @@ final class DefaultListsViewModel: ListsViewModel {
             actions.showAuthorization()
             
         case .missing:
-            error.value = NSLocalizedString("Missing session id", comment: "")
+         error.value = NSLocalizedString("Missing session id",comment: ""
+            )
         }
     }
     
@@ -108,13 +130,15 @@ final class DefaultListsViewModel: ListsViewModel {
             return
             
         case .missing:
-            error.value = NSLocalizedString("Missing session id", comment: "")
+            error.value = NSLocalizedString("Missing session id",
+                comment: ""
+            )
             return
         }
         
         let list = lists.value[index]
         
-        deleteListUseCase.execute(
+        deleteListTask = deleteListUseCase.execute(
             listId: list.id,
             sessionId: sessionId
         ) { [weak self] result in
@@ -139,6 +163,7 @@ final class DefaultListsViewModel: ListsViewModel {
         switch authSessionStorage.listsAuthorizationState() {
         case .authenticated:
             guard index < lists.value.count else { return }
+            
             let list = lists.value[index]
             actions.showListDetails(list)
             
@@ -146,7 +171,10 @@ final class DefaultListsViewModel: ListsViewModel {
             actions.showAuthorization()
             
         case .missing:
-            error.value = NSLocalizedString("Missing session id", comment: "")
+            error.value = NSLocalizedString(
+                "Missing session id",
+                comment: ""
+            )
         }
     }
     
@@ -165,7 +193,9 @@ final class DefaultListsViewModel: ListsViewModel {
     
     // MARK: - Private
     private func fetchAccountDetails(sessionId: String) {
-        fetchAccountDetailsUseCase.execute(sessionId: sessionId) { [weak self] result in
+        fetchAccountDetailsTask = fetchAccountDetailsUseCase.execute(
+            sessionId: sessionId
+        ) { [weak self] result in
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 
@@ -207,7 +237,7 @@ final class DefaultListsViewModel: ListsViewModel {
         
         isLoading = true
         
-        fetchAccountListsUseCase.execute(
+        fetchAccountListsTask = fetchAccountListsUseCase.execute(
             accountId: accountId,
             sessionId: sessionId,
             page: page
@@ -245,7 +275,7 @@ final class DefaultListsViewModel: ListsViewModel {
     
     private func fetchPosterPaths(for lists: [MovieList]) {
         for list in lists {
-            fetchListMoviesUseCase.execute(
+            if let task = fetchListMoviesUseCase.execute(
                 listId: list.id
             ) { [weak self] result in
                 guard case let .success(movies) = result,
@@ -258,6 +288,8 @@ final class DefaultListsViewModel: ListsViewModel {
                     paths[list.id] = posterPath
                     self?.posterPaths.value = paths
                 }
+            } {
+                posterLoadTasks.append(task)
             }
         }
     }

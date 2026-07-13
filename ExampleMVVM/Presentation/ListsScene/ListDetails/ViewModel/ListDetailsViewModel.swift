@@ -30,6 +30,11 @@ final class DefaultListDetailsViewModel: ListDetailsViewModel {
     // MARK: - Properties
     private let fetchListMoviesUseCase: FetchListMoviesUseCase
     private let mainQueue: DispatchQueueType
+    private var fetchListMoviesTask: Cancellable? {
+        willSet {
+            fetchListMoviesTask?.cancel()
+        }
+    }
 
     // MARK: - Init
     init(
@@ -44,7 +49,7 @@ final class DefaultListDetailsViewModel: ListDetailsViewModel {
 
     // MARK: - Input
     func viewDidLoad() {
-        fetchListMoviesUseCase.execute(
+        fetchListMoviesTask = fetchListMoviesUseCase.execute(
             listId: list.id
         ) { [weak self] result in
             self?.mainQueue.async {

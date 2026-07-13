@@ -8,12 +8,13 @@
 import Foundation
 
 protocol CreateListUseCase {
+    @discardableResult
     func execute(
         sessionId: String,
         name: String,
         description: String,
         completion: @escaping (Result<Int, Error>) -> Void
-    )
+    ) -> Cancellable?
 }
 
 final class DefaultCreateListUseCase: CreateListUseCase {
@@ -24,12 +25,13 @@ final class DefaultCreateListUseCase: CreateListUseCase {
         self.listsRepository = listsRepository
     }
     
+    @discardableResult
     func execute(
         sessionId: String,
         name: String,
         description: String,
         completion: @escaping (Result<Int, Error>) -> Void
-    ) {
+    ) -> Cancellable? {
         listsRepository.createList(
             sessionId: sessionId,
             name: name,

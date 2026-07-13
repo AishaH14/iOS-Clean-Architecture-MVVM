@@ -8,10 +8,11 @@
 import Foundation
 
 protocol FetchAccountDetailsUseCase {
+    @discardableResult
     func execute(
         sessionId: String,
         completion: @escaping (Result<Account, Error>) -> Void
-    )
+    ) -> Cancellable?
 }
 
 final class DefaultFetchAccountDetailsUseCase: FetchAccountDetailsUseCase {
@@ -22,10 +23,11 @@ final class DefaultFetchAccountDetailsUseCase: FetchAccountDetailsUseCase {
         self.listsRepository = listsRepository
     }
     
+    @discardableResult
     func execute(
         sessionId: String,
         completion: @escaping (Result<Account, Error>) -> Void
-    ) {
+    ) -> Cancellable? {
         listsRepository.fetchAccountDetails(
             sessionId: sessionId,
             completion: completion

@@ -33,56 +33,75 @@ final class DefaultListsRepository {
 
 extension DefaultListsRepository: ListsRepository {
     
+    @discardableResult
     func fetchAccountDetails(
         sessionId: String,
         completion: @escaping (Result<Account, Error>) -> Void
-    ) {
+    ) -> Cancellable? {
+        
         let requestDTO = AccountRequestDTO(sessionId: sessionId)
         let endpoint = APIEndpoints.getAccountDetails(with: requestDTO)
         
-        dataTransferService.request(
+        let task = RepositoryTask()
+        
+        task.networkTask = dataTransferService.request(
             with: endpoint,
             on: backgroundQueue
         ) { result in
             switch result {
             case .success(let responseDTO):
                 completion(.success(responseDTO.toDomain()))
+                
             case .failure(let error):
                 completion(.failure(error))
             }
         }
+        
+        return task
     }
     
+    @discardableResult
     func fetchAccountLists(
         accountId: Int,
         sessionId: String,
         page: Int,
         completion: @escaping (Result<[MovieList], Error>) -> Void
-    ) {
-        let requestDTO = ListsRequestDTO(sessionId: sessionId, page: page)
+    ) -> Cancellable? {
+        
+        let requestDTO = ListsRequestDTO(
+            sessionId: sessionId,
+            page: page
+        )
+        
         let endpoint = ListsEndpoints.getAccountLists(
             accountId: accountId,
             with: requestDTO
         )
         
-        dataTransferService.request(
+        let task = RepositoryTask()
+        
+        task.networkTask = dataTransferService.request(
             with: endpoint,
             on: backgroundQueue
         ) { result in
             switch result {
             case .success(let responseDTO):
                 completion(.success(responseDTO.toDomain()))
+                
             case .failure(let error):
                 completion(.failure(error))
             }
         }
+        
+        return task
     }
+    @discardableResult
     func createList(
         sessionId: String,
         name: String,
         description: String,
         completion: @escaping (Result<Int, Error>) -> Void
-    ) {
+    ) -> Cancellable? {
         let sessionRequestDTO = CreateListSessionRequestDTO(
             sessionId: sessionId
         )
@@ -92,12 +111,15 @@ extension DefaultListsRepository: ListsRepository {
             description: description,
             language: "en"
         )
+        
         let endpoint = ListsEndpoints.createList(
             with: sessionRequestDTO,
             body: requestDTO
         )
         
-        dataTransferService.request(
+        let task = RepositoryTask()
+        
+        task.networkTask = dataTransferService.request(
             with: endpoint,
             on: backgroundQueue
         ) { result in
@@ -120,12 +142,16 @@ extension DefaultListsRepository: ListsRepository {
                 completion(.failure(error))
             }
         }
+        
+        return task
     }
+    
+    @discardableResult
     func deleteList(
         listId: Int,
         sessionId: String,
         completion: @escaping (Result<Void, Error>) -> Void
-    ) {
+    ) -> Cancellable? {
         let sessionRequestDTO = CreateListSessionRequestDTO(
             sessionId: sessionId
         )
@@ -135,7 +161,9 @@ extension DefaultListsRepository: ListsRepository {
             with: sessionRequestDTO
         )
         
-        dataTransferService.request(
+        let task = RepositoryTask()
+        
+        task.networkTask = dataTransferService.request(
             with: endpoint,
             on: backgroundQueue
         ) { result in
@@ -158,14 +186,17 @@ extension DefaultListsRepository: ListsRepository {
                 completion(.failure(error))
             }
         }
+        
+        return task
     }
     
+    @discardableResult
     func addMovieToList(
         listId: Int,
         sessionId: String,
         movieId: Int,
         completion: @escaping (Result<Void, Error>) -> Void
-    ) {
+    ) -> Cancellable? {
         let sessionRequestDTO = CreateListSessionRequestDTO(
             sessionId: sessionId
         )
@@ -180,7 +211,9 @@ extension DefaultListsRepository: ListsRepository {
             body: requestDTO
         )
         
-        dataTransferService.request(
+        let task = RepositoryTask()
+        
+        task.networkTask = dataTransferService.request(
             with: endpoint,
             on: backgroundQueue
         ) { result in
@@ -203,14 +236,17 @@ extension DefaultListsRepository: ListsRepository {
                 completion(.failure(error))
             }
         }
+        
+        return task
     }
     
+    @discardableResult
     func removeMovieFromList(
         listId: Int,
         sessionId: String,
         movieId: Int,
         completion: @escaping (Result<Void, Error>) -> Void
-    ) {
+    ) -> Cancellable? {
         let sessionRequestDTO = CreateListSessionRequestDTO(
             sessionId: sessionId
         )
@@ -225,7 +261,9 @@ extension DefaultListsRepository: ListsRepository {
             body: requestDTO
         )
         
-        dataTransferService.request(
+        let task = RepositoryTask()
+        
+        task.networkTask = dataTransferService.request(
             with: endpoint,
             on: backgroundQueue
         ) { result in
@@ -248,17 +286,22 @@ extension DefaultListsRepository: ListsRepository {
                 completion(.failure(error))
             }
         }
+        
+        return task
     }
     
+    @discardableResult
     func fetchListMovies(
         listId: Int,
         completion: @escaping (Result<[Movie], Error>) -> Void
-    ) {
+    ) -> Cancellable? {
         let endpoint = ListsEndpoints.getListDetails(
             listId: listId
         )
         
-        dataTransferService.request(
+        let task = RepositoryTask()
+        
+        task.networkTask = dataTransferService.request(
             with: endpoint,
             on: backgroundQueue
         ) { result in
@@ -270,5 +313,7 @@ extension DefaultListsRepository: ListsRepository {
                 completion(.failure(error))
             }
         }
+        
+        return task
     }
 }

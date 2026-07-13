@@ -8,31 +8,30 @@
 import Foundation
 
 protocol AddMovieToListUseCase {
+    @discardableResult
     func execute(
         listId: Int,
         sessionId: String,
         movieId: Int,
         completion: @escaping (Result<Void, Error>) -> Void
-    )
+    ) -> Cancellable?
 }
 
 final class DefaultAddMovieToListUseCase: AddMovieToListUseCase {
     
-    // MARK: - Properties
     private let listsRepository: ListsRepository
     
-    // MARK: - Init
     init(listsRepository: ListsRepository) {
         self.listsRepository = listsRepository
     }
     
-    // MARK: - Execute
+    @discardableResult
     func execute(
         listId: Int,
         sessionId: String,
         movieId: Int,
         completion: @escaping (Result<Void, Error>) -> Void
-    ) {
+    ) -> Cancellable? {
         listsRepository.addMovieToList(
             listId: listId,
             sessionId: sessionId,

@@ -43,6 +43,11 @@ extension ListDetailsViewController {
             self?.movies = movies
             self?.collectionView.reloadData()
         }
+        
+        viewModel.error.observe(on: self) { [weak self] message in
+            guard !message.isEmpty else { return }
+            self?.showError(message: message)
+        }
     }
     static func create(
         with viewModel: ListDetailsViewModel,
@@ -85,7 +90,22 @@ private extension ListDetailsViewController {
         updatedLabel.textColor = .gray
         updatedLabel.textAlignment = .center
     }
-
+    func showError(message: String) {
+        let alert = UIAlertController(
+            title: NSLocalizedString("Error", comment: ""),
+            message: message,
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(
+            UIAlertAction(
+                title: NSLocalizedString("OK", comment: ""),
+                style: .default
+            )
+        )
+        
+        present(alert, animated: true)
+    }
     func setupCollectionView() {
         let nib = UINib(
             nibName: CellIdentifiers.listMovieCell,

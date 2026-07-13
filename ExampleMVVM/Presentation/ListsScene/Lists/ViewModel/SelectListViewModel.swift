@@ -38,6 +38,23 @@ final class DefaultSelectListViewModel: SelectListViewModel {
     private let addMovieToListUseCase: AddMovieToListUseCase
     private let authSessionStorage: AuthSessionStorage
     private let actions: SelectListViewModelActions
+    private var fetchAccountDetailsTask: Cancellable? {
+        willSet {
+            fetchAccountDetailsTask?.cancel()
+        }
+    }
+
+    private var fetchAccountListsTask: Cancellable? {
+        willSet {
+            fetchAccountListsTask?.cancel()
+        }
+    }
+
+    private var addMovieToListTask: Cancellable? {
+        willSet {
+            addMovieToListTask?.cancel()
+        }
+    }
 
     // MARK: - Init
     init(
@@ -67,7 +84,9 @@ extension DefaultSelectListViewModel {
             return
         }
 
-        fetchAccountDetailsUseCase.execute(sessionId: sessionId) { [weak self] result in
+        fetchAccountDetailsTask = fetchAccountDetailsUseCase.execute(
+            sessionId: sessionId
+        ) { [weak self] result in
             switch result {
             case .success(let account):
                 self?.fetchLists(
@@ -86,7 +105,7 @@ extension DefaultSelectListViewModel {
         }
     }
     private func fetchLists(accountId: Int, sessionId: String) {
-        fetchAccountListsUseCase.execute(
+        fetchAccountListsTask = fetchAccountListsUseCase.execute(
             accountId: accountId,
             sessionId: sessionId,
             page: 1
@@ -115,7 +134,7 @@ extension DefaultSelectListViewModel {
 
         let selectedList = lists.value[index]
 
-        addMovieToListUseCase.execute(
+        addMovieToListTask = addMovieToListUseCase.execute(
             listId: selectedList.id,
             sessionId: sessionId,
             movieId: movieId
