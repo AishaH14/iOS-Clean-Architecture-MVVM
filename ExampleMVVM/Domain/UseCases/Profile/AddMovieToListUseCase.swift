@@ -19,10 +19,10 @@ protocol AddMovieToListUseCase {
 
 final class DefaultAddMovieToListUseCase: AddMovieToListUseCase {
     
-    private let listsRepository: ListsRepository
+    private let userMediaRepository: UserMediaRepository
     
-    init(listsRepository: ListsRepository) {
-        self.listsRepository = listsRepository
+    init(userMediaRepository: UserMediaRepository) {
+        self.userMediaRepository = userMediaRepository
     }
     
     @discardableResult
@@ -32,7 +32,7 @@ final class DefaultAddMovieToListUseCase: AddMovieToListUseCase {
         movieId: Int,
         completion: @escaping (Result<Void, Error>) -> Void
     ) -> Cancellable? {
-        listsRepository.addMovieToList(
+        userMediaRepository.addMovieToList(
             listId: listId,
             sessionId: sessionId,
             movieId: movieId,

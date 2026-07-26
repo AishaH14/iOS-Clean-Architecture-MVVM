@@ -18,7 +18,7 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
         dataTransferService: dependencies.apiDataTransferService
     )
     lazy var authSessionStorage: AuthSessionStorage = KeychainAuthSessionStorage()
-    lazy var listsRepository: ListsRepository = DefaultListsRepository(
+    lazy var userMediaRepository: UserMediaRepository = DefaultUserMediaRepository(
         dataTransferService: dependencies.apiDataTransferService
     )
     init(dependencies: Dependencies) {
@@ -60,7 +60,29 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
     }
     func makeFetchListMoviesUseCase() -> FetchListMoviesUseCase {
         DefaultFetchListMoviesUseCase(
-            listsRepository: makeListsRepository()
+            userMediaRepository: makeUserMediaRepository()
+        )
+    }
+    func makeFetchFavoriteMoviesUseCase() -> FetchFavoriteMoviesUseCase {
+        DefaultFetchFavoriteMoviesUseCase(
+            userMediaRepository: makeUserMediaRepository()
+        )
+    }
+
+    func makeFetchWatchlistMoviesUseCase() -> FetchWatchlistMoviesUseCase {
+        DefaultFetchWatchlistMoviesUseCase(
+            userMediaRepository: makeUserMediaRepository()
+        )
+    }
+    func makeUpdateFavoriteUseCase() -> UpdateFavoriteUseCase {
+        DefaultUpdateFavoriteUseCase(
+            userMediaRepository: userMediaRepository
+        )
+    }
+
+    func makeUpdateWatchlistUseCase() -> UpdateWatchlistUseCase {
+        DefaultUpdateWatchlistUseCase(
+            userMediaRepository: userMediaRepository
         )
     }
     func makeAuthSessionStorage() -> AuthSessionStorage {
@@ -114,30 +136,31 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
     private func makeAuthRepository() -> AuthRepository {
         return authRepository
     }
-    private func makeListsRepository() -> ListsRepository {
-        return listsRepository
+    private func makeUserMediaRepository() -> UserMediaRepository {
+        return userMediaRepository
     }
 
     func makeFetchAccountListsUseCase() -> FetchAccountListsUseCase {
         DefaultFetchAccountListsUseCase(
-            listsRepository: makeListsRepository()
+            userMediaRepository: makeUserMediaRepository()
         )
     }
     func makeFetchAccountDetailsUseCase() -> FetchAccountDetailsUseCase {
         DefaultFetchAccountDetailsUseCase(
-            listsRepository: makeListsRepository()
+            userMediaRepository: makeUserMediaRepository()
         )
     }
     func makeCreateListUseCase() -> CreateListUseCase {
         DefaultCreateListUseCase(
-            listsRepository: makeListsRepository()
+            userMediaRepository: makeUserMediaRepository()
         )
     }
     func makeDeleteListUseCase() -> DeleteListUseCase {
         DefaultDeleteListUseCase(
-            listsRepository: makeListsRepository()
+            userMediaRepository: makeUserMediaRepository()
         )
     }
+    
     // MARK: - Profile
     func makeProfileViewController(actions: ProfileViewModelActions) -> UIViewController {
         let viewController = ProfileViewController.instantiateViewController()
@@ -145,8 +168,14 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
         return viewController
     }
 
-    func makeProfileViewModel(actions: ProfileViewModelActions) -> ProfileViewModel {
-        DefaultProfileViewModel(actions: actions)
+    func makeProfileViewModel(
+        actions: ProfileViewModelActions
+    ) -> ProfileViewModel {
+        DefaultProfileViewModel(
+            fetchAccountDetailsUseCase: makeFetchAccountDetailsUseCase(),
+            authSessionStorage: makeAuthSessionStorage(),
+            actions: actions
+        )
     }
     // MARK: - Lists
 
@@ -183,30 +212,37 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
         )
     }
   
-    func makeListDetailsViewController(
-        list: MovieList
-    ) -> ListDetailsViewController {
-        ListDetailsViewController.create(
-            with: makeListDetailsViewModel(list: list),
+    func makeMediaListViewController(
+        source: MediaListSource
+    ) -> MediaListViewController {
+        MediaListViewController.create(
+            with: makeMediaListViewModel(source: source),
             posterImagesRepository: makePosterImagesRepository()
         )
     }
-    func makeListDetailsViewModel(
-        list: MovieList
-    ) -> ListDetailsViewModel {
-        DefaultListDetailsViewModel(
-            list: list,
-            fetchListMoviesUseCase: makeFetchListMoviesUseCase()
+    func makeMediaListViewModel(
+        source: MediaListSource
+    ) -> MediaListViewModel {
+        DefaultMediaListViewModel(
+            source: source,
+            fetchListMoviesUseCase: makeFetchListMoviesUseCase(),
+            fetchAccountDetailsUseCase: makeFetchAccountDetailsUseCase(),
+            fetchFavoriteMoviesUseCase: makeFetchFavoriteMoviesUseCase(),
+            fetchWatchlistMoviesUseCase: makeFetchWatchlistMoviesUseCase(),
+            authSessionStorage: makeAuthSessionStorage(),
+            updateFavoriteUseCase: makeUpdateFavoriteUseCase(),
+            updateWatchlistUseCase: makeUpdateWatchlistUseCase(),
+            removeMovieFromListUseCase: makeRemoveMovieFromListUseCase(),
         )
     }
     func makeAddMovieToListUseCase() -> AddMovieToListUseCase {
         DefaultAddMovieToListUseCase(
-            listsRepository: makeListsRepository()
+            userMediaRepository: makeUserMediaRepository()
         )
     }
     func makeRemoveMovieFromListUseCase() -> RemoveMovieFromListUseCase {
         DefaultRemoveMovieFromListUseCase(
-            listsRepository: makeListsRepository()
+            userMediaRepository: makeUserMediaRepository()
         )
     }
     func makeSelectListViewController(
@@ -319,7 +355,11 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
             fetchAccountDetailsUseCase: makeFetchAccountDetailsUseCase(),
             fetchAccountListsUseCase: makeFetchAccountListsUseCase(),
             fetchListMoviesUseCase: makeFetchListMoviesUseCase(),
-            actions: actions
+            updateFavoriteUseCase: makeUpdateFavoriteUseCase(),
+            updateWatchlistUseCase: makeUpdateWatchlistUseCase(),
+            fetchFavoriteMoviesUseCase: makeFetchFavoriteMoviesUseCase(),
+            fetchWatchlistMoviesUseCase: makeFetchWatchlistMoviesUseCase(),
+            actions: actions,
         )
     }
     // MARK: - Movies Queries Suggestions List

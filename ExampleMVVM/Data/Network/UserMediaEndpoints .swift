@@ -1,5 +1,5 @@
 //
-//  ListsEndpoints.swift
+//  UserMediaEndpoints.swift
 //  ExampleMVVM
 //
 //  Created by Aisha Hudasi on 27/01/1448 AH.
@@ -25,21 +25,31 @@ private enum ListsAPIPath {
     static func removeListItem(_ listId: Int) -> String {
         "\(listDetails(listId))/remove_item"
     }
+    static func favoriteMovies(_ accountId: Int) -> String {
+        "3/account/\(accountId)/favorite/movies"
+    }
+
+    static func watchlistMovies(_ accountId: Int) -> String {
+        "3/account/\(accountId)/watchlist/movies"
+    }
+
+    static func favorite(_ accountId: Int) -> String {
+        "3/account/\(accountId)/favorite"
+    }
+
+    static func watchlist(_ accountId: Int) -> String {
+        "3/account/\(accountId)/watchlist"
+    }
 }
 
 private enum ListsAPIHeaders {
-    static let contentType = "Content-Type"
-    static let accept = "Accept"
-    static let json = "application/json"
-    static let jsonWithCharset = "application/json;charset=utf-8"
-
     static let jsonHeaders: [String: String] = [
-        contentType: jsonWithCharset,
-        accept: json
+        AuthConstants.contentTypeHeader: "application/json;charset=utf-8",
+        AuthConstants.acceptHeader: AuthConstants.applicationJSON
     ]
 }
 
-struct ListsEndpoints {
+struct UserMediaEndpoints {
 
     static func getAccountLists(
         accountId: Int,
@@ -113,4 +123,65 @@ struct ListsEndpoints {
             bodyParametersEncodable: removeMovieRequestDTO
         )
     }
-}
+    static func getFavoriteMovies(
+            accountId: Int,
+            sessionId: String,
+            page: Int
+        ) -> Endpoint<MoviesResponseDTO> {
+            Endpoint(
+                path: ListsAPIPath.favoriteMovies(accountId),
+                method: .get,
+                queryParameters: [
+                    APIConstants.QueryKeys.sessionId: sessionId,
+                    APIConstants.QueryKeys.page: page
+                ]
+            )
+        }
+
+        static func getWatchlistMovies(
+            accountId: Int,
+            sessionId: String,
+            page: Int
+        ) -> Endpoint<MoviesResponseDTO> {
+            Endpoint(
+                path: ListsAPIPath.watchlistMovies(accountId),
+                method: .get,
+                queryParameters: [
+                    APIConstants.QueryKeys.sessionId: sessionId,
+                    APIConstants.QueryKeys.page: page
+                ]
+            )
+        }
+
+        static func updateFavorite(
+            accountId: Int,
+            sessionId: String,
+            body requestDTO: UpdateFavoriteRequestDTO
+        ) -> Endpoint<ListActionResponseDTO> {
+            Endpoint(
+                path: ListsAPIPath.favorite(accountId),
+                method: .post,
+                headerParameters: ListsAPIHeaders.jsonHeaders,
+                queryParameters: [
+                    APIConstants.QueryKeys.sessionId: sessionId
+                ],
+                bodyParametersEncodable: requestDTO
+            )
+        }
+
+        static func updateWatchlist(
+            accountId: Int,
+            sessionId: String,
+            body requestDTO: UpdateWatchlistRequestDTO
+        ) -> Endpoint<ListActionResponseDTO> {
+            Endpoint(
+                path: ListsAPIPath.watchlist(accountId),
+                method: .post,
+                headerParameters: ListsAPIHeaders.jsonHeaders,
+                queryParameters: [
+                    APIConstants.QueryKeys.sessionId: sessionId
+                ],
+                bodyParametersEncodable: requestDTO
+            )
+        }
+    }

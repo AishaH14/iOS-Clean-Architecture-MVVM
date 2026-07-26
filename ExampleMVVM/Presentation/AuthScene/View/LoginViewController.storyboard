@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24765" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24743"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -30,9 +29,9 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wFx-ro-iEv">
-                                        <rect key="frame" x="24" y="78" width="297" height="44"/>
+                                        <rect key="frame" x="24" y="78" width="301" height="44"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="44" id="Rfv-7S-ps3"/>
+                                            <constraint firstAttribute="height" constant="44" id="YDi-PS-yra"/>
                                         </constraints>
                                         <string key="text">Sign in to access your watchlist
 and favorites</string>
@@ -41,14 +40,14 @@ and favorites</string>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IGo-MU-4H8" customClass="AuthButtonView" customModule="ExampleMVVM" customModuleProvider="target">
-                                        <rect key="frame" x="24" y="142" width="297" height="52"/>
+                                        <rect key="frame" x="30" y="134" width="295" height="52"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="52" id="IUf-DR-Pdh"/>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JBY-rs-hBi" customClass="AuthButtonView" customModule="ExampleMVVM" customModuleProvider="target">
-                                        <rect key="frame" x="24" y="209" width="297" height="52"/>
+                                        <rect key="frame" x="30" y="198" width="295" height="52"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
@@ -58,19 +57,19 @@ and favorites</string>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
+                                    <constraint firstItem="JBY-rs-hBi" firstAttribute="leading" secondItem="9sw-W0-A3n" secondAttribute="leading" constant="30" id="6sG-F0-bL9"/>
                                     <constraint firstAttribute="height" constant="280" id="7nA-uy-Uis"/>
-                                    <constraint firstAttribute="trailing" secondItem="IGo-MU-4H8" secondAttribute="trailing" constant="24" id="Fe9-GL-GXo"/>
                                     <constraint firstItem="naN-QZ-dhP" firstAttribute="leading" secondItem="9sw-W0-A3n" secondAttribute="leading" constant="20" id="J5H-wO-qS6"/>
-                                    <constraint firstItem="IGo-MU-4H8" firstAttribute="leading" secondItem="9sw-W0-A3n" secondAttribute="leading" constant="24" id="NUb-Fk-6dP"/>
-                                    <constraint firstItem="wFx-ro-iEv" firstAttribute="leading" secondItem="9sw-W0-A3n" secondAttribute="leading" constant="24" id="NYV-Cg-GOi"/>
-                                    <constraint firstItem="wFx-ro-iEv" firstAttribute="top" secondItem="naN-QZ-dhP" secondAttribute="bottom" constant="12" id="OU2-VV-gdq"/>
-                                    <constraint firstAttribute="trailing" secondItem="JBY-rs-hBi" secondAttribute="trailing" constant="24" id="P6s-Qy-UhD"/>
-                                    <constraint firstItem="JBY-rs-hBi" firstAttribute="leading" secondItem="9sw-W0-A3n" secondAttribute="leading" constant="24" id="ac2-od-EHt"/>
-                                    <constraint firstItem="IGo-MU-4H8" firstAttribute="top" secondItem="wFx-ro-iEv" secondAttribute="bottom" constant="20" id="c1i-dQ-PSt"/>
+                                    <constraint firstItem="IGo-MU-4H8" firstAttribute="leading" secondItem="9sw-W0-A3n" secondAttribute="leading" constant="30" id="JuS-u5-TIb"/>
+                                    <constraint firstItem="wFx-ro-iEv" firstAttribute="leading" secondItem="9sw-W0-A3n" secondAttribute="leading" constant="24" id="Kid-OJ-60b"/>
+                                    <constraint firstAttribute="trailing" secondItem="JBY-rs-hBi" secondAttribute="trailing" constant="20" id="NEV-fV-zCg"/>
+                                    <constraint firstItem="JBY-rs-hBi" firstAttribute="top" secondItem="IGo-MU-4H8" secondAttribute="bottom" constant="12" id="agI-6e-O6d"/>
+                                    <constraint firstAttribute="trailing" secondItem="IGo-MU-4H8" secondAttribute="trailing" constant="20" id="cBH-Dn-hNS"/>
+                                    <constraint firstAttribute="trailing" secondItem="wFx-ro-iEv" secondAttribute="trailing" constant="20" id="fGK-m0-55Z"/>
                                     <constraint firstItem="naN-QZ-dhP" firstAttribute="top" secondItem="9sw-W0-A3n" secondAttribute="top" constant="32" id="hhU-cd-OsO"/>
-                                    <constraint firstItem="JBY-rs-hBi" firstAttribute="top" secondItem="IGo-MU-4H8" secondAttribute="bottom" constant="15" id="iK4-pX-Xyh"/>
                                     <constraint firstItem="naN-QZ-dhP" firstAttribute="centerX" secondItem="9sw-W0-A3n" secondAttribute="centerX" id="j55-i7-Ad0"/>
-                                    <constraint firstAttribute="trailing" secondItem="wFx-ro-iEv" secondAttribute="trailing" constant="24" id="uPK-z6-Rry"/>
+                                    <constraint firstItem="IGo-MU-4H8" firstAttribute="top" secondItem="wFx-ro-iEv" secondAttribute="bottom" constant="12" id="muD-xa-PV5"/>
+                                    <constraint firstItem="wFx-ro-iEv" firstAttribute="top" secondItem="naN-QZ-dhP" secondAttribute="bottom" constant="12" id="rmc-nM-vGP"/>
                                     <constraint firstAttribute="trailing" secondItem="naN-QZ-dhP" secondAttribute="trailing" constant="20" id="wUz-Ff-BhP"/>
                                 </constraints>
                             </view>
@@ -100,7 +99,7 @@ and favorites</string>
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray5Color">
-            <color red="0.8980392157" green="0.8980392157" blue="0.91764705879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.89803921568627454" green="0.89803921568627454" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

@@ -13,6 +13,13 @@ final class ProfileViewController: UIViewController, StoryboardInstantiable {
     @IBOutlet private weak var tableView: UITableView!
     @IBOutlet private weak var userCardView: UIView!
     @IBOutlet private weak var avatarImageView: UIImageView!
+    @IBOutlet private weak var usernameLabel: UILabel!
+    @IBOutlet private weak var subtitleLabel: UILabel!
+    @IBOutlet private weak var signInButton: UIButton!
+    // MARK: - IBAction
+    @IBAction private func signInButtonTapped(_ sender: UIButton) {
+        viewModel.didTapSignIn()
+    }
     // MARK: - Properties
     var viewModel: ProfileViewModel!
     
@@ -27,6 +34,8 @@ final class ProfileViewController: UIViewController, StoryboardInstantiable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        bindViewModel()
+        viewModel.viewDidLoad()
         
     }
 }
@@ -36,12 +45,17 @@ private extension ProfileViewController {
     
     func setupView() {
         title = "Profile"
-        
+        setupUserCard()
+        setupTableView()
+        setupAvatarImageView()
+    }
+    func setupUserCard() {
         userCardView.layer.cornerRadius = 12
         userCardView.layer.borderWidth = 1
         userCardView.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.1).cgColor
         userCardView.clipsToBounds = true
-        
+    }
+    func setupTableView() {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(
@@ -57,8 +71,43 @@ private extension ProfileViewController {
         tableView.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.1).cgColor
         tableView.clipsToBounds = true
     }
+    func setupAvatarImageView() {
+        avatarImageView.layer.cornerRadius = 40
+        avatarImageView.clipsToBounds = true
+        avatarImageView.image = UIImage(systemName: "person.crop.circle.fill")
+        avatarImageView.tintColor = .systemGray3
+        avatarImageView.contentMode = .scaleAspectFit
     }
+    func bindViewModel() {
+            viewModel.isSignInButtonHidden.observe(on: self) { [weak self] isHidden in
+                self?.signInButton.isHidden = isHidden
+            }
+            viewModel.account.observe(on: self) { [weak self] account in
+                guard let account = account else { return }
+                self?.usernameLabel.text = account.username
+                self?.subtitleLabel.text = "Signed in to TMDB"
+            }
+            viewModel.error.observe(on: self) { [weak self] message in
+                guard !message.isEmpty else { return }
+                self?.showError(message: message)
+            }
+        }
+        func showError(message: String) {
+            let alert = UIAlertController(
+                title: "Error",
+                message: message,
+                preferredStyle: .alert
+            )
+            alert.addAction(
+                UIAlertAction(
+                    title: "OK",
+                    style: .default
+                )
+            )
+            present(alert, animated: true)
 
+        }
+    }
 
 // MARK: - UITableViewDataSource
 extension ProfileViewController: UITableViewDataSource {
@@ -101,9 +150,15 @@ extension ProfileViewController: UITableViewDelegate {
         switch item {
         case .lists:
             viewModel.didTapLists()
-        case .favorites, .watchlist, .logout:
-            return
+            case .favorites:
+                viewModel.didSelectFavorites()
+
+            case .watchlist:
+                viewModel.didSelectWatchlist()
+
+            case .logout:
+                viewModel.didSelectLogout()
+            }
         }
     }
-}
 

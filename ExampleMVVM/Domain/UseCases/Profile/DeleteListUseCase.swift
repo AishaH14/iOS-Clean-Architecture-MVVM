@@ -1,39 +1,37 @@
 //
-//  RemoveMovieFromListUseCase.swift
+//  DeleteListUseCase.swift
 //  ExampleMVVM
 //
-//  Created by Aisha Hudasi on 21/01/1448 AH.
+//  Created by Aisha Hudasi on 16/01/1448 AH.
 //
-
 import Foundation
 
-protocol RemoveMovieFromListUseCase {
+protocol DeleteListUseCase {
     @discardableResult
     func execute(
         listId: Int,
         sessionId: String,
-        movieId: Int,
         completion: @escaping (Result<Void, Error>) -> Void
     ) -> Cancellable?
 }
 
-final class DefaultRemoveMovieFromListUseCase: RemoveMovieFromListUseCase {
-    private let listsRepository: ListsRepository
-    init(listsRepository: ListsRepository) {
-        self.listsRepository = listsRepository
+final class DefaultDeleteListUseCase: DeleteListUseCase {
+    
+    private let userMediaRepository: UserMediaRepository
+    
+    init(userMediaRepository: UserMediaRepository) {
+        self.userMediaRepository = userMediaRepository
     }
     
     @discardableResult
     func execute(
         listId: Int,
         sessionId: String,
-        movieId: Int,
         completion: @escaping (Result<Void, Error>) -> Void
     ) -> Cancellable? {
-        listsRepository.removeMovieFromList(
+        userMediaRepository.deleteList(
             listId: listId,
             sessionId: sessionId,
-            movieId: movieId,
             completion: completion
         )
     }

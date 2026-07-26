@@ -1,5 +1,5 @@
 //
-//  ListsRepositoryError.swift
+//  UserMediaRepositoryError.swift
 //  ExampleMVVM
 //
 //  Created by Aisha Hudasi on 21/01/1448 AH.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ListsRepositoryError: LocalizedError {
+enum UserMediaRepositoryError: LocalizedError {
     case apiError(code: Int, message: String)
 
     var errorDescription: String? {

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24765" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24743"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -33,7 +32,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qBn-RE-nNn" customClass="AuthButtonView" customModule="ExampleMVVM" customModuleProvider="target">
-                                        <rect key="frame" x="24" y="112" width="297" height="52"/>
+                                        <rect key="frame" x="30" y="112" width="291" height="52"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
@@ -47,7 +46,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="Cfw-Pg-f1x">
-                                        <rect key="frame" x="162" y="230" width="20" height="20"/>
+                                        <rect key="frame" x="170" y="223" width="20" height="20"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </activityIndicatorView>
                                 </subviews>
@@ -63,7 +62,7 @@
                                     <constraint firstItem="Uvo-vm-xiB" firstAttribute="top" secondItem="xcY-Op-yoL" secondAttribute="top" constant="32" id="nID-6T-UiM"/>
                                     <constraint firstAttribute="trailing" secondItem="rHf-Gp-hap" secondAttribute="trailing" constant="24" id="nV9-UP-2Xl"/>
                                     <constraint firstItem="rHf-Gp-hap" firstAttribute="leading" secondItem="xcY-Op-yoL" secondAttribute="leading" constant="24" id="tMF-Rg-w1o"/>
-                                    <constraint firstItem="qBn-RE-nNn" firstAttribute="leading" secondItem="xcY-Op-yoL" secondAttribute="leading" constant="24" id="vkk-sy-HXZ"/>
+                                    <constraint firstItem="qBn-RE-nNn" firstAttribute="leading" secondItem="xcY-Op-yoL" secondAttribute="leading" constant="30" id="vkk-sy-HXZ"/>
                                     <constraint firstAttribute="trailing" secondItem="g9s-px-Mg5" secondAttribute="trailing" constant="24" id="yxv-le-haJ"/>
                                     <constraint firstAttribute="height" constant="280" id="zFS-gG-5gK"/>
                                 </constraints>
@@ -93,7 +92,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray5Color">
-            <color red="0.8980392157" green="0.8980392157" blue="0.91764705879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.89803921568627454" green="0.89803921568627454" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

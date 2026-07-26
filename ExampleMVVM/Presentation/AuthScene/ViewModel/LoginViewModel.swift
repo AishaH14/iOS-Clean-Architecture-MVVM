@@ -60,6 +60,7 @@ final class DefaultLoginViewModel: LoginViewModel {
                 
                 switch result {
                 case .success(let guestSessionId):
+                    self?.authSessionStorage.removeSessionId()
                     self?.authSessionStorage.saveGuestSessionId(guestSessionId)
                     self?.actions.showProfile()
                     
