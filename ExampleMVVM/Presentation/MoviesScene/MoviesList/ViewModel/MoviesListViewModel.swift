@@ -54,6 +54,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     private var pages: [MoviesPage] = []
     private var moviesLoadTask: Cancellable? { willSet { moviesLoadTask?.cancel() } }
     private let mainQueue: DispatchQueueType
+    private var filteredMovies: [Movie] = []
     
     // MARK: - OUTPUT
     
@@ -190,8 +191,9 @@ extension DefaultMoviesListViewModel {
     }
 
     func didSelectItem(at index: Int) {
-        actions?.showMovieDetails(pages.movies[index])
-    }
+        guard filteredMovies.indices.contains(index) else { return }
+            actions?.showMovieDetails(filteredMovies[index])
+        }
     func didSelectGenre(at index: Int) {
 
         if index == 0 {
@@ -201,7 +203,7 @@ extension DefaultMoviesListViewModel {
 
         let selectedGenre = genres.value[index - 1]
 
-        let filteredMovies = allMovies.filter {
+        filteredMovies = allMovies.filter {
             $0.genreIds?.contains(selectedGenre.id) ?? false
         }
 
