@@ -39,7 +39,7 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
     }
 
     private func bind(to viewModel: MoviesListViewModel) {
-        viewModel.items.observe(on: self) { [weak self] _ in self?.updateItems() }
+        viewModel.items.observe(on: self) { [weak self] _ in  DispatchQueue.main.async {self?.updateItems() }}
         viewModel.loading.observe(on: self) { [weak self] in self?.updateLoading($0) }
         viewModel.query.observe(on: self) { [weak self] in self?.updateSearchQuery($0) }
         viewModel.error.observe(on: self) { [weak self] in self?.showError($0) }
@@ -134,6 +134,7 @@ extension MoviesListViewController {
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.frame = searchBarContainer.bounds
         searchBarContainer.addSubview(searchController.searchBar)
+        searchController.searchBar.searchTextField.clearButtonMode = .never
         definesPresentationContext = true
         if #available(iOS 13.0, *) {
             searchController.searchBar.searchTextField.accessibilityIdentifier = AccessibilityIdentifier.searchField

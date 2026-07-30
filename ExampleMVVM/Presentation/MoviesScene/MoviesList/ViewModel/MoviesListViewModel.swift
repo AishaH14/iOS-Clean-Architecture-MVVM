@@ -35,6 +35,7 @@ protocol MoviesListViewModelOutput {
     var errorTitle: String { get }
     var searchBarPlaceholder: String { get }
     var genres: Observable<[Genre]> { get }
+    var canLoadNextPage: Bool { get }
 }
 
 typealias MoviesListViewModel = MoviesListViewModelInput & MoviesListViewModelOutput
@@ -46,6 +47,11 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     private let actions: MoviesListViewModelActions?
     private var allMovies: [Movie] = []
     let genres: Observable<[Genre]> = Observable([])
+    private var selectedGenreIndex: Int = 0
+
+    var canLoadNextPage: Bool {
+        selectedGenreIndex == 0 && hasMorePages && loading.value == .none
+    }
     var currentPage: Int = 0
     var totalPageCount: Int = 1
     var hasMorePages: Bool { currentPage < totalPageCount }
@@ -163,8 +169,7 @@ extension DefaultMoviesListViewModel {
     
     func viewDidLoad() {
         loadGenres()
-        update(movieQuery: MovieQuery(query: "movie"))
-          query.value = ""
+        defaultSearchState()
     }
     
     func didLoadNextPage() {
@@ -180,8 +185,16 @@ extension DefaultMoviesListViewModel {
 
     func didCancelSearch() {
         moviesLoadTask?.cancel()
+        defaultSearchState()
+       
     }
-
+//        update(movieQuery: MovieQuery(query: "movie"))
+//        query.value = ""
+//    }
+    func defaultSearchState() {
+        query.value = "movie"
+        update(movieQuery: MovieQuery(query: query.value))
+    }
     func showQueriesSuggestions() {
         actions?.showMovieQueriesSuggestions(update(movieQuery:))
     }
@@ -195,7 +208,7 @@ extension DefaultMoviesListViewModel {
             actions?.showMovieDetails(filteredMovies[index])
         }
     func didSelectGenre(at index: Int) {
-
+        selectedGenreIndex = index 
         if index == 0 {
             items.value = allMovies.map(MoviesListItemViewModel.init)
             return
