@@ -188,9 +188,7 @@ extension DefaultMoviesListViewModel {
         defaultSearchState()
        
     }
-//        update(movieQuery: MovieQuery(query: "movie"))
-//        query.value = ""
-//    }
+
     func defaultSearchState() {
         query.value = "movie"
         update(movieQuery: MovieQuery(query: query.value))
