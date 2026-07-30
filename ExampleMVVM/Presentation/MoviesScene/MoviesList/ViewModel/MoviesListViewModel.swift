@@ -22,6 +22,7 @@ protocol MoviesListViewModelInput {
     func closeQueriesSuggestions()
     func didSelectItem(at index: Int)
     func didSelectGenre(at index: Int)
+    var selectedGenreIndex:Int? { set get }
 }
 
 protocol MoviesListViewModelOutput {
@@ -35,6 +36,7 @@ protocol MoviesListViewModelOutput {
     var errorTitle: String { get }
     var searchBarPlaceholder: String { get }
     var genres: Observable<[Genre]> { get }
+    var resetGenres: Observable<Bool> { get }
     var canLoadNextPage: Bool { get }
 }
 
@@ -47,11 +49,12 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     private let actions: MoviesListViewModelActions?
     private var allMovies: [Movie] = []
     let genres: Observable<[Genre]> = Observable([])
-    private var selectedGenreIndex: Int = 0
 
     var canLoadNextPage: Bool {
         selectedGenreIndex == 0 && hasMorePages && loading.value == .none
     }
+    var resetGenres: Observable<Bool> = .init(false)
+    var selectedGenreIndex: Int? = 0
     var currentPage: Int = 0
     var totalPageCount: Int = 1
     var hasMorePages: Bool { currentPage < totalPageCount }
@@ -191,6 +194,7 @@ extension DefaultMoviesListViewModel {
 
     func defaultSearchState() {
         selectedGenreIndex = 0
+        resetGenres.value = true
             update(movieQuery: MovieQuery(query: "movie"))
             query.value = ""
         }
