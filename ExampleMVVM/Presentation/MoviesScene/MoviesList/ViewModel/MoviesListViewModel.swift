@@ -190,9 +190,10 @@ extension DefaultMoviesListViewModel {
     }
 
     func defaultSearchState() {
-        query.value = "movie"
-        update(movieQuery: MovieQuery(query: query.value))
-    }
+        selectedGenreIndex = 0
+            update(movieQuery: MovieQuery(query: "movie"))
+            query.value = ""
+        }
     func showQueriesSuggestions() {
         actions?.showMovieQueriesSuggestions(update(movieQuery:))
     }
