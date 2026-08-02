@@ -76,13 +76,13 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
     }
     func makeUpdateFavoriteUseCase() -> UpdateFavoriteUseCase {
         DefaultUpdateFavoriteUseCase(
-            userMediaRepository: userMediaRepository
+            userMediaRepository: makeUserMediaRepository()
         )
     }
 
     func makeUpdateWatchlistUseCase() -> UpdateWatchlistUseCase {
         DefaultUpdateWatchlistUseCase(
-            userMediaRepository: userMediaRepository
+            userMediaRepository: makeUserMediaRepository()
         )
     }
     func makeAuthSessionStorage() -> AuthSessionStorage {
@@ -350,16 +350,18 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
             movie: movie,
             posterImagesRepository: makePosterImagesRepository(),
             movieDetailsRepository: movieDetailsRepository,
-            removeMovieFromListUseCase: makeRemoveMovieFromListUseCase(),
             authSessionStorage: makeAuthSessionStorage(),
-            fetchAccountDetailsUseCase: makeFetchAccountDetailsUseCase(),
-            fetchAccountListsUseCase: makeFetchAccountListsUseCase(),
-            fetchListMoviesUseCase: makeFetchListMoviesUseCase(),
-            updateFavoriteUseCase: makeUpdateFavoriteUseCase(),
-            updateWatchlistUseCase: makeUpdateWatchlistUseCase(),
-            fetchFavoriteMoviesUseCase: makeFetchFavoriteMoviesUseCase(),
-            fetchWatchlistMoviesUseCase: makeFetchWatchlistMoviesUseCase(),
-            actions: actions,
+            movieDetailsUseCases: MovieDetailsUseCases(
+                removeMovieFromListUseCase: makeRemoveMovieFromListUseCase(),
+                fetchAccountDetailsUseCase: makeFetchAccountDetailsUseCase(),
+                fetchAccountListsUseCase: makeFetchAccountListsUseCase(),
+                fetchListMoviesUseCase: makeFetchListMoviesUseCase(),
+                updateFavoriteUseCase: makeUpdateFavoriteUseCase(),
+                updateWatchlistUseCase: makeUpdateWatchlistUseCase(),
+                fetchFavoriteMoviesUseCase: makeFetchFavoriteMoviesUseCase(),
+                fetchWatchlistMoviesUseCase: makeFetchWatchlistMoviesUseCase()
+            ),
+            actions: actions
         )
     }
     // MARK: - Movies Queries Suggestions List

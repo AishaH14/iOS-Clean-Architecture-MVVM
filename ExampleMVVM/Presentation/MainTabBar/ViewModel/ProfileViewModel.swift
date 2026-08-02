@@ -102,10 +102,15 @@ private extension DefaultProfileViewModel {
             isGuest.value = false
             isSignInButtonHidden.value = true
             fetchAccountDetails(sessionId: sessionId)
-            
-        case .guest, .missing:
+
+        case .guest:
             account.value = nil
             isGuest.value = true
+            isSignInButtonHidden.value = false
+
+        case .missing:
+            account.value = nil
+            isGuest.value = false
             isSignInButtonHidden.value = false
         }
     }

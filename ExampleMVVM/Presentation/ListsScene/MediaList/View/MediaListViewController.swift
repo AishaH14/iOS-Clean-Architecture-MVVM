@@ -6,7 +6,7 @@
 //
 import UIKit
 
-final class MediaListViewController: UIViewController {
+final class MediaListViewController: UIViewController, StoryboardInstantiable {
     
     // MARK: - IBOutlet
     @IBOutlet private weak var titleLabel: UILabel!
@@ -57,14 +57,12 @@ extension MediaListViewController {
         with viewModel: MediaListViewModel,
         posterImagesRepository: PosterImagesRepository?
     ) -> MediaListViewController {
-        let viewController = MediaListViewController(
-            nibName: CellIdentifiers.MediaListViewController,
-            bundle: nil
-        )
-
+        let viewController = MediaListViewController.instantiateViewController()
         viewController.viewModel = viewModel
         viewController.posterImagesRepository = posterImagesRepository
-
+        viewController.viewModel = viewModel
+        viewController.posterImagesRepository = posterImagesRepository
+        
         return viewController
     }
 }
