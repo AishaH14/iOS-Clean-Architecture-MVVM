@@ -804,8 +804,7 @@
 			isa = PBXGroup;
 			children = (
 				CA1729822FFA49D400A19266 /* Flow */,
-				1FE49D96230AEB1400D1D42E /* ViewModel */,
-				1FE49D80230AA7C200D1D42E /* MovieDetailsViewModel.swift */,
+				CAE71E8B301F5204001B393C /* ViewModel */,
 				1FE49D97230AEB2000D1D42E /* View */,
 			);
 			path = MovieDetails;
@@ -846,13 +845,6 @@
 				1FE49D68230AA7C200D1D42E /* Cells */,
 			);
 			path = UIKit;
-			sourceTree = "<group>";
-		};
-		1FE49D96230AEB1400D1D42E /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		1FE49D97230AEB2000D1D42E /* View */ = {
@@ -988,6 +980,14 @@
 				CA4979F32FDEF01D00657F9A /* View */,
 			);
 			path = MainTabBar;
+			sourceTree = "<group>";
+		};
+		CAE71E8B301F5204001B393C /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				1FE49D80230AA7C200D1D42E /* MovieDetailsViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		FC7408122165557500FE52A5 /* PersistentStorages */ = {
