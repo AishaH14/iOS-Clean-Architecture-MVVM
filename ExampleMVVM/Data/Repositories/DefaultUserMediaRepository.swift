@@ -1,5 +1,5 @@
 //
-//  DefaultListsRepository.swift
+//  DefaultUserMediaRepository.swift
 //  ExampleMVVM
 //
 //  Created by Aisha Hudasi on 13/01/1448 AH.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class DefaultListsRepository {
+final class DefaultUserMediaRepository {
     
     private let dataTransferService: DataTransferService
     private let backgroundQueue: DataTransferDispatchQueue
@@ -24,14 +24,14 @@ final class DefaultListsRepository {
         code: Int,
         message: String
     ) -> Error {
-        ListsRepositoryError.apiError(
+        UserMediaRepositoryError.apiError(
             code: code,
             message: message
         )
     }
 }
 
-extension DefaultListsRepository: ListsRepository {
+extension DefaultUserMediaRepository: UserMediaRepository {
     
     @discardableResult
     func fetchAccountDetails(
@@ -73,7 +73,7 @@ extension DefaultListsRepository: ListsRepository {
             page: page
         )
         
-        let endpoint = ListsEndpoints.getAccountLists(
+        let endpoint = UserMediaEndpoints.getAccountLists(
             accountId: accountId,
             with: requestDTO
         )
@@ -112,7 +112,7 @@ extension DefaultListsRepository: ListsRepository {
             language: "en"
         )
         
-        let endpoint = ListsEndpoints.createList(
+        let endpoint = UserMediaEndpoints.createList(
             with: sessionRequestDTO,
             body: requestDTO
         )
@@ -156,7 +156,7 @@ extension DefaultListsRepository: ListsRepository {
             sessionId: sessionId
         )
         
-        let endpoint = ListsEndpoints.deleteList(
+        let endpoint = UserMediaEndpoints.deleteList(
             listId: listId,
             with: sessionRequestDTO
         )
@@ -205,7 +205,7 @@ extension DefaultListsRepository: ListsRepository {
             mediaId: movieId
         )
         
-        let endpoint = ListsEndpoints.addMovieToList(
+        let endpoint = UserMediaEndpoints.addMovieToList(
             listId: listId,
             with: sessionRequestDTO,
             body: requestDTO
@@ -255,7 +255,7 @@ extension DefaultListsRepository: ListsRepository {
             mediaId: movieId
         )
         
-        let endpoint = ListsEndpoints.removeMovieFromList(
+        let endpoint = UserMediaEndpoints.removeMovieFromList(
             listId: listId,
             with: sessionRequestDTO,
             body: requestDTO
@@ -295,7 +295,7 @@ extension DefaultListsRepository: ListsRepository {
         listId: Int,
         completion: @escaping (Result<[Movie], Error>) -> Void
     ) -> Cancellable? {
-        let endpoint = ListsEndpoints.getListDetails(
+        let endpoint = UserMediaEndpoints.getListDetails(
             listId: listId
         )
         
@@ -314,6 +314,143 @@ extension DefaultListsRepository: ListsRepository {
             }
         }
         
+        return task
+    }
+    
+    @discardableResult
+    func fetchFavoriteMovies(
+        accountId: Int,
+        sessionId: String,
+        page: Int,
+        completion: @escaping (Result<[Movie], Error>) -> Void
+    ) -> Cancellable? {
+        let endpoint = UserMediaEndpoints.getFavoriteMovies(
+            accountId: accountId,
+            sessionId: sessionId,
+            page: page
+        )
+        
+        let task = RepositoryTask()
+        
+        task.networkTask = dataTransferService.request(
+            with: endpoint,
+            on: backgroundQueue
+        ) { result in
+            switch result {
+            case .success(let responseDTO):
+                completion(.success(responseDTO.toDomain().movies))
+                
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+        
+        return task
+    }
+    @discardableResult
+    func fetchWatchlistMovies(
+        accountId: Int,
+        sessionId: String,
+        page: Int,
+        completion: @escaping (Result<[Movie], Error>) -> Void
+    ) -> Cancellable? {
+
+        let endpoint = UserMediaEndpoints.getWatchlistMovies(
+            accountId: accountId,
+            sessionId: sessionId,
+            page: page
+        )
+
+        let task = RepositoryTask()
+
+        task.networkTask = dataTransferService.request(
+            with: endpoint,
+            on: backgroundQueue
+        ) { result in
+            switch result {
+            case .success(let responseDTO):
+                completion(.success(responseDTO.toDomain().movies))
+
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+
+        return task
+    }
+    @discardableResult
+    func updateFavorite(
+        accountId: Int,
+        sessionId: String,
+        movieId: Int,
+        favorite: Bool,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) -> Cancellable? {
+        let requestDTO = UpdateFavoriteRequestDTO(
+            mediaType: "movie",
+            mediaId: movieId,
+            favorite: favorite
+        )
+
+        let endpoint = UserMediaEndpoints.updateFavorite(
+            accountId: accountId,
+            sessionId: sessionId,
+            body: requestDTO
+        )
+
+        let task = RepositoryTask()
+
+        task.networkTask = dataTransferService.request(
+            with: endpoint,
+            on: backgroundQueue
+        ) { result in
+            switch result {
+            case .success:
+                completion(.success(()))
+
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+
+        return task
+    }
+
+    @discardableResult
+    func updateWatchlist(
+        accountId: Int,
+        sessionId: String,
+        movieId: Int,
+        watchlist: Bool,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) -> Cancellable? {
+        let requestDTO = UpdateWatchlistRequestDTO(
+            mediaType: "movie",
+            mediaId: movieId,
+            watchlist: watchlist
+        )
+
+        let endpoint = UserMediaEndpoints.updateWatchlist(
+            accountId: accountId,
+            sessionId: sessionId,
+            body: requestDTO
+        )
+
+        let task = RepositoryTask()
+
+        task.networkTask = dataTransferService.request(
+            with: endpoint,
+            on: backgroundQueue
+        ) { result in
+            switch result {
+            case .success:
+                completion(.success(()))
+
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+
         return task
     }
 }

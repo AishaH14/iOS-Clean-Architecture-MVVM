@@ -37,7 +37,6 @@ final class AuthorizeViewController: UIViewController,StoryboardInstantiable {
           
           cardView.layer.cornerRadius = 16
           cardView.clipsToBounds = true
-          
           openTMDBButton.configure(title: "Open TMDB", style: .filled)
           openTMDBButton.addTarget(self, action: #selector(openTMDBTapped))
           activityIndicator.hidesWhenStopped = true

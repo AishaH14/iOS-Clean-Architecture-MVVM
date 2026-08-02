@@ -19,10 +19,10 @@ protocol FetchAccountListsUseCase {
 
 final class DefaultFetchAccountListsUseCase: FetchAccountListsUseCase {
     
-    private let listsRepository: ListsRepository
+    private let userMediaRepository: UserMediaRepository
     
-    init(listsRepository: ListsRepository) {
-        self.listsRepository = listsRepository
+    init(userMediaRepository: UserMediaRepository) {
+        self.userMediaRepository = userMediaRepository
     }
     
     @discardableResult
@@ -32,7 +32,7 @@ final class DefaultFetchAccountListsUseCase: FetchAccountListsUseCase {
         page: Int,
         completion: @escaping (Result<[MovieList], Error>) -> Void
     ) -> Cancellable? {
-        listsRepository.fetchAccountLists(
+        userMediaRepository.fetchAccountLists(
             accountId: accountId,
             sessionId: sessionId,
             page: page,

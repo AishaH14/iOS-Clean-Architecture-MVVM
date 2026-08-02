@@ -23,6 +23,7 @@ final class DefaultAuthRepository: AuthRepository {
     }
 
     // MARK: - AuthRepository
+        @discardableResult
     func requestToken(
         completion: @escaping (Result<String, Error>) -> Void
     ) -> Cancellable? {
@@ -42,7 +43,7 @@ final class DefaultAuthRepository: AuthRepository {
         }
         return task
     }
-
+    @discardableResult
     func createSession(
         requestToken: String,
         completion: @escaping (Result<String, Error>) -> Void
@@ -63,7 +64,7 @@ final class DefaultAuthRepository: AuthRepository {
         }
         return task
     }
-
+    @discardableResult
     func createGuestSession(
         completion: @escaping (Result<String, Error>) -> Void
     ) -> Cancellable? {

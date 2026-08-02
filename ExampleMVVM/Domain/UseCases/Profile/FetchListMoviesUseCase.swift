@@ -17,10 +17,10 @@ protocol FetchListMoviesUseCase {
 
 final class DefaultFetchListMoviesUseCase: FetchListMoviesUseCase {
     
-    private let listsRepository: ListsRepository
+    private let userMediaRepository: UserMediaRepository
     
-    init(listsRepository: ListsRepository) {
-        self.listsRepository = listsRepository
+    init(userMediaRepository: UserMediaRepository) {
+        self.userMediaRepository = userMediaRepository
     }
     
     @discardableResult
@@ -28,7 +28,7 @@ final class DefaultFetchListMoviesUseCase: FetchListMoviesUseCase {
         listId: Int,
         completion: @escaping (Result<[Movie], Error>) -> Void
     ) -> Cancellable? {
-        listsRepository.fetchListMovies(
+        userMediaRepository.fetchListMovies(
             listId: listId,
             completion: completion
         )

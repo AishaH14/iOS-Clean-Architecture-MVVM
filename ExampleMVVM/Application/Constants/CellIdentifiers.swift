@@ -10,7 +10,7 @@ import Foundation
 
 
     enum CellIdentifiers {
-        static let listDetailsViewController = "ListDetailsViewController"
+        static let MediaListViewController = "MediaListViewController"
         static let selectListCell = "SelectListCell"
         static let listsItemCell = "ListsItemCell"
         static let listMovieCell = "ListMovieCell"

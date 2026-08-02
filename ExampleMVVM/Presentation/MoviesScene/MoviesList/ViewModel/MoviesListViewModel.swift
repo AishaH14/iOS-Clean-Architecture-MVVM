@@ -205,11 +205,12 @@ extension DefaultMoviesListViewModel {
     func closeQueriesSuggestions() {
         actions?.closeMovieQueriesSuggestions()
     }
-
     func didSelectItem(at index: Int) {
-        guard filteredMovies.indices.contains(index) else { return }
-            actions?.showMovieDetails(filteredMovies[index])
-        }
+        let movies = selectedGenreIndex == 0 ? allMovies: filteredMovies
+        guard movies.indices.contains(index) else { return }
+
+        actions?.showMovieDetails(movies[index])
+    }
     func didSelectGenre(at index: Int) {
         selectedGenreIndex = index 
         if index == 0 {

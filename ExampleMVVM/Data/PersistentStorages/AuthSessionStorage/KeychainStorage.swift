@@ -15,12 +15,9 @@ final class KeychainStorage {
     init(service: String) {
         self.service = service
     }
-
-    func save(
-        _ value: String,
-        forKey key: String
-    ) {
-        guard let data = value.data(using: .utf8) else { return }
+    @discardableResult
+    func save(_ value: String, forKey key: String) -> Bool {
+        guard let data = value.data(using: .utf8) else { return false }
 
         let query = makeKeychainQuery(forKey: key)
 
@@ -36,11 +33,10 @@ final class KeychainStorage {
         if status == errSecItemNotFound {
             var newItem = query
             newItem[kSecValueData as String] = data
-            SecItemAdd(
-                newItem as CFDictionary,
-                nil
-            )
+           let addStatus = SecItemAdd(newItem as CFDictionary,nil)
+            return addStatus == errSecSuccess
         }
+        return status == errSecSuccess
     }
 
     func getValue(forKey key: String) -> String? {
@@ -64,7 +60,12 @@ final class KeychainStorage {
 
         return value
     }
-
+    @discardableResult
+    func removeValue(forKey key: String) -> Bool {
+        let query = makeKeychainQuery(forKey: key)
+        let status = SecItemDelete(query as CFDictionary)
+                return status == errSecSuccess || status == errSecItemNotFound
+            }
     private func makeKeychainQuery(
         forKey key: String
     ) -> [String: Any] {

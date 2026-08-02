@@ -10,7 +10,7 @@ import UIKit
 protocol ListsFlowCoordinatorDependencies {
     func makeListsViewController(actions: ListsViewModelActions) -> ListsViewController
     func makeCreateListViewController(actions: CreateListViewModelActions) -> CreateListViewController
-    func makeListDetailsViewController(list: MovieList) -> ListDetailsViewController
+    func makeMediaListViewController(source: MediaListSource) -> MediaListViewController
     func makeLoginViewController(actions: LoginViewModelActions) -> LoginViewController
     func makeAuthorizeViewController(actions: AuthorizeViewModelActions) -> AuthorizeViewController
 }
@@ -53,7 +53,7 @@ final class ListsFlowCoordinator {
         listsViewController?.refreshLists()
     }
     private func showListDetails(_ list: MovieList) {
-        let viewController = dependencies.makeListDetailsViewController(list: list)
+        let viewController = dependencies.makeMediaListViewController(source: .list(list))
         navigationController?.pushViewController(viewController, animated: true)
         
     }

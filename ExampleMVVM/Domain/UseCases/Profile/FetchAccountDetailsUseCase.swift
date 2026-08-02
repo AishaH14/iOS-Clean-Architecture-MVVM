@@ -17,10 +17,10 @@ protocol FetchAccountDetailsUseCase {
 
 final class DefaultFetchAccountDetailsUseCase: FetchAccountDetailsUseCase {
     
-    private let listsRepository: ListsRepository
+    private let userMediaRepository : UserMediaRepository
     
-    init(listsRepository: ListsRepository) {
-        self.listsRepository = listsRepository
+    init(userMediaRepository : UserMediaRepository) {
+        self.userMediaRepository = userMediaRepository
     }
     
     @discardableResult
@@ -28,7 +28,7 @@ final class DefaultFetchAccountDetailsUseCase: FetchAccountDetailsUseCase {
         sessionId: String,
         completion: @escaping (Result<Account, Error>) -> Void
     ) -> Cancellable? {
-        listsRepository.fetchAccountDetails(
+        userMediaRepository.fetchAccountDetails(
             sessionId: sessionId,
             completion: completion
         )

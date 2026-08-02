@@ -20,11 +20,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="319" height="224"/>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l29-6a-zK1">
-                        <rect key="frame" x="8" y="227" width="303" height="54"/>
+                        <rect key="frame" x="8" y="227" width="303" height="74"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="54" id="mqm-6d-kiT"/>
+                            <constraint firstAttribute="height" constant="74" id="mqm-6d-kiT"/>
                         </constraints>
-                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
@@ -33,7 +33,7 @@
                     <constraint firstItem="l29-6a-zK1" firstAttribute="leading" secondItem="Ngt-uT-uNR" secondAttribute="leading" constant="8" id="4HZ-Ug-woK"/>
                     <constraint firstItem="AHx-SK-8LW" firstAttribute="centerX" secondItem="l29-6a-zK1" secondAttribute="centerX" id="HDW-Df-f50"/>
                     <constraint firstItem="l29-6a-zK1" firstAttribute="top" secondItem="AHx-SK-8LW" secondAttribute="bottom" constant="3" id="Qcs-Bn-gHZ"/>
-                    <constraint firstAttribute="bottom" secondItem="l29-6a-zK1" secondAttribute="bottom" constant="20" id="nce-KL-bNU"/>
+                    <constraint firstAttribute="bottom" secondItem="l29-6a-zK1" secondAttribute="bottom" id="nce-KL-bNU"/>
                     <constraint firstItem="AHx-SK-8LW" firstAttribute="leading" secondItem="Ngt-uT-uNR" secondAttribute="leading" id="rVn-Yr-uY1"/>
                     <constraint firstAttribute="trailing" secondItem="AHx-SK-8LW" secondAttribute="trailing" id="u2L-pv-S33"/>
                     <constraint firstItem="AHx-SK-8LW" firstAttribute="top" secondItem="Ngt-uT-uNR" secondAttribute="top" id="vCO-Y7-u1B"/>

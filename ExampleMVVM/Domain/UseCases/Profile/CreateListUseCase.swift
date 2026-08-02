@@ -19,10 +19,10 @@ protocol CreateListUseCase {
 
 final class DefaultCreateListUseCase: CreateListUseCase {
     
-    private let listsRepository: ListsRepository
+    private let userMediaRepository: UserMediaRepository
     
-    init(listsRepository: ListsRepository) {
-        self.listsRepository = listsRepository
+    init(userMediaRepository: UserMediaRepository) {
+        self.userMediaRepository = userMediaRepository
     }
     
     @discardableResult
@@ -32,7 +32,7 @@ final class DefaultCreateListUseCase: CreateListUseCase {
         description: String,
         completion: @escaping (Result<Int, Error>) -> Void
     ) -> Cancellable? {
-        listsRepository.createList(
+        userMediaRepository.createList(
             sessionId: sessionId,
             name: name,
             description: description,

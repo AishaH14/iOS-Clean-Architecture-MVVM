@@ -12,6 +12,8 @@ protocol AuthSessionStorage {
     func getSessionId() -> String?
     func saveGuestSessionId(_ guestSessionId: String)
     func getGuestSessionId() -> String?
+    func removeSessionId()
+    func removeGuestSessionId()
 }
 
 final class KeychainAuthSessionStorage: AuthSessionStorage {
@@ -57,5 +59,11 @@ final class KeychainAuthSessionStorage: AuthSessionStorage {
         keychainStorage.getValue(
             forKey: Keys.guestSessionId
         )
+    }
+    func removeSessionId() {
+        keychainStorage.removeValue(forKey: Keys.sessionId)
+    }
+    func removeGuestSessionId() {
+        keychainStorage.removeValue(forKey: Keys.guestSessionId)
     }
 }
