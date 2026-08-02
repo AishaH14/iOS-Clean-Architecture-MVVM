@@ -39,7 +39,7 @@ final class AuthorizeViewController: UIViewController,StoryboardInstantiable {
           cardView.clipsToBounds = true
           openTMDBButton.configure(title: "Open TMDB", style: .filled)
           openTMDBButton.addTarget(self, action: #selector(openTMDBTapped))
-          
+          activityIndicator.hidesWhenStopped = true
           activityIndicator.stopAnimating()
       }
       
@@ -99,5 +99,8 @@ extension AuthorizeViewController: SFSafariViewControllerDelegate {
     
     func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
         controller.dismiss(animated: true)
+        activityIndicator.stopAnimating()
+        openTMDBButton.isUserInteractionEnabled = true
+        
     }
 }

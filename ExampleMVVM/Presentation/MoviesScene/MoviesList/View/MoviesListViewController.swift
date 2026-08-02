@@ -11,7 +11,6 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
     
     private var viewModel: MoviesListViewModel!
     private var posterImagesRepository: PosterImagesRepository?
-    private var selectedGenreIndex = 0
     private var moviesTableViewController: MoviesListTableViewController?
     private var searchController = UISearchController(searchResultsController: nil)
 
@@ -39,12 +38,17 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
     }
 
     private func bind(to viewModel: MoviesListViewModel) {
-        viewModel.items.observe(on: self) { [weak self] _ in self?.updateItems() }
+        viewModel.items.observe(on: self) { [weak self] _ in  DispatchQueue.main.async {self?.updateItems() }}
         viewModel.loading.observe(on: self) { [weak self] in self?.updateLoading($0) }
         viewModel.query.observe(on: self) { [weak self] in self?.updateSearchQuery($0) }
         viewModel.error.observe(on: self) { [weak self] in self?.showError($0) }
-        viewModel.genres.observe(on: self) { [weak self] _ in self?.genresCollectionView.reloadData()
+        viewModel.genres.observe(on: self) { [weak self] _ in self?.genresCollectionView.reloadData()}
+        viewModel.resetGenres.observe(on: self) { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.genresCollectionView.reloadData()
+            }
         }
+        
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -134,6 +138,7 @@ extension MoviesListViewController {
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.frame = searchBarContainer.bounds
         searchBarContainer.addSubview(searchController.searchBar)
+        searchController.searchBar.searchTextField.clearButtonMode = .never
         definesPresentationContext = true
         if #available(iOS 13.0, *) {
             searchController.searchBar.searchTextField.accessibilityIdentifier = AccessibilityIdentifier.searchField
@@ -190,10 +195,9 @@ extension MoviesListViewController: UICollectionViewDelegate, UICollectionViewDa
             let genre = viewModel.genres.value[indexPath.row - 1]
             cell.configure(with: genre.name)
         }
-
-        let isSelected = indexPath.row == selectedGenreIndex
-
-      
+        
+        let isSelected = indexPath.row ==  viewModel.selectedGenreIndex
+        
         cell.contentView.backgroundColor = isSelected
         ? UIColor(red: 0/255, green: 102/255, blue: 230/255, alpha: 1)
         : UIColor(red: 42/255, green: 42/255, blue: 46/255, alpha: 1)
@@ -202,7 +206,7 @@ extension MoviesListViewController: UICollectionViewDelegate, UICollectionViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        selectedGenreIndex = indexPath.row
+        viewModel.selectedGenreIndex = indexPath.row 
         collectionView.reloadData()
         viewModel.didSelectGenre(at: indexPath.row)
     }

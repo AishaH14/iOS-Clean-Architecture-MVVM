@@ -213,11 +213,10 @@ final class DefaultListsViewModel: ListsViewModel {
                         page: self.currentPage
                     )
                     
-                case .failure:
-                    self.error.value = NSLocalizedString(
-                        "Failed to fetch account details",
-                        comment: ""
-                    )
+                case .failure(let error):
+                    self.error.value = error.isInternetConnectionError
+                        ? NSLocalizedString("No internet connection", comment: "")
+                        : NSLocalizedString("Failed to fetch account details", comment: "")
                 }
             }
         }
@@ -263,11 +262,11 @@ final class DefaultListsViewModel: ListsViewModel {
                     self.currentPage = page
                     self.fetchPosterPaths(for: newLists)
                     
-                case .failure:
-                    self.error.value = NSLocalizedString(
-                        "Failed to fetch lists",
-                        comment: ""
-                    )
+                case .failure(let error):
+                    self.error.value = error.isInternetConnectionError
+                        ? NSLocalizedString("No internet connection", comment: "")
+                        : NSLocalizedString("Failed to fetch account details", comment: "")
+
                 }
             }
         }

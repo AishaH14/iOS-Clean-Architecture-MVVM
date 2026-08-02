@@ -66,10 +66,10 @@ extension MoviesListTableViewController {
         cell.fill(with: viewModel.items.value[indexPath.row],
                   posterImagesRepository: posterImagesRepository)
 
-        if indexPath.row == viewModel.items.value.count - 1 {
-            viewModel.didLoadNextPage()
-        }
-
+        if indexPath.row == viewModel.items.value.count - 1,
+            viewModel.canLoadNextPage {
+                viewModel.didLoadNextPage()
+            }
         return cell
     }
 

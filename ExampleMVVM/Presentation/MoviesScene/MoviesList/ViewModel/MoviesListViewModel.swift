@@ -22,6 +22,7 @@ protocol MoviesListViewModelInput {
     func closeQueriesSuggestions()
     func didSelectItem(at index: Int)
     func didSelectGenre(at index: Int)
+    var selectedGenreIndex:Int? { set get }
 }
 
 protocol MoviesListViewModelOutput {
@@ -35,6 +36,8 @@ protocol MoviesListViewModelOutput {
     var errorTitle: String { get }
     var searchBarPlaceholder: String { get }
     var genres: Observable<[Genre]> { get }
+    var resetGenres: Observable<Bool> { get }
+    var canLoadNextPage: Bool { get }
 }
 
 typealias MoviesListViewModel = MoviesListViewModelInput & MoviesListViewModelOutput
@@ -46,6 +49,12 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     private let actions: MoviesListViewModelActions?
     private var allMovies: [Movie] = []
     let genres: Observable<[Genre]> = Observable([])
+
+    var canLoadNextPage: Bool {
+        selectedGenreIndex == 0 && hasMorePages && loading.value == .none
+    }
+    var resetGenres: Observable<Bool> = .init(false)
+    var selectedGenreIndex: Int? = 0
     var currentPage: Int = 0
     var totalPageCount: Int = 1
     var hasMorePages: Bool { currentPage < totalPageCount }
@@ -54,6 +63,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     private var pages: [MoviesPage] = []
     private var moviesLoadTask: Cancellable? { willSet { moviesLoadTask?.cancel() } }
     private let mainQueue: DispatchQueueType
+    private var filteredMovies: [Movie] = []
     
     // MARK: - OUTPUT
     
@@ -162,8 +172,7 @@ extension DefaultMoviesListViewModel {
     
     func viewDidLoad() {
         loadGenres()
-        update(movieQuery: MovieQuery(query: "movie"))
-          query.value = ""
+        defaultSearchState()
     }
     
     func didLoadNextPage() {
@@ -179,8 +188,16 @@ extension DefaultMoviesListViewModel {
 
     func didCancelSearch() {
         moviesLoadTask?.cancel()
+        defaultSearchState()
+       
     }
 
+    func defaultSearchState() {
+        selectedGenreIndex = 0
+        resetGenres.value = true
+            update(movieQuery: MovieQuery(query: "movie"))
+            query.value = ""
+        }
     func showQueriesSuggestions() {
         actions?.showMovieQueriesSuggestions(update(movieQuery:))
     }
@@ -190,10 +207,11 @@ extension DefaultMoviesListViewModel {
     }
 
     func didSelectItem(at index: Int) {
-        actions?.showMovieDetails(pages.movies[index])
-    }
+        guard filteredMovies.indices.contains(index) else { return }
+            actions?.showMovieDetails(filteredMovies[index])
+        }
     func didSelectGenre(at index: Int) {
-
+        selectedGenreIndex = index 
         if index == 0 {
             items.value = allMovies.map(MoviesListItemViewModel.init)
             return
@@ -201,7 +219,7 @@ extension DefaultMoviesListViewModel {
 
         let selectedGenre = genres.value[index - 1]
 
-        let filteredMovies = allMovies.filter {
+        filteredMovies = allMovies.filter {
             $0.genreIds?.contains(selectedGenre.id) ?? false
         }
 
