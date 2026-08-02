@@ -342,6 +342,16 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
         )
     }
 
+    func makeMovieUserStateUseCase() -> MovieUserStateUseCase {
+        DefaultMovieUserStateUseCase(
+            fetchAccountDetailsUseCase: makeFetchAccountDetailsUseCase(),
+            fetchAccountListsUseCase: makeFetchAccountListsUseCase(),
+            fetchListMoviesUseCase: makeFetchListMoviesUseCase(),
+            fetchFavoriteMoviesUseCase: makeFetchFavoriteMoviesUseCase(),
+            fetchWatchlistMoviesUseCase: makeFetchWatchlistMoviesUseCase()
+        )
+    }
+
     func makeMoviesDetailsViewModel(
         movie: Movie,
         actions: MovieDetailsViewModelActions
@@ -351,16 +361,10 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
             posterImagesRepository: makePosterImagesRepository(),
             movieDetailsRepository: movieDetailsRepository,
             authSessionStorage: makeAuthSessionStorage(),
-            movieDetailsUseCases: MovieDetailsUseCases(
-                removeMovieFromListUseCase: makeRemoveMovieFromListUseCase(),
-                fetchAccountDetailsUseCase: makeFetchAccountDetailsUseCase(),
-                fetchAccountListsUseCase: makeFetchAccountListsUseCase(),
-                fetchListMoviesUseCase: makeFetchListMoviesUseCase(),
-                updateFavoriteUseCase: makeUpdateFavoriteUseCase(),
-                updateWatchlistUseCase: makeUpdateWatchlistUseCase(),
-                fetchFavoriteMoviesUseCase: makeFetchFavoriteMoviesUseCase(),
-                fetchWatchlistMoviesUseCase: makeFetchWatchlistMoviesUseCase()
-            ),
+            updateFavoriteUseCase: makeUpdateFavoriteUseCase(),
+            updateWatchlistUseCase: makeUpdateWatchlistUseCase(),
+            removeMovieFromListUseCase: makeRemoveMovieFromListUseCase(),
+            movieUserStateUseCase: makeMovieUserStateUseCase(),
             actions: actions
         )
     }
