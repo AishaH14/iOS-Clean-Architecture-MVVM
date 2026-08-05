@@ -13,7 +13,7 @@ final class HomeMovieCollectionViewCell: UICollectionViewCell {
     @IBOutlet private weak var posterImageView: UIImageView!
     @IBOutlet private weak var titleLabel: UILabel!
     @IBOutlet private weak var ratingLabel: UILabel!
-    
+    @IBOutlet private weak var ratingIconImageView: UIImageView!
     private var imageLoadTask: Cancellable? { willSet { imageLoadTask?.cancel() } }
     
     override func awakeFromNib() {
@@ -24,6 +24,7 @@ final class HomeMovieCollectionViewCell: UICollectionViewCell {
             posterImageView.isSkeletonable = true
             titleLabel.isSkeletonable = true
             ratingLabel.isSkeletonable = true
+            ratingIconImageView.isSkeletonable = true
         }
     
     override func prepareForReuse() {
@@ -62,12 +63,14 @@ final class HomeMovieCollectionViewCell: UICollectionViewCell {
            posterImageView.showAnimatedGradientSkeleton()
            titleLabel.showAnimatedGradientSkeleton()
            ratingLabel.showAnimatedGradientSkeleton()
+           ratingIconImageView.showAnimatedGradientSkeleton()
        }
 
        func hideSkeleton() {
            posterImageView.hideSkeleton()
            titleLabel.hideSkeleton()
            ratingLabel.hideSkeleton()
+           ratingIconImageView.hideSkeleton()
        }
    }
         

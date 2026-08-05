@@ -101,8 +101,7 @@ private extension DefaultHomeViewModel {
         self.loading.value = loading
         
         loadTask = fetchHomeMoviesUseCase.execute { [weak self] result in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-           // self?.mainQueue.async {
+               self?.mainQueue.async {
                 guard let self = self else { return }
                 self.loading.value = .none
                 

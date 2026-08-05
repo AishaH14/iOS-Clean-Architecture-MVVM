@@ -90,6 +90,7 @@
                                         </collectionViewCellContentView>
                                         <connections>
                                             <outlet property="posterImageView" destination="xoh-sX-UYS" id="reL-cs-lGT"/>
+                                            <outlet property="ratingIconImageView" destination="lZQ-fa-VCo" id="DSO-Em-N4X"/>
                                             <outlet property="ratingLabel" destination="YYx-F3-P10" id="AkV-wz-s8j"/>
                                             <outlet property="titleLabel" destination="QNK-z6-WSM" id="z5f-mg-YhL"/>
                                         </connections>
