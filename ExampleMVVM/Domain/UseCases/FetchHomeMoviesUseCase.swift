@@ -62,24 +62,10 @@ final class DefaultFetchHomeMoviesUseCase: FetchHomeMoviesUseCase {
             dispatchGroup.leave()
         }
         
-        
         dispatchGroup.notify(queue: .global(qos: .userInitiated)) {
-            if case .failure(let error) = nowPlayingResult {
-                completion(.failure(error))
-                return
-            }
+            let results = [nowPlayingResult, popularResult, topRatedResult, upcomingResult]
             
-            if case .failure(let error) = popularResult {
-                completion(.failure(error))
-                return
-            }
-            
-            if case .failure(let error) = topRatedResult {
-                completion(.failure(error))
-                return
-            }
-            
-            if case .failure(let error) = upcomingResult {
+            if let error = Self.firstFailure(in: results) {
                 completion(.failure(error))
                 return
             }
@@ -100,6 +86,18 @@ final class DefaultFetchHomeMoviesUseCase: FetchHomeMoviesUseCase {
             topRatedTask,
             upcomingTask
         ])
+    }
+}
+
+private extension DefaultFetchHomeMoviesUseCase {
+    
+    static func firstFailure(
+        in results: [Result<MoviesPage, Error>?]
+    ) -> Error? {
+        for case .failure(let error)? in results {
+            return error
+        }
+        return nil
     }
 }
 

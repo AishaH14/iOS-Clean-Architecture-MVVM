@@ -14,7 +14,12 @@ protocol MoviesHomeFlowCoordinatorDependencies {
     func makeMovieDetailsFlowCoordinator(
         navigationController: UINavigationController
     ) -> MovieDetailsFlowCoordinator
-}
+    
+       func makeMoviesSearchFlowCoordinator(
+           navigationController: UINavigationController
+       ) -> MoviesSearchFlowCoordinator
+   }
+
 final class MoviesHomeFlowCoordinator {
     
     private weak var navigationController: UINavigationController?
@@ -30,8 +35,9 @@ final class MoviesHomeFlowCoordinator {
     
     func start() {
         let actions = HomeViewModelActions(
-            showMovieDetails: showMovieDetails
-        )
+                showMovieDetails: showMovieDetails,
+                showSeeAll: showSeeAll
+            )
         
         let viewController = dependencies.makeHomeViewController(actions: actions)
         navigationController?.setViewControllers([viewController], animated: false)
@@ -45,6 +51,15 @@ final class MoviesHomeFlowCoordinator {
         )
 
         coordinator.start(movie: movie)
+    }
+    private func showSeeAll(source: MoviesListSource) {
+        guard let navigationController else { return }
+
+        let coordinator = dependencies.makeMoviesSearchFlowCoordinator(
+            navigationController: navigationController
+        )
+
+        coordinator.start(source: source)
     }
     }
 

@@ -3,10 +3,22 @@ import Foundation
 
 struct APIEndpoints {
     
-    static func getMovies(with moviesRequestDTO: MoviesRequestDTO) -> Endpoint<MoviesResponseDTO> {
+    static func searchMedia(
+        category: MediaCategory,
+        with moviesRequestDTO: MoviesRequestDTO
+    ) -> Endpoint<MoviesResponseDTO> {
+        let path: String
+
+        switch category {
+        case .movies:
+            path = "3/search/movie"
+
+        case .tvShows:
+            path = "3/search/tv"
+        }
 
         return Endpoint(
-            path: "3/search/multi",
+            path: path,
             method: .get,
             queryParametersEncodable: moviesRequestDTO
         )

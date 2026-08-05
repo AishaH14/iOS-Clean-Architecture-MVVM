@@ -8,12 +8,19 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
     @IBOutlet private var searchBarContainer: UIView!
     @IBOutlet private weak var genresCollectionView: UICollectionView!
     @IBOutlet private var emptyDataLabel: UILabel!    
-    
+    @IBOutlet private weak var categorySegmentedControl: UISegmentedControl!
+    @IBAction private func categoryChanged(_ sender: UISegmentedControl) {
+        let category: MediaCategory =
+                sender.selectedSegmentIndex == 0 ? .movies : .tvShows
+
+            viewModel.didSelectCategory(category)
+        }
     private var viewModel: MoviesListViewModel!
     private var posterImagesRepository: PosterImagesRepository?
     private var moviesTableViewController: MoviesListTableViewController?
     private var searchController = UISearchController(searchResultsController: nil)
 
+    @IBOutlet weak var searchContainerHeight: NSLayoutConstraint!
     // MARK: - Lifecycle
 
     static func create(
@@ -38,19 +45,31 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
     }
 
     private func bind(to viewModel: MoviesListViewModel) {
-        viewModel.items.observe(on: self) { [weak self] _ in  DispatchQueue.main.async {self?.updateItems() }}
-        viewModel.loading.observe(on: self) { [weak self] in self?.updateLoading($0) }
-        viewModel.query.observe(on: self) { [weak self] in self?.updateSearchQuery($0) }
-        viewModel.error.observe(on: self) { [weak self] in self?.showError($0) }
-        viewModel.genres.observe(on: self) { [weak self] _ in self?.genresCollectionView.reloadData()}
+        viewModel.items.observe(on: self) { [weak self] _ in
+                self?.updateItems()
+            }
+        viewModel.loading.observe(on: self) { [weak self] loading in
+            self?.updateLoading(loading)
+        }
+        viewModel.query.observe(on: self) { [weak self] query in
+            self?.updateSearchQuery(query)
+        }
+        viewModel.error.observe(on: self) { [weak self] error in
+            self?.showError(error)
+        }
+        viewModel.selectedCategory.observe(on: self) { [weak self] category in
+            self?.categorySegmentedControl.selectedSegmentIndex =
+                category == .movies ? 0 : 1
+        }
+        viewModel.genres.observe(on: self) { [weak self] _ in
+            self?.genresCollectionView.reloadData()
+        }
         viewModel.resetGenres.observe(on: self) { [weak self] _ in
             DispatchQueue.main.async {
                 self?.genresCollectionView.reloadData()
             }
         }
-        
     }
-
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         searchController.isActive = false
@@ -71,9 +90,26 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
     private func setupViews() {
         title = viewModel.screenTitle
         emptyDataLabel.text = viewModel.emptyDataTitle
-        setupSearchController()
+        categorySegmentedControl.setTitle("Movies", forSegmentAt: 0)
+        categorySegmentedControl.setTitle("TV Shows", forSegmentAt: 1)
+        categorySegmentedControl.selectedSegmentTintColor = .primary
+        categorySegmentedControl.setTitleTextAttributes(
+            [.foregroundColor: UIColor.white],
+            for: .selected
+        )
+        categorySegmentedControl.setTitleTextAttributes(
+            [.foregroundColor: UIColor.gray],
+            for: .normal
+        )
+        if viewModel.source == .search {
+            searchContainerHeight.constant = 56 
+            setupSearchController()
+        } else {
+            searchContainerHeight.constant = 0
+            searchBarContainer.isHidden = true
+        }
     }
-
+    
     private func setupBehaviours() {
         addBehaviors([BackButtonEmptyTitleNavigationBarBehavior(),
                       BlackStyleNavigationBarBehavior()])
@@ -199,8 +235,8 @@ extension MoviesListViewController: UICollectionViewDelegate, UICollectionViewDa
         let isSelected = indexPath.row ==  viewModel.selectedGenreIndex
         
         cell.contentView.backgroundColor = isSelected
-        ? UIColor(red: 0/255, green: 102/255, blue: 230/255, alpha: 1)
-        : UIColor(red: 42/255, green: 42/255, blue: 46/255, alpha: 1)
+         ? .primary
+        : .chipBackground
         return cell
         
     }

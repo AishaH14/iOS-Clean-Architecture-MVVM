@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SkeletonView
 
 final class HomeMovieCollectionViewCell: UICollectionViewCell {
     static let reuseIdentifier = String(describing: HomeMovieCollectionViewCell.self)
@@ -15,8 +16,19 @@ final class HomeMovieCollectionViewCell: UICollectionViewCell {
     
     private var imageLoadTask: Cancellable? { willSet { imageLoadTask?.cancel() } }
     
+    override func awakeFromNib() {
+            super.awakeFromNib()
+
+            isSkeletonable = true
+            contentView.isSkeletonable = true
+            posterImageView.isSkeletonable = true
+            titleLabel.isSkeletonable = true
+            ratingLabel.isSkeletonable = true
+        }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
+        hideSkeleton()
         posterImageView.image = nil
         titleLabel.text = nil
         ratingLabel.text = nil
@@ -27,6 +39,7 @@ final class HomeMovieCollectionViewCell: UICollectionViewCell {
         with viewModel: HomeMovieCellViewModel,
         posterImagesRepository: PosterImagesRepository?
     ) {
+        hideSkeleton()
         titleLabel.text = viewModel.title
         
         ratingLabel.text = viewModel.rating
@@ -43,7 +56,20 @@ final class HomeMovieCollectionViewCell: UICollectionViewCell {
                 self?.posterImageView.image = UIImage(data: data)
             }
         }
+    
     }
-        }
+    func showSkeleton() {
+           posterImageView.showAnimatedGradientSkeleton()
+           titleLabel.showAnimatedGradientSkeleton()
+           ratingLabel.showAnimatedGradientSkeleton()
+       }
+
+       func hideSkeleton() {
+           posterImageView.hideSkeleton()
+           titleLabel.hideSkeleton()
+           ratingLabel.hideSkeleton()
+       }
+   }
+        
     
 

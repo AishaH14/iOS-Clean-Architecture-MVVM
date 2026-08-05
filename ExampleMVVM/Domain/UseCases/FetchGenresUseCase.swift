@@ -11,10 +11,10 @@ protocol FetchGenresUseCase {
     
     @discardableResult
     func execute(
+        category: MediaCategory,
         completion: @escaping (Result<[Genre], Error>) -> Void
     ) -> Cancellable?
 }
-
 final class DefaultFetchGenresUseCase: FetchGenresUseCase {
     
     private let genresRepository: GenresRepository
@@ -25,42 +25,21 @@ final class DefaultFetchGenresUseCase: FetchGenresUseCase {
     
     @discardableResult
     func execute(
+        category: MediaCategory,
         completion: @escaping (Result<[Genre], Error>) -> Void
     ) -> Cancellable? {
-        
-        let task = genresRepository.fetchMovieGenres { [weak self] movieResult in
-            
-            switch movieResult {
-                
-            case .success(let movieGenres):
-                
-                _ = self?.genresRepository.fetchTVGenres { tvResult in
+        switch category {
+                case .movies:
+                    return genresRepository.fetchMovieGenres(
+                        completion: completion
+                    )
                     
-                    switch tvResult {
-                        
-                    case .success(let tvGenres):
-                        
-                        let allGenres = movieGenres + tvGenres
-                        
-                        let uniqueGenres = Array(
-                            Dictionary(
-                                grouping: allGenres,
-                                by: { $0.id }
-                            ).compactMap { $0.value.first }
-                        )
-                        
-                        completion(.success(uniqueGenres))
-                        
-                    case .failure(let error):
-                        completion(.failure(error))
-                    }
+                case .tvShows:
+                    return genresRepository.fetchTVGenres(
+                        completion: completion
+                    )
                 }
-                
-            case .failure(let error):
-                completion(.failure(error))
             }
         }
+       
         
-        return task
-    }
-}

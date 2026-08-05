@@ -148,6 +148,11 @@
 		CA9167B630109388006FC081 /* UpdateFavoriteUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9167B430109384006FC081 /* UpdateFavoriteUseCase.swift */; };
 		CA9167B8301093DE006FC081 /* UpdateWatchlistUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9167B7301093DC006FC081 /* UpdateWatchlistUseCase.swift */; };
 		CA9167B9301093DE006FC081 /* UpdateWatchlistUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9167B7301093DC006FC081 /* UpdateWatchlistUseCase.swift */; };
+		CAAB6163301FA478009AD7A0 /* FetchMoviesSectionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAB6162301FA475009AD7A0 /* FetchMoviesSectionUseCase.swift */; };
+		CAAB6164301FA478009AD7A0 /* FetchMoviesSectionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAB6162301FA475009AD7A0 /* FetchMoviesSectionUseCase.swift */; };
+		CAAB61693020C2AC009AD7A0 /* UIColor+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAB61683020C2A9009AD7A0 /* UIColor+App.swift */; };
+		CAAB616A3020C2AC009AD7A0 /* UIColor+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAB61683020C2A9009AD7A0 /* UIColor+App.swift */; };
+		CAAB616F3021D0D7009AD7A0 /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = CAAB616E3021D0D7009AD7A0 /* SkeletonView */; };
 		CABE95402FF11555002720A1 /* ListsResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE953F2FF11551002720A1 /* ListsResponseDTO+Mapping.swift */; };
 		CABE95422FF1160D002720A1 /* MovieList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE95412FF11609002720A1 /* MovieList.swift */; };
 		CABE95432FF1160D002720A1 /* MovieList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE95412FF11609002720A1 /* MovieList.swift */; };
@@ -297,6 +302,8 @@
 		CA9167B2301091AC006FC081 /* UpdateUserMediaRequestDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserMediaRequestDTO.swift; sourceTree = "<group>"; };
 		CA9167B430109384006FC081 /* UpdateFavoriteUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateFavoriteUseCase.swift; sourceTree = "<group>"; };
 		CA9167B7301093DC006FC081 /* UpdateWatchlistUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateWatchlistUseCase.swift; sourceTree = "<group>"; };
+		CAAB6162301FA475009AD7A0 /* FetchMoviesSectionUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchMoviesSectionUseCase.swift; sourceTree = "<group>"; };
+		CAAB61683020C2A9009AD7A0 /* UIColor+App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+App.swift"; sourceTree = "<group>"; };
 		CABE953F2FF11551002720A1 /* ListsResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ListsResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 		CABE95412FF11609002720A1 /* MovieList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieList.swift; sourceTree = "<group>"; };
 		CABE95442FF11675002720A1 /* ListsRequestDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsRequestDTO.swift; sourceTree = "<group>"; };
@@ -320,6 +327,7 @@
 		CA4979F52FDEF04600657F9A /* Flows */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Flows; sourceTree = "<group>"; };
 		CA4979FA2FDEF2B000657F9A /* AuthScene */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AuthScene; sourceTree = "<group>"; };
 		CA90EC812FFBDBB4002393D7 /* Constants */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Constants; sourceTree = "<group>"; };
+		CAAB615E301F9AD1009AD7A0 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
 		CABE95672FF14F51002720A1 /* ListsScene */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ListsScene; sourceTree = "<group>"; };
 		CAC3DFA62FE2B56900DB09E7 /* AuthSessionStorage */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AuthSessionStorage; sourceTree = "<group>"; };
 		CAC3DFAD2FE2BA4400DB09E7 /* Auth */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Auth; sourceTree = "<group>"; };
@@ -337,6 +345,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CAAB616F3021D0D7009AD7A0 /* SkeletonView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -569,6 +578,7 @@
 				1FA5338B201E1FDE00747E55 /* ExampleMVVM */,
 				1FA533A0201E1FDE00747E55 /* ExampleMVVMTests */,
 				1F02DE3322F8507500E40C3A /* ExampleMVVMUITests */,
+				CAAB616D3021D0CA009AD7A0 /* Frameworks */,
 				1FA5338A201E1FDE00747E55 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -668,6 +678,7 @@
 				56FA113C2FD6AC4D004861EC /* FetchGenresUseCase.swift */,
 				CA4034612FAB46F000B54677 /* FetchHomeMoviesUseCase.swift */,
 				CAE71E8C301F66C7001B393C /* MovieUserStateUseCase.swift */,
+				CAAB6162301FA475009AD7A0 /* FetchMoviesSectionUseCase.swift */,
 				1F05A6CB2220A2CB001E2801 /* SearchMoviesUseCase.swift */,
 				1F84DECF23006BDA00139F73 /* FetchRecentMovieQueriesUseCase.swift */,
 				1F4102F2240BEE5800EC014A /* Protocol */,
@@ -786,6 +797,7 @@
 		1FE49D7C230AA7C200D1D42E /* MoviesScene */ = {
 			isa = PBXGroup;
 			children = (
+				CAAB615E301F9AD1009AD7A0 /* Shared */,
 				1F16031E2426922E00C173C6 /* Flows */,
 				1FE49D81230AA7C200D1D42E /* MoviesList */,
 				1FE49D7F230AA7C200D1D42E /* MovieDetails */,
@@ -891,6 +903,7 @@
 		1FEED0D520231F72000F4EAA /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				CAAB616B3020C30C009AD7A0 /* Extensions */,
 				CA4979E92FD05BF500657F9A /* CompositeCancellable.swift */,
 				6C0F72E129CF0F5A0005020A /* DispatchQueueType.swift */,
 				1F474F2122356B1E0092DB4B /* Cancellable.swift */,
@@ -986,6 +999,21 @@
 			path = MainTabBar;
 			sourceTree = "<group>";
 		};
+		CAAB616B3020C30C009AD7A0 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				CAAB61683020C2A9009AD7A0 /* UIColor+App.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		CAAB616D3021D0CA009AD7A0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		CAE71E8B301F5204001B393C /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -1046,6 +1074,7 @@
 				CA4979F52FDEF04600657F9A /* Flows */,
 				CA4979FA2FDEF2B000657F9A /* AuthScene */,
 				CA90EC812FFBDBB4002393D7 /* Constants */,
+				CAAB615E301F9AD1009AD7A0 /* Shared */,
 				CABE95672FF14F51002720A1 /* ListsScene */,
 				CAC3DFA62FE2B56900DB09E7 /* AuthSessionStorage */,
 				CAC3DFAD2FE2BA4400DB09E7 /* Auth */,
@@ -1113,6 +1142,9 @@
 				es,
 			);
 			mainGroup = 1FA53380201E1FDE00747E55;
+			packageReferences = (
+				CAAB616C3021CF21009AD7A0 /* XCRemoteSwiftPackageReference "SkeletonView" */,
+			);
 			productRefGroup = 1FA5338A201E1FDE00747E55 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1206,6 +1238,7 @@
 				1FE49D90230AA7C200D1D42E /* MovieDetailsViewModel.swift in Sources */,
 				1F794921247D869700552CC3 /* BlackStyleNavigationBarBehavior.swift in Sources */,
 				1F1FC48A22E3693100BCBA8D /* DataTransferService.swift in Sources */,
+				CAAB61693020C2AC009AD7A0 /* UIColor+App.swift in Sources */,
 				1FEE31622218B17E00C160B9 /* Observable.swift in Sources */,
 				1FFFC836221B0041007D99D2 /* MoviesRepository.swift in Sources */,
 				1F57F8D223C656F600981E09 /* AccessibilityIdentifier.swift in Sources */,
@@ -1239,6 +1272,7 @@
 				1FE49D8E230AA7C200D1D42E /* MoviesQueryListView.swift in Sources */,
 				1F9035272307528F00DEA4BD /* CoreDataMoviesQueriesStorage.swift in Sources */,
 				CA9167B530109388006FC081 /* UpdateFavoriteUseCase.swift in Sources */,
+				CAAB6163301FA478009AD7A0 /* FetchMoviesSectionUseCase.swift in Sources */,
 				1FE49D92230AA7C200D1D42E /* MoviesListViewModel.swift in Sources */,
 				1FB0903A2437651700DBE132 /* UIViewController+AddBehaviors.swift in Sources */,
 				1F5CE1CD242C303700A9CDE3 /* CoreDataStorage.swift in Sources */,
@@ -1287,6 +1321,7 @@
 				1F9035412307758D00DEA4BD /* PosterImagesRepositoryMock.swift in Sources */,
 				1F474F2E22356C7F0092DB4B /* MoviesRepository.swift in Sources */,
 				1F9034DC2307291800DEA4BD /* FetchRecentMovieQueriesUseCase.swift in Sources */,
+				CAAB6164301FA478009AD7A0 /* FetchMoviesSectionUseCase.swift in Sources */,
 				CA4034632FAB46F600B54677 /* FetchHomeMoviesUseCase.swift in Sources */,
 				1FE49D9B230AEC4F00D1D42E /* MoviesListViewModel.swift in Sources */,
 				56FA11382FD565A4004861EC /* GenresRepository.swift in Sources */,
@@ -1320,6 +1355,7 @@
 				56B631692FAA27E100046E63 /* Genre.swift in Sources */,
 				1FE49D9D230AEC5D00D1D42E /* MoviesQueryListViewModel.swift in Sources */,
 				1F474F2A22356C7F0092DB4B /* Movie.swift in Sources */,
+				CAAB616A3020C2AC009AD7A0 /* UIColor+App.swift in Sources */,
 				1F90353723076B8A00DEA4BD /* MovieDetailsViewModelTests.swift in Sources */,
 				1F474F2822356C7F0092DB4B /* Cancellable.swift in Sources */,
 				1F0CEFD023436B8B004141FA /* ConnectionError.swift in Sources */,
@@ -1664,6 +1700,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CAAB616C3021CF21009AD7A0 /* XCRemoteSwiftPackageReference "SkeletonView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Juanpe/SkeletonView.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.31.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CAAB616E3021D0D7009AD7A0 /* SkeletonView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CAAB616C3021CF21009AD7A0 /* XCRemoteSwiftPackageReference "SkeletonView" */;
+			productName = SkeletonView;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		1FD03804239098650016D05F /* CoreDataStorage.xcdatamodeld */ = {
