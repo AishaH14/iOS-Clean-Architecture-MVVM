@@ -176,6 +176,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
 
         moviesLoadTask = fetchMoviesSectionUseCase.execute(
             source: source,
+            category: selectedCategory.value,
             page: nextPage
         ) { [weak self] result in
             self?.mainQueue.async {
@@ -290,16 +291,23 @@ extension DefaultMoviesListViewModel {
 
         loadGenres()
 
-        let searchQuery = currentQuery.isEmpty
-            ? defaultQuery(for: category)
-            : currentQuery
+        switch source {
+        case .search:
+            let searchQuery = currentQuery.isEmpty
+                ? defaultQuery(for: category)
+                : currentQuery
 
-        update(
-            movieQuery: MovieQuery(query: searchQuery)
-        )
+            update(
+                movieQuery: MovieQuery(query: searchQuery)
+            )
 
-        if currentQuery.isEmpty {
-            query.value = ""
+            if currentQuery.isEmpty {
+                query.value = ""
+            }
+
+        case .nowPlaying, .popular, .topRated, .upcoming:
+            resetPages()
+            loadSection(loading: .fullScreen)
         }
     }
     private func defaultQuery(

@@ -40,7 +40,7 @@ extension DefaultMoviesRepository: MoviesRepository {
             
             guard !task.isCancelled else { return }
             
-            let endpoint = APIEndpoints.searchMedia(category: category,with: requestDTO)
+            let endpoint = MoviesEndpoints.searchMedia(category: category, with: requestDTO)
             task.networkTask = self?.dataTransferService.request(
                 with: endpoint,
                 on: backgroundQueue
@@ -59,84 +59,62 @@ extension DefaultMoviesRepository: MoviesRepository {
     }
     
     func fetchNowPlayingMovies(
+        category: MediaCategory,
         page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable? {
-        
         let requestDTO = MoviesListRequestDTO(page: page)
-        let endpoint = APIEndpoints.getNowPlayingMovies(with: requestDTO)
-        let task = RepositoryTask()
-        
-        task.networkTask = dataTransferService.request(
-            with: endpoint,
-            on: backgroundQueue
-        ) { result in
-            switch result {
-            case .success(let responseDTO):
-                completion(.success(responseDTO.toDomain()))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-        
-        return task
+        let endpoint = category == .movies
+            ? MoviesEndpoints.getNowPlayingMovies(with: requestDTO)
+            : MoviesEndpoints.getAiringTodayTV(with: requestDTO)
+        return fetchMoviesList(endpoint: endpoint, completion: completion)
     }
     
     func fetchPopularMovies(
+        category: MediaCategory,
         page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable? {
-        
         let requestDTO = MoviesListRequestDTO(page: page)
-        let endpoint = APIEndpoints.getPopularMovies(with: requestDTO)
-        let task = RepositoryTask()
-        
-        task.networkTask = dataTransferService.request(
-            with: endpoint,
-            on: backgroundQueue
-        ) { result in
-            switch result {
-            case .success(let responseDTO):
-                completion(.success(responseDTO.toDomain()))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-        
-        return task
+        let endpoint = category == .movies
+            ? MoviesEndpoints.getPopularMovies(with: requestDTO)
+            : MoviesEndpoints.getPopularTV(with: requestDTO)
+        return fetchMoviesList(endpoint: endpoint, completion: completion)
     }
     
     func fetchTopRatedMovies(
+        category: MediaCategory,
         page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable? {
-        
         let requestDTO = MoviesListRequestDTO(page: page)
-        let endpoint = APIEndpoints.getTopRatedMovies(with: requestDTO)
-        let task = RepositoryTask()
-        
-        task.networkTask = dataTransferService.request(
-            with: endpoint,
-            on: backgroundQueue
-        ) { result in
-            switch result {
-            case .success(let responseDTO):
-                completion(.success(responseDTO.toDomain()))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-        
-        return task
+        let endpoint = category == .movies
+            ? MoviesEndpoints.getTopRatedMovies(with: requestDTO)
+            : MoviesEndpoints.getTopRatedTV(with: requestDTO)
+        return fetchMoviesList(endpoint: endpoint, completion: completion)
     }
     
     func fetchUpcomingMovies(
+        category: MediaCategory,
         page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable? {
-        
         let requestDTO = MoviesListRequestDTO(page: page)
-        let endpoint = APIEndpoints.getUpcomingMovies(with: requestDTO)
+        let endpoint = category == .movies
+            ? MoviesEndpoints.getUpcomingMovies(with: requestDTO)
+            : MoviesEndpoints.getOnTheAirTV(with: requestDTO)
+        return fetchMoviesList(endpoint: endpoint, completion: completion)
+    }
+}
+
+// MARK: - Private
+
+private extension DefaultMoviesRepository {
+    
+    func fetchMoviesList(
+        endpoint: Endpoint<MoviesResponseDTO>,
+        completion: @escaping (Result<MoviesPage, Error>) -> Void
+    ) -> Cancellable? {
         let task = RepositoryTask()
         
         task.networkTask = dataTransferService.request(

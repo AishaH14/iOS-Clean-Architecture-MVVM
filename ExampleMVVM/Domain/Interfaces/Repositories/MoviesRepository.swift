@@ -12,21 +12,25 @@ protocol MoviesRepository {
 
 
     func fetchNowPlayingMovies(
+        category: MediaCategory,
         page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable?
 
     func fetchPopularMovies(
+        category: MediaCategory,
         page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable?
 
     func fetchTopRatedMovies(
+        category: MediaCategory,
         page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable?
 
     func fetchUpcomingMovies(
+        category: MediaCategory,
         page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
            ) -> Cancellable?

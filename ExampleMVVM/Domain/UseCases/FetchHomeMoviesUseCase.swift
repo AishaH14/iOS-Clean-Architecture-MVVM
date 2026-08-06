@@ -39,25 +39,25 @@ final class DefaultFetchHomeMoviesUseCase: FetchHomeMoviesUseCase {
         var upcomingResult: Result<MoviesPage, Error>?
         
         dispatchGroup.enter()
-        let nowPlayingTask = moviesRepository.fetchNowPlayingMovies(page: 1) { result in
+        let nowPlayingTask = moviesRepository.fetchNowPlayingMovies(category: .movies,page: 1) { result in
             nowPlayingResult = result
             dispatchGroup.leave()
         }
         
         dispatchGroup.enter()
-        let popularTask = moviesRepository.fetchPopularMovies(page: 1) { result in
+        let popularTask = moviesRepository.fetchPopularMovies(category: .movies,page: 1) { result in
             popularResult = result
             dispatchGroup.leave()
         }
         
         dispatchGroup.enter()
-        let topRatedTask = moviesRepository.fetchTopRatedMovies(page: 1) { result in
+        let topRatedTask = moviesRepository.fetchTopRatedMovies(category: .movies,page: 1) { result in
             topRatedResult = result
             dispatchGroup.leave()
         }
         
         dispatchGroup.enter()
-        let upcomingTask = moviesRepository.fetchUpcomingMovies(page: 1) { result in
+        let upcomingTask = moviesRepository.fetchUpcomingMovies(category: .movies,page: 1) { result in
             upcomingResult = result
             dispatchGroup.leave()
         }

@@ -12,6 +12,7 @@ protocol FetchMoviesSectionUseCase {
     @discardableResult
     func execute(
         source: MoviesListSource,
+        category: MediaCategory,
         page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable?
@@ -28,6 +29,7 @@ final class DefaultFetchMoviesSectionUseCase: FetchMoviesSectionUseCase {
     @discardableResult
     func execute(
         source: MoviesListSource,
+        category: MediaCategory,
         page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable? {
@@ -35,24 +37,28 @@ final class DefaultFetchMoviesSectionUseCase: FetchMoviesSectionUseCase {
         switch source {
         case .nowPlaying:
             return moviesRepository.fetchNowPlayingMovies(
+                category: category,
                 page: page,
                 completion: completion
             )
             
         case .popular:
             return moviesRepository.fetchPopularMovies(
+                category: category,
                 page: page,
                 completion: completion
             )
             
         case .topRated:
             return moviesRepository.fetchTopRatedMovies(
+                category: category,
                 page: page,
                 completion: completion
             )
             
         case .upcoming:
             return moviesRepository.fetchUpcomingMovies(
+                category: category,
                 page: page,
                 completion: completion
             )
