@@ -1,0 +1,144 @@
+//
+//  ProfileFlowCoordinator.swift
+//  ExampleMVVM
+//
+//  Created by Aisha Hudasi on 29/12/1447 AH.
+//
+
+import UIKit
+
+protocol ProfileFlowCoordinatorDependencies: ListsFlowCoordinatorDependencies {
+    func makeLoginViewController(actions: LoginViewModelActions) -> LoginViewController
+    func makeAuthorizeViewController(actions: AuthorizeViewModelActions) -> AuthorizeViewController
+    func makeProfileViewController(actions: ProfileViewModelActions) -> UIViewController
+    func makeAuthSessionStorage() -> AuthSessionStorage
+}
+
+final class ProfileFlowCoordinator {
+
+    // MARK: - Properties
+    private weak var navigationController: UINavigationController?
+    private let dependencies: ProfileFlowCoordinatorDependencies
+
+    // MARK: - Init
+    init(
+        navigationController: UINavigationController,
+        dependencies: ProfileFlowCoordinatorDependencies
+    ) {
+        self.navigationController = navigationController
+        self.dependencies = dependencies
+    }
+
+    // MARK: - Start
+    func start() {
+        let authSessionStorage = dependencies.makeAuthSessionStorage()
+        let sessionId = authSessionStorage.getSessionId()
+        let guestSessionId = authSessionStorage.getGuestSessionId()
+
+        if sessionId != nil || guestSessionId != nil {
+            let profileViewController = dependencies.makeProfileViewController(
+                actions: ProfileViewModelActions(
+                    showLists: showLists,
+                    showSignIn: showSignIn,
+                    showFavorites: showFavorites,
+                    showWatchlist: showWatchlist,
+                    logout: logout
+                )
+            )
+
+            navigationController?.setViewControllers(
+                [profileViewController],
+                animated: false
+            )
+        } else {
+            let loginViewController = dependencies.makeLoginViewController(
+                actions: LoginViewModelActions(
+                    showAuthorize: showAuthorize,
+                    showProfile: showProfile
+                )
+            )
+
+            navigationController?.setViewControllers([loginViewController],animated: false
+            )
+        }
+    }
+    // MARK: - Private
+    private func requireAuthentication() -> Bool {
+        let authSessionStorage = dependencies.makeAuthSessionStorage()
+        guard authSessionStorage.getSessionId() != nil else {
+            showSignIn()
+            return false
+        }
+        return true
+    }
+    
+    private func showAuthorize() {
+        let authorizeViewController = dependencies.makeAuthorizeViewController(
+            actions: AuthorizeViewModelActions(
+                showProfile:showProfile
+            )
+        )
+        navigationController?.pushViewController(authorizeViewController, animated: true)
+    }
+
+    private func showProfile() {
+        let profileViewController = dependencies.makeProfileViewController(
+            actions: ProfileViewModelActions(
+                showLists: showLists,
+                showSignIn: showSignIn,
+                showFavorites: showFavorites,
+                showWatchlist: showWatchlist,
+                logout: logout
+            )
+        )
+        navigationController?.setViewControllers([profileViewController], animated: true)
+    }
+    private func showLists() {
+        guard requireAuthentication() else { return }
+        guard let navigationController = navigationController else {
+            return
+        }
+        let flow = ListsFlowCoordinator(
+            navigationController: navigationController,
+            dependencies: dependencies
+        )
+        flow.start()
+    }
+    private func showSignIn() {
+        let loginViewController = dependencies.makeLoginViewController(
+            actions: LoginViewModelActions(
+                showAuthorize: showAuthorize,
+                showProfile: showProfile
+            )
+        )
+        
+        navigationController?.pushViewController(loginViewController,animated: true
+        )
+    }
+    private func showFavorites() {
+        guard requireAuthentication() else { return }
+
+        let viewController = dependencies.makeMediaListViewController(
+            source: .favorites
+        )
+        navigationController?.pushViewController(viewController,animated: true
+        )
+    }
+
+    private func showWatchlist() {
+        guard requireAuthentication() else { return }
+
+        let viewController = dependencies.makeMediaListViewController(
+            source: .watchlist
+        )
+
+        navigationController?.pushViewController(viewController,animated: true
+        )
+    }
+
+    private func logout() {
+            let authSessionStorage = dependencies.makeAuthSessionStorage()
+            authSessionStorage.removeSessionId()
+            showProfile()
+        }
+    }

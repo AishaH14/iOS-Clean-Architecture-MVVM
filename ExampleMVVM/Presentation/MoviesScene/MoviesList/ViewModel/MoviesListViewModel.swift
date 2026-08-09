@@ -21,6 +21,8 @@ protocol MoviesListViewModelInput {
     func showQueriesSuggestions()
     func closeQueriesSuggestions()
     func didSelectItem(at index: Int)
+    func didSelectGenre(at index: Int)
+    var selectedGenreIndex:Int? { set get }
 }
 
 protocol MoviesListViewModelOutput {
@@ -33,72 +35,86 @@ protocol MoviesListViewModelOutput {
     var emptyDataTitle: String { get }
     var errorTitle: String { get }
     var searchBarPlaceholder: String { get }
+    var genres: Observable<[Genre]> { get }
+    var resetGenres: Observable<Bool> { get }
+    var canLoadNextPage: Bool { get }
 }
 
 typealias MoviesListViewModel = MoviesListViewModelInput & MoviesListViewModelOutput
 
 final class DefaultMoviesListViewModel: MoviesListViewModel {
-
+    
     private let searchMoviesUseCase: SearchMoviesUseCase
+    private let fetchGenresUseCase: FetchGenresUseCase
     private let actions: MoviesListViewModelActions?
+    private var allMovies: [Movie] = []
+    let genres: Observable<[Genre]> = Observable([])
 
+    var canLoadNextPage: Bool {
+        selectedGenreIndex == 0 && hasMorePages && loading.value == .none
+    }
+    var resetGenres: Observable<Bool> = .init(false)
+    var selectedGenreIndex: Int? = 0
     var currentPage: Int = 0
     var totalPageCount: Int = 1
     var hasMorePages: Bool { currentPage < totalPageCount }
     var nextPage: Int { hasMorePages ? currentPage + 1 : currentPage }
-
+    
     private var pages: [MoviesPage] = []
     private var moviesLoadTask: Cancellable? { willSet { moviesLoadTask?.cancel() } }
     private let mainQueue: DispatchQueueType
-
+    private var filteredMovies: [Movie] = []
+    
     // MARK: - OUTPUT
-
+    
     let items: Observable<[MoviesListItemViewModel]> = Observable([])
     let loading: Observable<MoviesListViewModelLoading?> = Observable(.none)
     let query: Observable<String> = Observable("")
     let error: Observable<String> = Observable("")
     var isEmpty: Bool { return items.value.isEmpty }
     let screenTitle = NSLocalizedString("Movies", comment: "")
-    let emptyDataTitle = NSLocalizedString("Search results", comment: "")
+    let emptyDataTitle = NSLocalizedString("No Found", comment: "")
     let errorTitle = NSLocalizedString("Error", comment: "")
-    let searchBarPlaceholder = NSLocalizedString("Search Movies", comment: "")
-
+    let searchBarPlaceholder =  NSLocalizedString("Search movies, TV shows...", comment: "")
+    
     // MARK: - Init
     
     init(
         searchMoviesUseCase: SearchMoviesUseCase,
+        fetchGenresUseCase: FetchGenresUseCase,
         actions: MoviesListViewModelActions? = nil,
         mainQueue: DispatchQueueType = DispatchQueue.main
     ) {
         self.searchMoviesUseCase = searchMoviesUseCase
+        self.fetchGenresUseCase = fetchGenresUseCase
         self.actions = actions
         self.mainQueue = mainQueue
     }
-
+    
     // MARK: - Private
-
+    
     private func appendPage(_ moviesPage: MoviesPage) {
         currentPage = moviesPage.page
         totalPageCount = moviesPage.totalPages
-
+        
         pages = pages
             .filter { $0.page != moviesPage.page }
-            + [moviesPage]
-
+        + [moviesPage]
+        self.allMovies = pages.movies
         items.value = pages.movies.map(MoviesListItemViewModel.init)
     }
-
+    
     private func resetPages() {
         currentPage = 0
         totalPageCount = 1
         pages.removeAll()
         items.value.removeAll()
     }
-
+    
     private func load(movieQuery: MovieQuery, loading: MoviesListViewModelLoading) {
         self.loading.value = loading
         query.value = movieQuery.query
-
+        
         moviesLoadTask = searchMoviesUseCase.execute(
             requestValue: .init(query: movieQuery, page: nextPage),
             cached: { [weak self] page in
@@ -116,27 +132,49 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
                     }
                     self?.loading.value = .none
                 }
-        })
+            })
     }
-
+    
     private func handle(error: Error) {
         self.error.value = error.isInternetConnectionError ?
-            NSLocalizedString("No internet connection", comment: "") :
-            NSLocalizedString("Failed loading movies", comment: "")
+        NSLocalizedString("No internet connection", comment: "") :
+        NSLocalizedString("Failed loading movies", comment: "")
     }
-
+    
     private func update(movieQuery: MovieQuery) {
         resetPages()
         load(movieQuery: movieQuery, loading: .fullScreen)
     }
-}
+    // MARK: - Private
+    
+    private func loadGenres() {
+            
+            _ = fetchGenresUseCase.execute { [weak self] result in
+                
+                self?.mainQueue.async {
+                    
+                    switch result {
+                        
+                    case .success(let genres):
+                        self?.genres.value = genres
+                        
+                    case .failure(let error):
+                        print("Error loading genres:", error)
+                    }
+                }
+            }
+        }
+    }
 
 // MARK: - INPUT. View event methods
 
 extension DefaultMoviesListViewModel {
-
-    func viewDidLoad() { }
-
+    
+    func viewDidLoad() {
+        loadGenres()
+        defaultSearchState()
+    }
+    
     func didLoadNextPage() {
         guard hasMorePages, loading.value == .none else { return }
         load(movieQuery: .init(query: query.value),
@@ -150,8 +188,16 @@ extension DefaultMoviesListViewModel {
 
     func didCancelSearch() {
         moviesLoadTask?.cancel()
+        defaultSearchState()
+       
     }
 
+    func defaultSearchState() {
+        selectedGenreIndex = 0
+        resetGenres.value = true
+            update(movieQuery: MovieQuery(query: "movie"))
+            query.value = ""
+        }
     func showQueriesSuggestions() {
         actions?.showMovieQueriesSuggestions(update(movieQuery:))
     }
@@ -159,9 +205,26 @@ extension DefaultMoviesListViewModel {
     func closeQueriesSuggestions() {
         actions?.closeMovieQueriesSuggestions()
     }
-
     func didSelectItem(at index: Int) {
-        actions?.showMovieDetails(pages.movies[index])
+        let movies = selectedGenreIndex == 0 ? allMovies: filteredMovies
+        guard movies.indices.contains(index) else { return }
+
+        actions?.showMovieDetails(movies[index])
+    }
+    func didSelectGenre(at index: Int) {
+        selectedGenreIndex = index 
+        if index == 0 {
+            items.value = allMovies.map(MoviesListItemViewModel.init)
+            return
+        }
+
+        let selectedGenre = genres.value[index - 1]
+
+        filteredMovies = allMovies.filter {
+            $0.genreIds?.contains(selectedGenre.id) ?? false
+        }
+
+        items.value = filteredMovies.map(MoviesListItemViewModel.init)
     }
 }
 

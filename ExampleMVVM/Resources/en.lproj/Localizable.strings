@@ -14,3 +14,6 @@
 "No internet connection" = "No internet connection";
 "Failed loading movies" = "Failed loading movies";
 "Search Movies" = "Search Movies";
+"Invalid authentication URL" = "Invalid authentication URL";
+"Failed to create request token" = "Failed to create request token";
+"Failed to create session" = "Failed to create session";
