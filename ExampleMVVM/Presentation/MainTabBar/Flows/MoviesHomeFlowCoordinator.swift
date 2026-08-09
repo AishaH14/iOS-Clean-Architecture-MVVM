@@ -15,11 +15,11 @@ protocol MoviesHomeFlowCoordinatorDependencies {
         navigationController: UINavigationController
     ) -> MovieDetailsFlowCoordinator
     
-       func makeMoviesSearchFlowCoordinator(
-           navigationController: UINavigationController
-       ) -> MoviesSearchFlowCoordinator
-   }
-
+    func makeMoviesListViewController(
+        source: MoviesListSource,
+        actions: MoviesListViewModelActions
+    ) -> MoviesListViewController
+}
 final class MoviesHomeFlowCoordinator {
     
     private weak var navigationController: UINavigationController?
@@ -55,11 +55,17 @@ final class MoviesHomeFlowCoordinator {
     private func showSeeAll(source: MoviesListSource) {
         guard let navigationController else { return }
 
-        let coordinator = dependencies.makeMoviesSearchFlowCoordinator(
-            navigationController: navigationController
+        let actions = MoviesListViewModelActions(
+            showMovieDetails: showMovieDetails,
+            showMovieQueriesSuggestions: { _ in },
+            closeMovieQueriesSuggestions: { }
         )
 
-        coordinator.start(source: source)
-    }
-    }
+        let viewController = dependencies.makeMoviesListViewController(
+            source: source,
+            actions: actions
+        )
 
+        navigationController.pushViewController(viewController, animated: true)
+    }
+}

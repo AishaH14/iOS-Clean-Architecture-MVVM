@@ -53,7 +53,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     private let actions: MoviesListViewModelActions?
     private var allMovies: [Movie] = []
     let genres: Observable<[Genre]> = Observable([])
-
+    
     var canLoadNextPage: Bool {
         selectedGenreIndex == 0 && hasMorePages && loading.value == .none
     }
@@ -66,6 +66,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     
     private var pages: [MoviesPage] = []
     private var moviesLoadTask: Cancellable? { willSet { moviesLoadTask?.cancel() } }
+    private var genresLoadTask: Cancellable? { willSet { genresLoadTask?.cancel() } }
     private let mainQueue: DispatchQueueType
     private var filteredMovies: [Movie] = []
     let source: MoviesListSource
@@ -82,16 +83,16 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
         switch source {
         case .search:
             return NSLocalizedString("Movies", comment: "")
-
+            
         case .nowPlaying:
             return NSLocalizedString("Now Playing", comment: "")
-
+            
         case .popular:
             return NSLocalizedString("Popular", comment: "")
-
+            
         case .topRated:
             return NSLocalizedString("Top Rated", comment: "")
-
+            
         case .upcoming:
             return NSLocalizedString("Upcoming", comment: "")
         }
@@ -173,7 +174,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
         loading: MoviesListViewModelLoading
     ) {
         self.loading.value = loading
-
+        
         moviesLoadTask = fetchMoviesSectionUseCase.execute(
             source: source,
             category: selectedCategory.value,
@@ -181,15 +182,15 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
         ) { [weak self] result in
             self?.mainQueue.async {
                 guard let self = self else { return }
-
+                
                 switch result {
                 case .success(let page):
                     self.appendPage(page)
-
+                    
                 case .failure(let error):
                     self.handle(error: error)
                 }
-
+                
                 self.loading.value = .none
             }
         }
@@ -207,24 +208,19 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     // MARK: - Private
     
     private func loadGenres() {
-            
-            _ = fetchGenresUseCase.execute (category: selectedCategory.value ){ [weak self] result in
-                
-                self?.mainQueue.async {
+        genresLoadTask = fetchGenresUseCase.execute(category: selectedCategory.value) { [weak self] result in
+            self?.mainQueue.async {
+                switch result {
+                case .success(let genres):
+                    self?.genres.value = genres
                     
-                    switch result {
-                        
-                    case .success(let genres):
-                        self?.genres.value = genres
-                        
-                    case .failure(let error):
-                        print("Error loading genres:", error)
-                    }
+                case .failure(let error):
+                    self?.handle(error: error)
                 }
             }
         }
     }
-
+}
 // MARK: - INPUT. View event methods
 
 extension DefaultMoviesListViewModel {
