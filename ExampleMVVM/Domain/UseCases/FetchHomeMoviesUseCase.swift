@@ -39,47 +39,33 @@ final class DefaultFetchHomeMoviesUseCase: FetchHomeMoviesUseCase {
         var upcomingResult: Result<MoviesPage, Error>?
         
         dispatchGroup.enter()
-        let nowPlayingTask = moviesRepository.fetchNowPlayingMovies(page: 1) { result in
+        let nowPlayingTask = moviesRepository.fetchNowPlayingMovies(category: .movies,page: 1) { result in
             nowPlayingResult = result
             dispatchGroup.leave()
         }
         
         dispatchGroup.enter()
-        let popularTask = moviesRepository.fetchPopularMovies(page: 1) { result in
+        let popularTask = moviesRepository.fetchPopularMovies(category: .movies,page: 1) { result in
             popularResult = result
             dispatchGroup.leave()
         }
         
         dispatchGroup.enter()
-        let topRatedTask = moviesRepository.fetchTopRatedMovies(page: 1) { result in
+        let topRatedTask = moviesRepository.fetchTopRatedMovies(category: .movies,page: 1) { result in
             topRatedResult = result
             dispatchGroup.leave()
         }
         
         dispatchGroup.enter()
-        let upcomingTask = moviesRepository.fetchUpcomingMovies(page: 1) { result in
+        let upcomingTask = moviesRepository.fetchUpcomingMovies(category: .movies,page: 1) { result in
             upcomingResult = result
             dispatchGroup.leave()
         }
         
-        
         dispatchGroup.notify(queue: .global(qos: .userInitiated)) {
-            if case .failure(let error) = nowPlayingResult {
-                completion(.failure(error))
-                return
-            }
+            let results = [nowPlayingResult, popularResult, topRatedResult, upcomingResult]
             
-            if case .failure(let error) = popularResult {
-                completion(.failure(error))
-                return
-            }
-            
-            if case .failure(let error) = topRatedResult {
-                completion(.failure(error))
-                return
-            }
-            
-            if case .failure(let error) = upcomingResult {
+            if let error = Self.firstFailure(in: results) {
                 completion(.failure(error))
                 return
             }
@@ -100,6 +86,18 @@ final class DefaultFetchHomeMoviesUseCase: FetchHomeMoviesUseCase {
             topRatedTask,
             upcomingTask
         ])
+    }
+}
+
+private extension DefaultFetchHomeMoviesUseCase {
+    
+    static func firstFailure(
+        in results: [Result<MoviesPage, Error>?]
+    ) -> Error? {
+        for case .failure(let error)? in results {
+            return error
+        }
+        return nil
     }
 }
 

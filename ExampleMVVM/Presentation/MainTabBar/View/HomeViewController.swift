@@ -13,6 +13,8 @@ final class HomeViewController: UIViewController, StoryboardInstantiable {
     private var posterImagesRepository: PosterImagesRepository?
     private var sections: [HomeSectionViewModel] = []
     private let activityIndicator = UIActivityIndicatorView(style: .large)
+    private let refreshControl = UIRefreshControl()
+    private var isLoadingSkeleton = false
     @IBOutlet private weak var collectionView: UICollectionView!
     
     static func create(
@@ -31,6 +33,7 @@ final class HomeViewController: UIViewController, StoryboardInstantiable {
         bind(to: viewModel)
         viewModel.viewDidLoad()
         setupActivityIndicator()
+        setupRefreshControl()
     }
     func setupActivityIndicator() {
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
@@ -42,6 +45,9 @@ final class HomeViewController: UIViewController, StoryboardInstantiable {
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
+    }
+    @objc private func didPullToRefresh() {
+        viewModel.didPullToRefresh()
     }
 }
 
@@ -62,12 +68,24 @@ private extension HomeViewController {
         }
         
         viewModel.loading.observe(on: self) { [weak self] isLoading in
-            if isLoading {
-                self?.activityIndicator.startAnimating()
-            } else {
-                self?.activityIndicator.stopAnimating()
+            guard let self = self else { return }
+            switch isLoading {
+                case .fullScreen:
+                    self.isLoadingSkeleton = true
+                    self.collectionView.reloadData()
+                    self.activityIndicator.startAnimating()
+                    
+                case .refresh:
+                    break
+                    
+                case .none:
+                    self.isLoadingSkeleton = false
+                    self.activityIndicator.stopAnimating()
+                    self.refreshControl.endRefreshing()
+                    self.collectionView.reloadData()
+                }
             }
-        }
+        
         
         viewModel.error.observe(on: self) { [weak self] error in
             guard !error.isEmpty else { return }
@@ -88,20 +106,36 @@ private extension HomeViewController {
         
         present(alert, animated: true)
     }
+    func setupRefreshControl() {
+        refreshControl.addTarget(
+            self,
+            action: #selector(didPullToRefresh),
+            for: .valueChanged
+        )
+
+        collectionView.refreshControl = refreshControl
+    }
 }
 // MARK: - UICollectionViewDataSource
 
 extension HomeViewController: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return sections.count
-    }
+        if isLoadingSkeleton {
+                return 4
+            }
+
+            return sections.count
+        }
     
     func collectionView(
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        return min(sections[section].movies.count, 3)
+        if isLoadingSkeleton {
+               return 3
+           }
+           return min(sections[section].movies.count, 3)
     }
     
     func collectionView(
@@ -114,7 +148,10 @@ extension HomeViewController: UICollectionViewDataSource {
         ) as? HomeMovieCollectionViewCell else {
             return UICollectionViewCell()
         }
-        
+        if isLoadingSkeleton {
+            cell.showSkeleton()
+            return cell
+        }
         let cellViewModel = sections[indexPath.section].movies[indexPath.item]
 
         cell.configure(
@@ -137,8 +174,15 @@ extension HomeViewController: UICollectionViewDataSource {
               ) as? HomeSectionHeaderView else {
             return UICollectionReusableView()
         }
-        
-        header.configure(title: sections[indexPath.section].title)
+        if isLoadingSkeleton {
+            header.configure(title: "") {}
+            return header
+        }
+        header.configure(title: sections[indexPath.section].title) { [weak self] in
+            self?.viewModel.didTapSeeAll(
+                sectionIndex: indexPath.section
+            )
+        }
         return header
     }
 }

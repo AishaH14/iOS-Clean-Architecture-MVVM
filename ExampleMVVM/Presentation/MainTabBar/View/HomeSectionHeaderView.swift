@@ -12,7 +12,24 @@ final class HomeSectionHeaderView: UICollectionReusableView {
     @IBOutlet private weak var titleLabel: UILabel!
     @IBOutlet private weak var seeAllButton: UIButton!
     
-    func configure(title: String) {
+    private var didTapSeeAll: (() -> Void)?
+    
+    func configure(title: String,didTapSeeAll: @escaping () -> Void) {
         titleLabel.text = title
-    }
-}
+        self.didTapSeeAll = didTapSeeAll
+        seeAllButton.removeTarget(
+                   self,
+                   action: #selector(seeAllButtonTapped),
+                   for: .touchUpInside
+               )
+               seeAllButton.addTarget(
+                   self,
+                   action: #selector(seeAllButtonTapped),
+                   for: .touchUpInside
+               )
+           }
+           
+           @objc private func seeAllButtonTapped() {
+               didTapSeeAll?()
+           }
+       }

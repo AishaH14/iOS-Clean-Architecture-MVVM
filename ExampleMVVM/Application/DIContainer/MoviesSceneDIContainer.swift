@@ -21,6 +21,22 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
     lazy var userMediaRepository: UserMediaRepository = DefaultUserMediaRepository(
         dataTransferService: dependencies.apiDataTransferService
     )
+    
+    // MARK: - Repositories (Singletons)
+    lazy var moviesRepository: MoviesRepository = DefaultMoviesRepository(
+        dataTransferService: dependencies.apiDataTransferService,
+        cache: moviesResponseCache
+    )
+    lazy var genresRepository: GenresRepository = DefaultGenresRepository(
+        dataTransferService: dependencies.apiDataTransferService
+    )
+    lazy var moviesQueriesRepository: MoviesQueriesRepository = DefaultMoviesQueriesRepository(
+        moviesQueriesPersistentStorage: moviesQueriesStorage
+    )
+    lazy var posterImagesRepository: PosterImagesRepository = DefaultPosterImagesRepository(
+        dataTransferService: dependencies.imageDataTransferService
+    )
+    
     init(dependencies: Dependencies) {
         self.dependencies = dependencies        
     }
@@ -160,7 +176,11 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
             userMediaRepository: makeUserMediaRepository()
         )
     }
-    
+    func makeFetchMoviesSectionUseCase() -> FetchMoviesSectionUseCase {
+        DefaultFetchMoviesSectionUseCase(
+            moviesRepository: makeMoviesRepository()
+        )
+    }
     // MARK: - Profile
     func makeProfileViewController(actions: ProfileViewModelActions) -> UIViewController {
         let viewController = ProfileViewController.instantiateViewController()
@@ -232,7 +252,7 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
             authSessionStorage: makeAuthSessionStorage(),
             updateFavoriteUseCase: makeUpdateFavoriteUseCase(),
             updateWatchlistUseCase: makeUpdateWatchlistUseCase(),
-            removeMovieFromListUseCase: makeRemoveMovieFromListUseCase(),
+            removeMovieFromListUseCase: makeRemoveMovieFromListUseCase()
         )
     }
     func makeAddMovieToListUseCase() -> AddMovieToListUseCase {
@@ -278,39 +298,32 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies, Mov
     }
     // MARK: - Repositories
     func makeMoviesRepository() -> MoviesRepository {
-        DefaultMoviesRepository(
-            dataTransferService: dependencies.apiDataTransferService,
-            cache: moviesResponseCache
-        )
+        return moviesRepository
     }
     func makeGenresRepository() -> GenresRepository {
-        DefaultGenresRepository(
-            dataTransferService: dependencies.apiDataTransferService
-        )
+        return genresRepository
     }
     func makeMoviesQueriesRepository() -> MoviesQueriesRepository {
-        DefaultMoviesQueriesRepository(
-            moviesQueriesPersistentStorage: moviesQueriesStorage
-        )
+        return moviesQueriesRepository
     }
     func makePosterImagesRepository() -> PosterImagesRepository {
-        DefaultPosterImagesRepository(
-            dataTransferService: dependencies.imageDataTransferService
-        )
+        return posterImagesRepository
     }
     
     // MARK: - Movies List
-    func makeMoviesListViewController(actions: MoviesListViewModelActions) -> MoviesListViewController {
+    func makeMoviesListViewController( source: MoviesListSource,actions: MoviesListViewModelActions) -> MoviesListViewController {
         MoviesListViewController.create(
-            with: makeMoviesListViewModel(actions: actions),
+            with: makeMoviesListViewModel( source: source,actions: actions),
             posterImagesRepository: makePosterImagesRepository()
         )
     }
     
-    func makeMoviesListViewModel(actions: MoviesListViewModelActions) -> MoviesListViewModel {
+    func makeMoviesListViewModel( source: MoviesListSource,actions: MoviesListViewModelActions) -> MoviesListViewModel {
         DefaultMoviesListViewModel(
+            source: source,
             searchMoviesUseCase: makeSearchMoviesUseCase(),
             fetchGenresUseCase: makeFetchGenresUseCase(),
+            fetchMoviesSectionUseCase: makeFetchMoviesSectionUseCase(),
             actions: actions
         )
     }
