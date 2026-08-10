@@ -145,8 +145,16 @@ extension DefaultMovieDetailsViewModel {
             }
         }
     }
+    private func authenticatedSessionId() -> String? {
+        guard let sessionId = authSessionStorage.getSessionId() else {
+            actions.showAuthorization()
+            return nil
+        }
+
+        return sessionId
+    }
     func toggleFavorite() {
-        guard let sessionId = authSessionStorage.getSessionId(),
+        guard let sessionId = authenticatedSessionId(),
               let currentMovieId = Int(movieId) else {
             return
         }
@@ -189,7 +197,7 @@ extension DefaultMovieDetailsViewModel {
     }
     
     func toggleWatchlist() {
-        guard let sessionId = authSessionStorage.getSessionId(),
+        guard let sessionId = authenticatedSessionId(),
               let currentMovieId = Int(movieId) else {
             return
         }
@@ -231,7 +239,8 @@ extension DefaultMovieDetailsViewModel {
         }
     }
     func addToList() {
-        guard let movieId = Int(movieId) else { return }
+        guard authenticatedSessionId() != nil,
+        let movieId = Int(movieId) else { return }
         
         actions.showLists(
             movieId,

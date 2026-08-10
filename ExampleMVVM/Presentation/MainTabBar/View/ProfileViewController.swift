@@ -16,6 +16,7 @@ final class ProfileViewController: UIViewController, StoryboardInstantiable {
     @IBOutlet private weak var usernameLabel: UILabel!
     @IBOutlet private weak var subtitleLabel: UILabel!
     @IBOutlet private weak var signInButton: UIButton!
+    @IBOutlet private weak var tableViewHeightConstraint: NSLayoutConstraint!
     // MARK: - IBAction
     @IBAction private func signInButtonTapped(_ sender: UIButton) {
         viewModel.didTapSignIn()
@@ -23,13 +24,11 @@ final class ProfileViewController: UIViewController, StoryboardInstantiable {
     // MARK: - Properties
     var viewModel: ProfileViewModel!
     
-    private let profileItems: [ProfileItem] = [
+    private var profileItems: [ProfileItem] = [
         .lists,
         .favorites,
-        .watchlist,
-        .logout
+        .watchlist
     ]
-    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,6 +82,11 @@ private extension ProfileViewController {
                 self?.signInButton.isHidden = isHidden
             }
             viewModel.account.observe(on: self) { [weak self] account in
+                if account != nil {
+                    self?.profileItems.append(.logout)
+                    self?.tableView.reloadData()
+                }
+                self?.updateTableViewHeight()
                 guard let account = account else { return }
                 self?.usernameLabel.text = account.username
                 self?.subtitleLabel.text = "Signed in to TMDB"
@@ -92,6 +96,10 @@ private extension ProfileViewController {
                 self?.showError(message: message)
             }
         }
+    private func updateTableViewHeight() {
+        tableViewHeightConstraint.constant =
+            CGFloat(profileItems.count) * tableView.rowHeight
+    }
         func showError(message: String) {
             let alert = UIAlertController(
                 title: "Error",

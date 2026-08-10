@@ -99,6 +99,7 @@
                         <outlet property="signInButton" destination="yVC-Bj-0OX" id="WT5-wy-mhp"/>
                         <outlet property="subtitleLabel" destination="kM0-Zd-yXe" id="OcO-lv-GvC"/>
                         <outlet property="tableView" destination="PZB-te-hHI" id="DBO-b6-xIY"/>
+                        <outlet property="tableViewHeightConstraint" destination="ROj-nl-6eU" id="YXR-XU-JnJ"/>
                         <outlet property="userCardView" destination="BGg-Kp-9QI" id="yId-mB-cE2"/>
                         <outlet property="usernameLabel" destination="ZlX-VO-FTT" id="EHZ-RP-Iqk"/>
                     </connections>
